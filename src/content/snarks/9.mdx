@@ -1,0 +1,39 @@
+---
+blocks: 9
+nickname: The one wrapped three times
+summary: Nine blocks around a nonagon. It’s the smallest Goldberg snark that neatly wraps around a smaller member of its family.
+teaser: Wraps three times around G3
+---
+
+import Highlight from "~/components/Highlight.astro";
+import Snark from "~/components/Snark.astro";
+
+## Three times around
+
+Five and seven are prime, but nine is three threes, and that makes room for something new.
+Number the blocks of <Snark n={9} /> around its ring as 1, 2, 3, 1, 2, 3, 1, 2, 3.
+Now pretend that blocks with the same number are the same block.
+What you're left with is [<Snark n={3} />](/g3).
+
+<Highlight
+	blocks={9}
+	kind="every-third"
+	label="The Goldberg snark G9, with every third of its nine blocks emphasized."
+>
+	Every third block of <Snark n={9} /> lands on the same block of{" "}
+	<Snark n={3} />.
+</Highlight>
+
+Graph theorists say that <Snark n={9} /> is a _triple cover_ of <Snark n={3} />.
+Every vertex of the small graph has three above it in the large one, and walking anywhere in the large graph casts a shadow of a walk in the small one.
+A lap around <Snark n={9} /> is three laps around <Snark n={3} />.
+
+## Why coverings matter
+
+If <Snark n={3} /> could be colored with three colors, then so could <Snark n={9} />: each edge would copy the color of the edge beneath it.
+The reverse is not true in general.
+Wrapping can make a graph easier to color: wrapping <Snark n={3} /> twice gives the six blocks of <Snark n={6} />, which three colors are enough for.
+Wrapping it three times doesn't help, as three is odd.
+
+The triangle of <Snark n={3} />, which [keeps it from being a snark](/g3), also comes undone along the way.
+It unwinds into the nonagon at the center.

@@ -16,11 +16,28 @@
 	<img alt="💪 TypeScript: Strict" src="https://img.shields.io/badge/%F0%9F%92%AA_typescript-strict-21bb42.svg" />
 </p>
 
-## Usage
+## About
+
+[goldbergsnarks.com](https://goldbergsnarks.com) explains what Goldberg snarks are, how they're built, and why three colors are never enough for their edges.
+Each of the first few has its own page at `/g3`, `/g5`, and so on through `/g15`.
+
+The site is built with [Astro](https://astro.build).
+Everything it says about a graph that can be computed is computed, by code in [`src/graphs`](./src/graphs).
 
 ## Development
 
 See [`.github/CONTRIBUTING.md`](./.github/CONTRIBUTING.md), then [`.github/DEVELOPMENT.md`](./.github/DEVELOPMENT.md).
 Thanks! 🕸️
+
+## Contributors
+
+<!-- spellchecker: disable -->
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+<!-- spellchecker: enable -->
 
 > 💝 This package was templated with [`create-typescript-app`](https://github.com/JoshuaKGoldberg/create-typescript-app) using the [Bingo framework](https://create.bingo).

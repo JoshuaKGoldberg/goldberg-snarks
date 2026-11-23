@@ -1,0 +1,37 @@
+---
+import HeroDrawing from "./HeroDrawing.astro";
+
+interface Props {
+	blocks: number;
+}
+---
+
+<div class="hero">
+	<div class="words">
+		<slot />
+	</div>
+	<HeroDrawing blocks={Astro.props.blocks} />
+</div>
+
+<style>
+	.hero {
+		align-items: center;
+		display: grid;
+		gap: 2.5rem clamp(2rem, 6vw, 5rem);
+		padding-block: clamp(1rem, 4vw, 3rem) clamp(3rem, 8vw, 6rem);
+	}
+
+	.words > :global(p) {
+		font-size: var(--fontSizeSubtitle);
+		line-height: 1.35;
+		margin-top: 1.25rem;
+		max-width: 26em;
+		text-wrap: pretty;
+	}
+
+	@media (min-width: 56rem) {
+		.hero {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+		}
+	}
+</style>

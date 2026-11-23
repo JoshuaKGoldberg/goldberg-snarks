@@ -1,0 +1,681 @@
+---
+import Article from "~/components/Article.astro";
+import BlockExplorer from "~/components/BlockExplorer.astro";
+import Cite from "~/components/Cite.astro";
+import ColoredFigure from "~/components/ColoredFigure.astro";
+import ColoringKey from "~/components/ColoringKey.astro";
+import Drawing from "~/components/Drawing.astro";
+import EdgePuzzle from "~/components/EdgePuzzle.astro";
+import Figure from "~/components/Figure.astro";
+import Gallery from "~/components/Gallery.astro";
+import Hero from "~/components/Hero.astro";
+import Proof from "~/components/Proof.astro";
+import References from "~/components/References.astro";
+import Snark from "~/components/Snark.astro";
+import Statement from "~/components/Statement.astro";
+import Term from "~/components/Term.astro";
+import { site } from "~/constants.ts";
+import type { Graph } from "~/graphs/types.ts";
+
+import { colorEdges } from "~/graphs/colorEdges.ts";
+import { createBlockChain, stub } from "~/graphs/createBlockChain.ts";
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { createPetersenAroundBlock } from "~/graphs/createPetersenAroundBlock.ts";
+import { createPetersenGraph } from "~/graphs/createPetersenGraph.ts";
+import { getColorClass, getPartClass } from "~/graphs/edgeClasses.ts";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+const description =
+	"What Goldberg snarks are, how they’re built, and a short proof of why three colors are never enough for their edges, with interactive diagrams.";
+
+const sections = [
+	{ id: "coloring", name: "Coloring edges" },
+	{ id: "snarks", name: "What is a snark?" },
+	{ id: "try", name: "Try to color one" },
+	{ id: "building", name: "Building one" },
+	{ id: "why-odd", name: "Why three colors fail" },
+	{ id: "gallery", name: "Each snark" },
+	{ id: "properties", name: "Properties" },
+	{ id: "relatives", name: "Relatives" },
+	{ id: "history", name: "History" },
+	{ id: "references", name: "References" },
+];
+
+const block = createBlockChain(1);
+const chain = createBlockChain(2);
+const petersen = createPetersenGraph();
+const ring = createGoldbergGraph(5);
+
+// Its loose links are the same on both sides, so that it could be repeated
+const loose = [...chain.edges.entries()].filter(([, { isLink }]) => isLink);
+const chainColoring = colorEdges(chain, {
+	fixed: new Map([
+		[loose[0][0], 1],
+		[loose[1][0], 0],
+		[loose[2][0], 0],
+		[loose[6][0], 1],
+		[loose[7][0], 0],
+		[loose[8][0], 0],
+	]),
+});
+
+const cutPetersen = createPetersenAroundBlock();
+
+/** Where names are drawn from vertices, so as to not cover any edges. */
+const flatOffsets: Record<string, readonly [number, number]> = {
+	a: [7, -5],
+	b: [0, -7],
+	c: [-8, 2],
+	d: [8, 2],
+	e: [0, -7],
+	f: [0, -7],
+	g: [-4, 12],
+	h: [4, 12],
+	u: [9, 3],
+	v: [0, 14],
+	w: [-10, 3],
+};
+
+const ringOffsets: Record<string, readonly [number, number]> = {
+	a: [8, 7],
+	b: [8, 3],
+	c: [8, -2],
+	d: [-5, -7],
+	e: [0, -7],
+	f: [-4, -7],
+	g: [-9, 0],
+	h: [10, 5],
+};
+
+const nameFlatVertex = (graph: Graph) => (index: number) => {
+	const { role } = graph.vertices[index];
+
+	return role === stub ? undefined : ([role, ...flatOffsets[role]] as const);
+};
+
+const citation = `@misc{goldbergsnarks,
+  author = {Goldberg, Josh},
+  title  = {Goldberg Snarks},
+  year   = {2026},
+  url    = {${site}}
+}`;
+---
+
+<BaseLayout
+	description={description}
+	image={{
+		alt: "The Goldberg snark G5, drawn as five blocks around a ring.",
+		path: "/images/g5.png",
+	}}
+	schema={{
+		"@type": "Article",
+		about: { "@type": "Thing", name: "Goldberg snark" },
+		headline: "Goldberg snarks",
+	}}
+	title="Goldberg snarks, explained"
+>
+	<Hero blocks={5}>
+		<h1>Goldberg snarks</h1>
+		<p>
+			Link an odd number of identical pieces in a ring, and you get a graph
+			whose edges can’t be colored with three colors. Nobody has to take that on
+			faith: here’s what they are, how they’re built, and why it’s true.
+		</p>
+	</Hero>
+
+	<Article sections={sections}>
+		<section id="coloring">
+			<h2>Coloring edges</h2>
+			<p>
+				A <em>graph</em> is a set of dots, called vertices, joined by lines,
+				called edges. Where they’re drawn doesn’t matter: only what’s joined to
+				what. The graphs on this site are all <em>cubic</em>, meaning every
+				vertex has exactly three edges.
+			</p>
+			<p>
+				To <em>color</em> a graph’s edges is to give each one a color such that
+				edges meeting at a vertex are all different. A cubic graph needs at
+				least three colors, because three edges meet at each vertex. A theorem
+				of Vadim Vizing from 1964 says it never needs more than four.
+			</p>
+			<p>
+				So every cubic graph either can be colored with three colors or just
+				barely can’t. Most can. Of the cubic graphs on 28 vertices with no
+				cycles shorter than four, fewer than one in a thousand need that fourth
+				color
+				<Cite id="brinkmann2026" />.
+			</p>
+		</section>
+
+		<section id="snarks">
+			<h2>What is a snark?</h2>
+			<p>
+				Snarks are the cubic graphs that need four colors. Some graphs need four
+				for a dull reason, though, such as having been padded out from a smaller
+				one. Those are ruled out.
+			</p>
+			<Statement kind="Definition" name="snark" id="snark">
+				<p>
+					A <em>snark</em> is a connected cubic graph whose edges can’t be
+					colored with three colors, that has no cycle of fewer than five edges,
+					and that can’t be separated into two parts that both have cycles by
+					cutting fewer than four edges.
+				</p>
+			</Statement>
+			<p>
+				Authors differ on the last two conditions, and some leave them out. The
+				smallest snark is the Petersen graph.
+			</p>
+			<ColoredFigure
+				graph={petersen}
+				label="The Petersen graph, a pentagon joined to a five-pointed star inside of it, with thirteen of its fifteen edges colored."
+				size="small"
+			>
+				The Petersen graph, colored as well as it can be. Wherever three colors
+				are put, at least two edges are <Term is="spare">left over</Term>.
+			</ColoredFigure>
+			<p>
+				Snarks matter because they’re where hard problems hide. For several
+				famous conjectures, such as the cycle double cover conjecture and the
+				five-flow conjecture, it’s been proven that the smallest counterexample
+				would have to be a snark
+				<Cite id="brinkmann2026" />. Anyone hoping to find one looks among the
+				snarks.
+			</p>
+		</section>
+
+		<section id="try">
+			<h2>Try to color one</h2>
+			<p>
+				This is <Snark n={5} />, the smallest Goldberg snark. Its 60 edges are
+				yours to color. Vertices where two edges of a color meet are marked in{" "}
+				<Term is="spare">pink</Term>.
+			</p>
+			<EdgePuzzle blocks={5} />
+			<p>
+				You can get to 58. The rest of this page is about why you can’t get to
+				60, and why it’s no use trying for 59.
+			</p>
+		</section>
+
+		<section id="building">
+			<h2>Building a Goldberg snark</h2>
+			<p>
+				Every Goldberg snark is made of copies of one piece: a <em>block</em> of
+				eight vertices, traditionally named <i>a</i> through <i>h</i>. Nine
+				edges are within the block, and six loose links, three to a side, join
+				it to its neighbors.
+			</p>
+			<Figure size="small">
+				<Drawing
+					slot="drawing"
+					edgeClass={(index) => getPartClass(block, index)}
+					graph={block}
+					label="A block: eight vertices named a through h. Links cross it at three heights: through f and e at the top, g and h lower down, and a at the bottom. Between them, c joins b, e, and g; d joins b, f, and h; and b joins a."
+					names={nameFlatVertex(block)}
+					padding={12}
+				/>
+				A block and its six loose links: two each for the
+				<Term is="outer">outer</Term>, <Term is="middle">middle</Term>, and
+				<Term is="hub">hub</Term> rings.
+			</Figure>
+			<p>
+				Blocks are cut from the Petersen graph. Take any three of its vertices
+				in a row and cut them out: what remains is <i>b</i> through <i>h</i>,
+				with five edges left dangling. The vertex <i>a</i> is then added below{" "}
+				<i>b</i>.
+			</p>
+			<Figure size="medium">
+				<Drawing
+					slot="drawing"
+					edgeClass={(index) =>
+						cutPetersen.edges[index].isLink ? "cut" : "plain"
+					}
+					graph={cutPetersen}
+					label="The Petersen graph, drawn as a block’s vertices b through h, with three more vertices: u, which joins e, h, and v; v, which joins b, u, and w; and w, which joins f, g, and v."
+					names={nameFlatVertex(cutPetersen)}
+					padding={14}
+				/>
+				The Petersen graph, drawn around a block. Cut out <i>u</i>, <i>v</i>,
+				and <i>w</i>, and the dashed edges are left dangling.
+			</Figure>
+			<p>
+				Link blocks side to side and the last back to the first. The links
+				themselves join up into three rings: the{" "}
+				<Term is="outer">outer ring</Term> through each block’s <i>e</i> and{" "}
+				<i>f</i>, the <Term is="middle">middle ring</Term>
+				through <i>g</i> and <i>h</i>, and the <Term is="hub">hub</Term> through{" "}
+				<i>a</i>.
+			</p>
+			<Figure size="large">
+				<Drawing
+					slot="drawing"
+					edgeClass={(index) => getPartClass(ring, index)}
+					graph={ring}
+					label="Five blocks in a ring. The outer and middle rings each pass through ten vertices, and the hub passes through five in the center."
+					names={(index) => {
+						const { block: number, role } = ring.vertices[index];
+
+						return number === 0
+							? ([`${role}1`, ...ringOffsets[role]] as const)
+							: undefined;
+					}}
+					padding={10}
+				/>
+				Five blocks make <Snark n={5} />. The first block’s vertices are named.
+			</Figure>
+			<Statement kind="Definition" name="Goldberg snark" id="goldberg-snark">
+				<p>
+					For <i>k</i> ≥ 3, the <em>Goldberg graph</em>
+					<Snark n="k" /> has 8<i>k</i> vertices{" "}
+					<i>
+						a<sub>i</sub>, b<sub>i</sub>, c<sub>i</sub>, d<sub>i</sub>, e
+						<sub>i</sub>, f<sub>i</sub>, g<sub>i</sub>, h<sub>i</sub>
+					</i>{" "}
+					and 12<i>k</i> edges:
+				</p>
+				<p class="edges">
+					<i>
+						a<sub>i</sub>b<sub>i</sub>, b<sub>i</sub>c<sub>i</sub>, b
+						<sub>i</sub>d<sub>i</sub>, c<sub>i</sub>e<sub>i</sub>, c<sub>i</sub>
+						g<sub>i</sub>, d<sub>i</sub>f<sub>i</sub>, d<sub>i</sub>h
+						<sub>i</sub>, e<sub>i</sub>f<sub>i</sub>, g<sub>i</sub>h<sub>i</sub>
+					</i>
+					<br />
+					<i>
+						a<sub>i</sub>a<sub>i+1</sub>, e<sub>i</sub>f<sub>i+1</sub>, h
+						<sub>i</sub>g<sub>i+1</sub>
+					</i>
+				</p>
+				<p>
+					where <i>i</i> counts from 1 to <i>k</i>, and <i>k</i> + 1 wraps back
+					to 1. When <i>k</i> is odd and at least 5, <Snark n="k" /> is a{" "}
+					<em>Goldberg snark</em> <Cite id="mohar2006" />.
+				</p>
+			</Statement>
+			<p>
+				Whether <Snark n={3} /> counts depends on whom you ask.
+				<a href="/g3">Its own page</a> has the arguments.
+			</p>
+		</section>
+
+		<section id="why-odd">
+			<h2>Why three colors fail</h2>
+			<p>
+				The trick is to ignore almost everything. Between two neighboring blocks
+				there are three links. Look only at the <Term is="outer">outer</Term>{" "}
+				and
+				<Term is="middle">middle</Term> ones, and ask one question: are they the
+				same color?
+			</p>
+			<Statement kind="Lemma" name="flipping" id="flipping">
+				<p>
+					However a block is colored with three colors, the outer and middle
+					links match on exactly one of its two sides.
+				</p>
+			</Statement>
+			<Figure>
+				<Drawing
+					slot="drawing"
+					edgeClass={(index) => getColorClass(chainColoring?.[index])}
+					graph={chain}
+					label="Two blocks in a row, colored. On the left, the outer and middle links are both green. Between the blocks, they’re two different colors. On the right, they’re the same color again."
+					padding={4}
+				/>
+				<ColoringKey />
+				The upper two links match on the left, differ in the middle, and match
+				again on the right. Each block flips them.
+			</Figure>
+			<Proof>
+				<p>
+					Set <i>a</i> aside. The other seven vertices have five dangling edges:
+					the outer and middle links on the left, those on the right, and the
+					edge down to
+					<i>a</i>. Each color has an edge at each of the seven vertices. Edges
+					inside account for two vertices at a time, and seven is odd, so each
+					color is on an odd number of dangling edges. With five of them, one
+					color is on three and the other two are on one each.
+				</p>
+				<p>
+					<em>Both sides can’t match.</em> If they did, the four links would be
+					two pairs. Then either two colors are on two edges each before
+					counting the fifth, or one color is on four. Neither can become three,
+					one, and one.
+				</p>
+				<p>
+					<em>Both sides can’t differ.</em> If they did, the color that’s on
+					three dangling edges must be once on the left, once on the right, and
+					once on the edge to <i>a</i>. The other link on the left has a second
+					color, and the other link on the right has the third. Now undo the
+					cut: attach the right’s links to <i>u</i>, the left’s links to{" "}
+					<i>w</i>, and the last edge to <i>v</i>. Color the edge from <i>u</i>{" "}
+					to <i>v</i> with the second color, and the edge from <i>w</i>
+					to <i>v</i> with the third. All three colors meet at each of <i>u</i>,{" "}
+					<i>v</i>, and <i>w</i>, so the Petersen graph has been colored with
+					three colors. That’s known to be impossible.
+				</p>
+			</Proof>
+			<p class="aside">
+				This site’s tests also check it the long way. Of the 729 ways to color a
+				block’s six links, 72 can be extended to the rest of it, and all 72
+				match on exactly one side.
+			</p>
+			<Statement kind="Theorem" name="parity" id="theorem">
+				<p>
+					The edges of <Snark n="k" /> can be colored with three colors if and
+					only if
+					<i>k</i> is even.
+				</p>
+			</Statement>
+			<Proof>
+				<p>
+					Suppose that it’s colored, start between any two blocks, and walk once
+					around the ring. Each of the <i>k</i> blocks flips the links from
+					matching to differing or back. But you return to the very links you
+					started at, so you must have flipped an even number of times. An odd{" "}
+					<i>k</i> is impossible.
+				</p>
+				<p>
+					When <i>k</i> is even, the pair of blocks above can be repeated, as
+					its links can be colored the same on the right as on the left.
+				</p>
+			</Proof>
+			<p>
+				Change the number of blocks to see both halves of the theorem. The
+				colors give out at every odd number, and recover at every even one.
+			</p>
+			<BlockExplorer />
+			<h3>Why exactly two edges are left over</h3>
+			<p>
+				Coloring all but one edge would be a near miss, but there’s no such
+				thing. Suppose only the edge between vertices <i>u</i> and <i>v</i> has
+				no color. Every other vertex has an edge of each color, and <i>u</i> and{" "}
+				<i>v</i> are each missing one color. Each color’s edges join vertices up
+				in pairs, and there’s an even number of vertices, so an even number of
+				them lack any given color. The color missing at <i>u</i> must then be
+				the one missing at <i>v</i>. Give it to the edge between them and the
+				whole graph is colored, which we know can’t be done.
+			</p>
+			<p>
+				This works for any snark. Two is the best that could be hoped for, and
+				every Goldberg snark drawn on this site achieves it.
+			</p>
+			<h3>No grand tour</h3>
+			<Statement kind="Corollary" id="hamiltonian">
+				<p>
+					No Goldberg snark has a <em>Hamiltonian cycle</em>: a loop along its
+					edges that visits every vertex exactly once.
+				</p>
+			</Statement>
+			<Proof>
+				<p>
+					The loop would have an even number of edges, so two colors could
+					alternate along it. It would use two of each vertex’s three edges, so
+					the edges unused wouldn’t touch each other, and could all be given the
+					third color.
+				</p>
+			</Proof>
+			<p>
+				They come as close as possible, though. Each one drawn here has a loop
+				that misses only a single vertex.{" "}
+				<a href="/g5">
+					The page for <Snark n={5} />
+				</a>{" "}
+				shows one.
+			</p>
+		</section>
+
+		<section id="gallery">
+			<h2>Each snark</h2>
+			<p>
+				There’s a Goldberg snark for every odd number from five up. These are
+				the first few, and their not-quite-a-snark sibling.
+			</p>
+			<Gallery />
+		</section>
+
+		<section id="properties">
+			<h2>Properties</h2>
+			<p>
+				Anything that depends only on blocks grows steadily with the number of
+				them, <i>k</i>. These hold for odd <i>k</i> ≥ 5.
+			</p>
+			<div class="table">
+				<table>
+					<thead>
+						<tr>
+							<th scope="col">Property</th>
+							<th scope="col">Value</th>
+							<th scope="col">How it’s known</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">Vertices</th>
+							<td>
+								8<i>k</i>
+							</td>
+							<td>By definition</td>
+						</tr>
+						<tr>
+							<th scope="row">Edges</th>
+							<td>
+								12<i>k</i>
+							</td>
+							<td>By definition</td>
+						</tr>
+						<tr>
+							<th scope="row">Colors needed for edges</th>
+							<td>4</td>
+							<td>
+								<a href="#theorem">Proven above</a>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Colors needed for edges and vertices at once</th>
+							<td>4</td>
+							<td>
+								Proven <Cite id="campos2011" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Shortest cycle (girth)</th>
+							<td>5</td>
+							<td>
+								Computed for{" "}
+								<span class="nowrap">
+									<i>k</i> ≤ 15
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Pentagons</th>
+							<td>
+								2<i>k</i>, or 11 for <i>k</i> = 5
+							</td>
+							<td>
+								Computed for{" "}
+								<span class="nowrap">
+									<i>k</i> ≤ 15
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Symmetries</th>
+							<td>
+								4<i>k</i>
+							</td>
+							<td>
+								Computed for{" "}
+								<span class="nowrap">
+									<i>k</i> ≤ 15
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Longest cycle</th>
+							<td>
+								8<i>k</i> − 1
+							</td>
+							<td>
+								Computed for{" "}
+								<span class="nowrap">
+									<i>k</i> ≤ 15
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Fewest crossings in a drawing</th>
+							<td>
+								2<i>k</i>
+							</td>
+							<td>
+								Reported for <i>k</i> ≤ 12, conjectured beyond{" "}
+								<Cite id="weisstein" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p>
+				Crossings are never avoidable. Peter Tait showed in 1880 that the four
+				color theorem, which says that four colors suffice for any flat map, is
+				the same as saying that no planar graph is a snark{" "}
+				<Cite id="tait1880" />. That theorem was proven in 1976, so every
+				snark’s drawings have edges that cross.
+			</p>
+		</section>
+
+		<section id="relatives">
+			<h2>Relatives</h2>
+			<dl>
+				<dt>Twisted Goldberg snarks</dt>
+				<dd>
+					Cross over two of the links that join one pair of blocks, so that its{" "}
+					<i>e</i> leads to the next one’s <i>g</i> and its <i>h</i> to the next
+					one’s <i>f</i>. The flipping proof doesn’t notice, as it only asks
+					whether those two links match <Cite id="campos2011" />.
+				</dd>
+				<dt>Loupekine snarks</dt>
+				<dd>
+					Snarks made from other snarks by the same cutting out of three
+					vertices in a row. The Goldberg snarks are one way to arrange the
+					pieces cut from Petersen graphs <Cite id="berman2017" />.
+				</dd>
+				<dt>Flower snarks</dt>
+				<dd>
+					An older family, also of odd rings of identical blocks, with four
+					vertices in each <Cite id="isaacs1975" />.
+				</dd>
+				<dt>Even Goldberg graphs</dt>
+				<dd>
+					The same construction with an even number of blocks. Three colors are
+					enough for them, so they’re not snarks.
+				</dd>
+			</dl>
+		</section>
+
+		<section id="history">
+			<h2>History</h2>
+			<p>
+				For decades, snarks were almost never seen. Julius Petersen showed in
+				1898 that his graph’s edges need four colors. Danilo Blanuša found the
+				next two in 1946, and only two more had turned up by 1975, when Rufus
+				Isaacs described the first infinite families of them{" "}
+				<Cite id="isaacs1975" />.
+			</p>
+			<p>
+				The name came a year later. Martin Gardner, writing in{" "}
+				<cite>Scientific American</cite>, borrowed it from Lewis Carroll’s{" "}
+				<cite>The Hunting of the Snark</cite>, for how elusive they’d been{" "}
+				<Cite id="gardner1976" />.
+			</p>
+			<p>
+				Mark K. Goldberg described the snarks on this site in 1981, in a paper
+				on building cubic graphs that three colors aren’t enough for{" "}
+				<Cite id="goldberg1981" />.
+				<a href="https://www.cs.rpi.edu/~goldberg">Goldberg</a> earned a
+				doctorate from the Institute of Mathematics in Novosibirsk and became a
+				professor of computer science at Rensselaer Polytechnic Institute. One
+				of the main conjectures about edge colorings, the Goldberg–Seymour
+				conjecture, also bears Goldberg’s name.
+			</p>
+		</section>
+
+		<section id="references">
+			<h2>References</h2>
+			<References />
+			<h3>Citing this site</h3>
+			<pre tabindex="0"><code>{citation}</code></pre>
+		</section>
+	</Article>
+</BaseLayout>
+
+<style>
+	.nowrap {
+		white-space: nowrap;
+	}
+
+	.aside {
+		color: var(--colorMuted);
+		font-size: 0.9em;
+	}
+
+	.edges {
+		line-height: 1.8;
+	}
+
+	.table {
+		margin-block: 1.5rem;
+		overflow-x: auto;
+	}
+
+	table {
+		border-collapse: collapse;
+		font-size: 0.9em;
+		line-height: 1.4;
+		width: 100%;
+	}
+
+	:is(td, th) {
+		border-bottom: 1px solid var(--colorRule);
+		font-weight: inherit;
+		padding: 0.6rem 1rem 0.6rem 0;
+		text-align: left;
+		vertical-align: baseline;
+	}
+
+	thead th {
+		color: var(--colorMuted);
+		font-family: var(--fontLabel);
+		font-size: var(--fontSizeSmall);
+	}
+
+	dl {
+		display: grid;
+		gap: 0.35rem;
+	}
+
+	dt {
+		color: var(--colorForegroundExtra);
+		font-weight: 600;
+	}
+
+	dd + dt {
+		margin-top: 1rem;
+	}
+
+	dd {
+		margin: 0;
+	}
+
+	pre {
+		background: var(--colorRaised);
+		border-radius: 0.5rem;
+		box-shadow: inset 0 0 0 1px var(--colorRule);
+		font-size: 0.875rem;
+		line-height: 1.5;
+		overflow-x: auto;
+		padding: 1rem 1.25rem;
+	}
+</style>

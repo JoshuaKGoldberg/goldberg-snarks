@@ -1,0 +1,66 @@
+<button aria-label="Dark theme" class="theme-toggle" type="button">
+	<svg aria-hidden="true" height="22" viewBox="0 0 24 24" width="22">
+		<circle cx="12" cy="12" r="8.5"></circle>
+		<path d="M12 3.5a8.5 8.5 0 0 1 0 17z"></path>
+	</svg>
+</button>
+
+<script>
+	const button = document.querySelector<HTMLButtonElement>(".theme-toggle");
+	const prefersDark = matchMedia("(prefers-color-scheme: dark)");
+	const root = document.documentElement;
+
+	const isDark = () =>
+		root.dataset.theme ? root.dataset.theme === "dark" : prefersDark.matches;
+
+	function update() {
+		button?.setAttribute("aria-pressed", isDark().toString());
+	}
+
+	button?.addEventListener("click", () => {
+		const theme = isDark() ? "light" : "dark";
+
+		root.dataset.theme = theme;
+
+		try {
+			localStorage.setItem("theme", theme);
+		} catch {
+			// The choice still applies to this page
+		}
+
+		update();
+	});
+
+	prefersDark.addEventListener("change", update);
+	update();
+</script>
+
+<style>
+	button {
+		background: none;
+		border: 0;
+		color: inherit;
+		cursor: pointer;
+		grid-area: toggle;
+		padding: 0.5rem;
+	}
+
+	/* Needs JavaScript to do anything, which is also what sets its state */
+	button:not([aria-pressed]) {
+		visibility: hidden;
+	}
+
+	button:hover {
+		color: var(--colorEmphasized);
+	}
+
+	circle {
+		fill: none;
+		stroke: currentcolor;
+		stroke-width: 1.75;
+	}
+
+	path {
+		fill: currentcolor;
+	}
+</style>

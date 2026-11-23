@@ -1,0 +1,274 @@
+@layer reset, base, graphs;
+
+@layer reset {
+	*,
+	::before,
+	::after {
+		box-sizing: border-box;
+	}
+
+	* {
+		margin: 0;
+	}
+
+	svg {
+		display: block;
+		max-width: 100%;
+	}
+}
+
+@layer base {
+	:root {
+		color-scheme: light dark;
+
+		--colorBackground: light-dark(#ecf4f9, #0b1220);
+		--colorEmphasized: light-dark(#0a58aa, #77bbff);
+		--colorForeground: light-dark(#283556, #dae7f3);
+		--colorForegroundExtra: light-dark(#142842, #f1f6fb);
+		--colorMuted: light-dark(#4d5b7b, #93a5bf);
+		--colorRaised: light-dark(#f8fbfd, #101a2c);
+		--colorRule: light-dark(#c5d8e6, #22344f);
+
+		/* Low to high, as in auroras */
+		--jade: light-dark(#0d7d5b, #45e0a4);
+		--cornflower: light-dark(#1b6bb5, #56bdff);
+		--wisteria: light-dark(#7a3fb5, #bd91ff);
+		--rose: light-dark(#b52e63, #ff7fab);
+
+		/* For edges that three colors aren't enough for, and nothing else */
+		--spare: light-dark(#d1006f, #ff4fa3);
+
+		--squiggleStart: light-dark(hsl(230 64% 30% / 74%), hsl(230 44% 74% / 64%));
+		--squiggleMiddle: light-dark(
+			hsl(170 64% 30% / 74%),
+			hsl(170 44% 74% / 64%)
+		);
+		--squiggleEnd: light-dark(hsl(266 64% 30% / 74%), hsl(266 44% 74% / 64%));
+
+		--fontSizeSmall: 0.875rem;
+		--fontSizeMedium: 1rem;
+		--fontSizeBody: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
+		--fontSizeSubtitle: clamp(1.35rem, 1.2rem + 0.9vw, 1.7rem);
+		--fontSizeHeading: clamp(1.75rem, 1.5rem + 1.3vw, 2.25rem);
+		--fontSizeTitle: clamp(2.75rem, 2rem + 4vw, 4.75rem);
+
+		--fontWeightText: 350;
+		--lineHeightBase: 1.3;
+		--lineHeightText: 1.55;
+
+		--space: clamp(1rem, 4vw, 2rem);
+		--widthFull: 68rem;
+		--widthText: 42rem;
+	}
+
+	:root[data-theme="dark"] {
+		color-scheme: dark;
+	}
+
+	:root[data-theme="light"] {
+		color-scheme: light;
+	}
+
+	html {
+		background: var(--colorBackground);
+		-webkit-text-size-adjust: 100%;
+		scroll-padding-top: 2rem;
+	}
+
+	body {
+		color: var(--colorForeground);
+		font-family: var(--fontText);
+		font-optical-sizing: auto;
+		font-size: var(--fontSizeBody);
+		font-weight: var(--fontWeightText);
+		line-height: var(--lineHeightText);
+		overflow-wrap: break-word;
+	}
+
+	h1,
+	h2,
+	h3 {
+		color: var(--colorForegroundExtra);
+		font-family: var(--fontDisplay);
+		font-weight: 400;
+		letter-spacing: -0.02em;
+		line-height: 1.1;
+		text-wrap: balance;
+	}
+
+	h1 {
+		font-size: var(--fontSizeTitle);
+		line-height: 1;
+	}
+
+	h2 {
+		font-size: var(--fontSizeHeading);
+	}
+
+	h3 {
+		font-size: var(--fontSizeSubtitle);
+	}
+
+	p,
+	li {
+		text-wrap: pretty;
+	}
+
+	a {
+		color: var(--colorForegroundExtra);
+		text-decoration: none;
+	}
+
+	/* Wavy and slow to change hue, and still an underline for links of many lines */
+	:where(p, li, dd, figcaption, td) a:not([class]) {
+		text-decoration: underline wavy var(--squiggleMiddle) 1px;
+		text-decoration-skip-ink: none;
+		text-underline-offset: 0.22em;
+
+		&:nth-of-type(3n + 2) {
+			text-decoration-color: var(--squiggleEnd);
+		}
+
+		&:nth-of-type(3n) {
+			text-decoration-color: var(--squiggleStart);
+		}
+
+		&:hover {
+			text-decoration-color: currentcolor;
+		}
+	}
+
+	a:hover {
+		color: var(--colorEmphasized);
+	}
+
+	:focus-visible {
+		border-radius: 3px;
+		outline: 2px solid var(--colorEmphasized);
+		outline-offset: 3px;
+	}
+
+	sub,
+	sup {
+		font-size: 0.72em;
+		line-height: 0;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		html {
+			scroll-behavior: smooth;
+		}
+	}
+}
+
+@layer graphs {
+	.graph {
+		height: auto;
+		overflow: visible;
+		width: 100%;
+	}
+
+	.graph path {
+		fill: none;
+		stroke: currentcolor;
+		stroke-linecap: round;
+		stroke-width: 1.5px;
+		vector-effect: non-scaling-stroke;
+	}
+
+	.graph circle {
+		fill: currentcolor;
+	}
+
+	.graph text {
+		fill: currentcolor;
+		font-family: var(--fontText);
+		font-size: 9px;
+		font-style: italic;
+		font-weight: 450;
+		paint-order: stroke;
+		stroke: var(--colorBackground);
+		stroke-linejoin: round;
+		stroke-width: 2px;
+		text-anchor: middle;
+	}
+
+	.graph .text-subscript {
+		font-size: 6px;
+		font-style: normal;
+	}
+
+	/* Places in a graph's structure */
+	.graph .hub {
+		color: var(--rose);
+		stroke-width: 2.25px;
+	}
+
+	.graph .spoke {
+		color: var(--colorMuted);
+	}
+
+	.graph .middle {
+		color: var(--jade);
+		stroke-width: 2.25px;
+	}
+
+	.graph .outer {
+		color: var(--cornflower);
+		stroke-width: 2.25px;
+	}
+
+	/* Edge colors, which dashes also tell apart */
+	.graph .green {
+		color: var(--jade);
+		stroke-width: 2.25px;
+	}
+
+	.graph .blue {
+		color: var(--cornflower);
+		stroke-dasharray: 9 5;
+		stroke-width: 2.25px;
+	}
+
+	.graph .purple {
+		color: var(--wisteria);
+		stroke-dasharray: 0.1 5;
+		stroke-width: 3px;
+	}
+
+	.graph .spare {
+		color: var(--spare);
+		stroke-width: 6px;
+	}
+
+	/* Emphasis, and its lack */
+	.graph .faint {
+		opacity: 0.38;
+	}
+
+	.graph .strong {
+		color: var(--rose);
+		stroke-width: 3.5px;
+	}
+
+	.graph .cut {
+		color: var(--colorMuted);
+		stroke-dasharray: 4 5;
+	}
+
+	.graph .heavy {
+		stroke-width: 3.5px;
+	}
+
+	@media (forced-colors: active) {
+		.graph * {
+			color: CanvasText;
+		}
+	}
+}
+
+@media print {
+	:root {
+		color-scheme: light;
+	}
+}

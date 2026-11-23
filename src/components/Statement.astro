@@ -1,0 +1,44 @@
+---
+interface Props {
+	id?: string;
+	kind: "Corollary" | "Definition" | "Lemma" | "Theorem";
+	name?: string;
+}
+
+const { id, kind, name } = Astro.props;
+---
+
+<div class="statement" id={id}>
+	<p class="head">
+		<strong>{kind}</strong>
+		{name && <span class="name"> ({name})</span>}
+	</p>
+	<slot />
+</div>
+
+<style>
+	.statement {
+		background: var(--colorRaised);
+		border-radius: 0.5rem;
+		box-shadow: inset 0 0 0 1px var(--colorRule);
+		margin-block: 2rem;
+		padding: 1.25rem 1.5rem 1.4rem;
+	}
+
+	.head {
+		color: var(--colorForegroundExtra);
+		margin-bottom: 0.4rem;
+	}
+
+	.statement > :global(p + p) {
+		margin-top: 0.75rem;
+	}
+
+	.statement > :global(.head + p) {
+		margin-top: 0;
+	}
+
+	strong {
+		font-weight: 600;
+	}
+</style>

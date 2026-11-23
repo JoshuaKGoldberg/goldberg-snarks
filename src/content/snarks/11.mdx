@@ -1,0 +1,37 @@
+---
+blocks: 11
+nickname: The balanced one
+summary: Eleven blocks around a hendecagon. It’s the only Goldberg snark that’s exactly as many steps across as it has blocks.
+teaser: As far across as its ring is long
+---
+
+import Cite from "~/components/Cite.astro";
+import Highlight from "~/components/Highlight.astro";
+import Snark from "~/components/Snark.astro";
+
+## Eleven steps across
+
+The _diameter_ of a graph is how many steps apart its two farthest vertices are.
+The diameter of <Snark n={11} /> is eleven: the same as its number of blocks.
+No other Goldberg snark's is.
+
+<Highlight
+	blocks={11}
+	kind="farthest"
+	label="The Goldberg snark G11, with a path of eleven edges from one side to the other emphasized."
+>
+	A shortest path between two vertices that are as far apart as any. It takes
+	eleven steps.
+</Highlight>
+
+It's a race between two kinds of distance.
+Getting into and out of the hub costs a few steps whatever the size, so small Goldberg snarks are further across than they have blocks: five blocks are six steps across, seven are eight, and nine are ten.
+Once you're in the hub, though, each step passes a whole block, and you never have to pass more than half of them.
+Every two blocks more add only one step.
+At thirteen blocks, the diameter of twelve has fallen behind for good.
+
+## The end of the record
+
+<Snark n={11} /> can't be drawn on a flat page with fewer than 22 pairs of its
+edges crossing. It's the largest of the Goldberg snarks for which that fewest
+number is on record <Cite id="weisstein" />.

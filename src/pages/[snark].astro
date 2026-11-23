@@ -1,0 +1,350 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import { render } from "astro:content";
+
+import Article from "~/components/Article.astro";
+import Cite from "~/components/Cite.astro";
+import ColoredFigure from "~/components/ColoredFigure.astro";
+import EdgePuzzle from "~/components/EdgePuzzle.astro";
+import Hero from "~/components/Hero.astro";
+import Snark from "~/components/Snark.astro";
+import Term from "~/components/Term.astro";
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { describeSnark } from "~/graphs/describeSnark.ts";
+import { toGraph6 } from "~/graphs/serialize.ts";
+import { getSnarks } from "~/getSnarks.ts";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+export const getStaticPaths = (async () => {
+	const snarks = await getSnarks();
+
+	return snarks.map((snark, i) => ({
+		params: { snark: snark.href.slice(1) },
+		props: { next: snarks[i + 1], previous: snarks[i - 1], snark },
+	}));
+}) satisfies GetStaticPaths;
+
+const { next, previous, snark } = Astro.props;
+const { blocks, href, name, nickname, summary } = snark;
+const { Content, headings } = await render(snark.entry);
+const facts = describeSnark(blocks);
+const graph = createGoldbergGraph(blocks);
+const isDisputed = blocks < 5;
+const title = isDisputed ? "Goldberg graph" : "Goldberg snark";
+
+const rows = [
+	["Blocks", blocks],
+	["Vertices", facts.vertices],
+	["Edges", facts.edges],
+	["Colors needed for edges", 4],
+	["Edges that three colors can cover", facts.edges - 2],
+	["Shortest cycle (girth)", facts.girth],
+	["Pentagons", facts.pentagons],
+	["Steps between the farthest vertices (diameter)", facts.diameter],
+	["Steps from a center to everywhere (radius)", facts.radius],
+	["Symmetries", facts.symmetries],
+	["Longest cycle", facts.vertices - 1],
+] as const;
+
+const sections = [
+	...headings
+		.filter(({ depth }) => depth === 2)
+		.map(({ slug, text }) => ({ id: slug, name: text })),
+	{ id: "coloring", name: "How far three colors get" },
+	{ id: "try", name: "Try to color it" },
+	{ id: "facts", name: "Facts and figures" },
+	{ id: "downloads", name: "Downloads" },
+];
+---
+
+<BaseLayout
+	description={summary}
+	image={{
+		alt: `The ${title} ${name}, drawn as ${blocks.toString()} blocks in a ring.`,
+		path: `/images${href}.png`,
+	}}
+	schema={{
+		"@type": "Article",
+		about: { "@type": "Thing", name: `${title} ${name}` },
+		headline: `${title} ${name}: ${nickname}`,
+	}}
+	title={`${title} ${name}: ${nickname.toLowerCase()}`}
+>
+	<Hero blocks={blocks}>
+		<h1>
+			<span class="kind">{title}</span> <Snark n={blocks} />
+		</h1>
+		<p>{summary}</p>
+		<dl class="glance">
+			{(
+				[
+					["vertices", facts.vertices],
+					["edges", facts.edges],
+					["symmetries", facts.symmetries],
+				] as const
+			).map(([label, value]) => (
+				<div>
+					<dt>{label}</dt>
+					<dd>{value}</dd>
+				</div>
+			))}
+		</dl>
+	</Hero>
+
+	<Article sections={sections}>
+		<div class="content">
+			<Content />
+		</div>
+
+		<section id="coloring">
+			<h2>How far three colors get</h2>
+			<p>
+				There are {blocks} blocks, which is an odd number, so
+				<a href="/#why-odd">three colors can’t be enough</a>. One edge is never
+				all that’s missing, either. Two can be: here are
+				{facts.edges - 2} of the {facts.edges} edges of <Snark n={blocks} />,
+				colored, and all of the <Term is="spare">trouble</Term> is in one block.
+			</p>
+			<ColoredFigure
+				graph={graph}
+				label={`${name} with ${(facts.edges - 2).toString()} of its ${facts.edges.toString()} edges colored green, blue, or purple. The two left over are from a1 to b1 and c1 to e1.`}
+				size="large"
+			>
+				No coloring of <Snark n={blocks} /> covers more edges than this one.
+			</ColoredFigure>
+		</section>
+
+		<section id="try">
+			<h2>Try to color it</h2>
+			<p>
+				There’s more than one way to reach {facts.edges - 2} edges. Can you find
+				another?
+			</p>
+			<EdgePuzzle blocks={blocks} />
+		</section>
+
+		<section id="facts">
+			<h2>Facts and figures</h2>
+			<table>
+				<tbody>
+					{rows.map(([label, value]) => (
+						<tr>
+							<th scope="row">{label}</th>
+							<td>{value}</td>
+						</tr>
+					))}
+					<tr>
+						<th scope="row">Fewest crossings in a drawing</th>
+						<td>
+							{facts.crossings ?? (
+								<Fragment>{blocks * 2}, if a conjecture holds</Fragment>
+							)}
+							<Cite id="weisstein" />
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Has a Hamiltonian cycle</th>
+						<td>
+							<a href="/#hamiltonian">No</a>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Planar</th>
+						<td>
+							<a href="/#properties">No</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section id="downloads">
+			<h2>Downloads</h2>
+			<ul class="downloads">
+				<li>
+					<a download href={`/downloads${href}.svg`}>
+						Drawing (SVG)
+					</a>
+				</li>
+				<li>
+					<a download href={`/images${href}.png`}>
+						Drawing (PNG)
+					</a>
+				</li>
+				<li>
+					<a download href={`/downloads${href}.txt`}>
+						Edge list (text)
+					</a>
+				</li>
+				<li>
+					<a download href={`/downloads${href}.g6`}>
+						Compact encoding (graph6)
+					</a>
+				</li>
+			</ul>
+			<p>
+				Programs such as NetworkX, SageMath, and nauty can read this graph6
+				encoding of <Snark n={blocks} />:
+			</p>
+			<pre tabindex="0"><code>{toGraph6(graph)}</code></pre>
+		</section>
+
+		<nav aria-label="Other snarks" class="siblings">
+			{previous ? (
+				<a class="sibling" href={previous.href} rel="prev">
+					<span class="direction">Previous</span>
+					<Snark n={previous.blocks} />: {previous.nickname.toLowerCase()}
+				</a>
+			) : (
+				<a class="sibling" href="/">
+					<span class="direction">Start from the beginning</span>
+					Goldberg snarks
+				</a>
+			)}
+			{next ? (
+				<a class="sibling next" href={next.href} rel="next">
+					<span class="direction">Next</span>
+					<Snark n={next.blocks} />: {next.nickname.toLowerCase()}
+				</a>
+			) : (
+				<a class="sibling next" href="/#gallery">
+					<span class="direction">See them all</span>
+					Goldberg snarks
+				</a>
+			)}
+		</nav>
+	</Article>
+</BaseLayout>
+
+<style>
+	h1 :global(sub) {
+		font-size: 0.6em;
+		margin-left: 0;
+		vertical-align: -0.18em;
+	}
+
+	.kind {
+		display: block;
+		font-size: 0.5em;
+		letter-spacing: -0.01em;
+		margin-bottom: 0.3em;
+	}
+
+	.glance {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem 2.25rem;
+		margin-top: 2rem;
+	}
+
+	.glance div {
+		display: flex;
+		flex-direction: column-reverse;
+	}
+
+	.glance dt {
+		color: var(--colorMuted);
+		font-family: var(--fontLabel);
+		font-size: var(--fontSizeSmall);
+	}
+
+	.glance dd {
+		color: var(--colorForegroundExtra);
+		font-size: 1.9rem;
+		font-weight: 400;
+		line-height: 1.15;
+		margin: 0;
+	}
+
+	.content {
+		margin-bottom: clamp(4rem, 10vw, 6.5rem);
+	}
+
+	.content :global(h2:not(:first-child)) {
+		margin-top: clamp(4rem, 10vw, 6.5rem);
+	}
+
+	.content :global(:is(p, ul) + :is(p, ul)) {
+		margin-top: 1.1rem;
+	}
+
+	.content :global(ul) {
+		display: grid;
+		gap: 0.6rem;
+		padding-left: 1.25rem;
+	}
+
+	table {
+		border-collapse: collapse;
+		line-height: 1.4;
+		width: 100%;
+	}
+
+	:is(td, th) {
+		border-bottom: 1px solid var(--colorRule);
+		padding: 0.6rem 0;
+		vertical-align: baseline;
+	}
+
+	th {
+		font-weight: inherit;
+		padding-right: 1.5rem;
+		text-align: left;
+	}
+
+	td {
+		color: var(--colorForegroundExtra);
+		font-weight: 500;
+		text-align: right;
+	}
+
+	.downloads {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 2rem;
+		list-style: none;
+		margin-bottom: 1.5rem;
+		padding: 0;
+	}
+
+	pre {
+		background: var(--colorRaised);
+		border-radius: 0.5rem;
+		box-shadow: inset 0 0 0 1px var(--colorRule);
+		font-size: 0.875rem;
+		line-height: 1.5;
+		margin-top: 1rem;
+		overflow-wrap: anywhere;
+		padding: 1rem 1.25rem;
+		white-space: pre-wrap;
+	}
+
+	.siblings {
+		border-top: 1px solid var(--colorRule);
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.5rem;
+		justify-content: space-between;
+		margin-top: 5rem;
+		padding-top: 1.5rem;
+	}
+
+	.sibling {
+		font-weight: 500;
+		line-height: 1.4;
+	}
+
+	.next {
+		text-align: right;
+		margin-left: auto;
+	}
+
+	.direction {
+		color: var(--colorMuted);
+		display: block;
+		font-family: var(--fontLabel);
+		font-size: var(--fontSizeSmall);
+		font-weight: 400;
+	}
+</style>

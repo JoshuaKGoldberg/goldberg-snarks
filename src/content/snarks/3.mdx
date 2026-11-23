@@ -1,0 +1,41 @@
+---
+blocks: 3
+nickname: The almost-snark
+summary: Three blocks around a triangle. It can’t be colored with three colors, yet many mathematicians wouldn’t call it a snark.
+teaser: The almost-snark, with a triangle
+---
+
+import Cite from "~/components/Cite.astro";
+import Highlight from "~/components/Highlight.astro";
+import Snark from "~/components/Snark.astro";
+
+## Is it a snark?
+
+With only three blocks, the hub closes up into a triangle.
+That triangle is the whole controversy.
+
+<Highlight
+	blocks={3}
+	kind="hub"
+	label="The Goldberg graph G3, with the triangle in its center emphasized."
+>
+	The hub of <Snark n={3} /> is its one triangle.
+</Highlight>
+
+The proof that three colors fail never asks how big the ring is, only whether it's odd.
+So <Snark n={3} /> is as impossible to color as any of its larger siblings.
+Where authors disagree is whether that's interesting enough:
+
+- The [common definition of a snark](/#snark) has no cycles shorter than five, because a triangle never makes a cubic graph any harder to color: shrink it to a single vertex and the question is the same.
+  By that standard the family starts at [five blocks](/g5) <Cite id="mohar2006" />.
+- Others only ask that three colors fail, and that the graph doesn't fall apart by removing one edge.
+  They count <Snark n={3} /> as the first Goldberg snark <Cite id="campos2011" />.
+
+## What's inside of it
+
+Shrink the triangle to a vertex, and the 22 vertices left do form a snark by anybody's definition.
+It's one of the two smallest [Loupekine snarks](/#relatives), found a few years before the Goldberg snarks were <Cite id="berman2017" />.
+
+<Snark n={3} /> has one more distinction. It's the only graph on this site in
+which no vertex is more central than any other. From anywhere, the farthest
+vertex is exactly four steps away.

@@ -11,6 +11,24 @@ pnpm install
 > This repository includes a list of suggested VS Code extensions.
 > It's a good idea to use [VS Code](https://code.visualstudio.com) and accept its suggestion to install them, as they'll help with development.
 
+## Building
+
+[Astro](https://astro.build) is used to build the site.
+You can run it locally in a development server that updates as you save files:
+
+```shell
+pnpm dev
+```
+
+To build the site as it would be deployed, then serve that:
+
+```shell
+pnpm build
+pnpm preview
+```
+
+To add a page for another snark, add an `.mdx` file to `src/content/snarks`.
+
 ## Formatting
 
 [Prettier](https://prettier.io) is used to format code.
@@ -29,7 +47,6 @@ Each should be shown in VS Code, and can be run manually on the command-line:
 
 - `pnpm lint` ([ESLint](https://eslint.org) with [typescript-eslint](https://typescript-eslint.io)): Lints source files, including JavaScript, Markdown, and TypeScript
 - `pnpm lint:knip` ([knip](https://github.com/webpro/knip)): Detects unused files, dependencies, and code exports
-- `pnpm lint:knip:production` ([knip](https://knip.dev/features/production-mode)): Detects unused files, dependencies, and code exports in production code, not counting usage from tests
 - `pnpm lint:spelling` ([cspell](https://cspell.org)): Spell checks across all source files
 
 Read the individual documentation for each linter to understand how it can be configured and used best.
@@ -67,7 +84,7 @@ To launch it, open a test file, then run _Debug Current Test File_ from the VS C
 
 You should be able to see suggestions from [TypeScript](https://typescriptlang.org) in your editor for all open files.
 
-However, it can be useful to run the TypeScript command-line (`tsc`) to type check all files in `src/`:
+However, it can be useful to run the TypeScript command-line (`tsc`) to type check all TypeScript files:
 
 ```shell
 pnpm tsc
@@ -77,4 +94,10 @@ Add `--watch` to keep the type checker running in a watch mode that updates the 
 
 ```shell
 pnpm tsc --watch
+```
+
+Astro files are type checked with [`astro check`](https://docs.astro.build/en/reference/cli-reference/#astro-check):
+
+```shell
+pnpm check
 ```

@@ -1,2 +1,4 @@
+/.astro
 /coverage
+/dist
 /node_modules

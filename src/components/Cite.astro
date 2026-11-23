@@ -1,0 +1,27 @@
+---
+import { type ReferenceId, references } from "~/references.ts";
+
+interface Props {
+	id: ReferenceId;
+}
+
+const { id } = Astro.props;
+---
+
+<span class="cite">
+	[<a href={`/#${id}`}>{references[id].short}</a>]
+</span>
+
+<style>
+	.cite {
+		font-size: 0.85em;
+	}
+
+	.cite :global(a) {
+		color: var(--colorMuted);
+	}
+
+	.cite :global(a:hover) {
+		color: var(--colorEmphasized);
+	}
+</style>

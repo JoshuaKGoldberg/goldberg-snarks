@@ -7,7 +7,12 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/prepare
+      - run: pnpm astro sync
       - parallel:
+          - name: Astro Check
+            run: pnpm check
+          - name: Build
+            run: pnpm build
           - name: Dedupe Check
             run: pnpm dedupe --check
           - name: Format Check
@@ -21,8 +26,6 @@ jobs:
               annotations: "true"
           - name: Lint Knip
             run: pnpm lint:knip
-          - name: Lint Knip Production
-            run: pnpm lint:knip:production
           - name: Lint Spelling
             run: pnpm lint:spelling
           - name: Test

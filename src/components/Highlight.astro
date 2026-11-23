@@ -1,0 +1,29 @@
+---
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { getHighlight, type HighlightKind } from "~/graphs/highlights.ts";
+
+import Drawing from "./Drawing.astro";
+import Figure from "./Figure.astro";
+
+interface Props {
+	blocks: number;
+	kind: HighlightKind;
+	label: string;
+}
+
+const { blocks, kind, label } = Astro.props;
+const graph = createGoldbergGraph(blocks);
+const { edgeClass, vertexClass } = getHighlight(graph, kind);
+---
+
+<Figure size="large">
+	<Drawing
+		slot="drawing"
+		edgeClass={edgeClass}
+		graph={graph}
+		label={label}
+		padding={5}
+		vertexClass={vertexClass}
+	/>
+	<slot />
+</Figure>

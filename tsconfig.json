@@ -1,15 +1,15 @@
 {
 	"compilerOptions": {
-		"declaration": true,
-		"esModuleInterop": true,
-		"module": "nodenext",
-		"moduleResolution": "nodenext",
-		"noEmit": true,
-		"resolveJsonModule": true,
-		"rewriteRelativeImportExtensions": true,
-		"skipLibCheck": true,
-		"strict": true,
+		"allowImportingTsExtensions": true,
+		"exactOptionalPropertyTypes": false,
+		"moduleResolution": "Bundler",
+		"noPropertyAccessFromIndexSignature": false,
+		"noUncheckedIndexedAccess": false,
+		"paths": {
+			"~/*": ["./src/*"]
+		},
 		"target": "ES2023"
 	},
-	"include": ["src"]
+	"exclude": ["coverage", "dist"],
+	"extends": "astro/tsconfigs/strictest"
 }

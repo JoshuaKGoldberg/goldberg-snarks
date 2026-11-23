@@ -1,0 +1,288 @@
+---
+import { colorMostEdges } from "~/graphs/colorEdges.ts";
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import {
+	drawEdge,
+	getVertexRadius,
+	getViewBox,
+	locate,
+} from "~/graphs/draw.ts";
+import { colorNames } from "~/graphs/edgeClasses.ts";
+
+interface Props {
+	blocks: number;
+}
+
+const { blocks } = Astro.props;
+const graph = createGoldbergGraph(blocks);
+const solution = colorMostEdges(graph);
+
+const getName = (index: number) => {
+	const { block, role } = graph.vertices[index];
+
+	return `${role}${(block + 1).toString()}`;
+};
+
+const id = `puzzle-${blocks.toString()}`;
+---
+
+<edge-puzzle>
+	<fieldset>
+		<legend>Color to use</legend>
+		{[...colorNames, "erase"].map((name, i) => (
+			<label>
+				<input
+					checked={i === 0}
+					name={`${id}-color`}
+					type="radio"
+					value={name === "erase" ? "" : i}
+				/>
+				<svg aria-hidden="true" class="graph" viewBox="0 0 36 8">
+					<path class={name} d="M3 4H33" />
+				</svg>
+				{name[0].toUpperCase() + name.slice(1)}
+			</label>
+		))}
+	</fieldset>
+
+	<p class="instructions" id={`${id}-instructions`}>
+		Pick a color, then click edges to color them.
+		<span class="keyboard">
+			With a keyboard: arrow keys move between edges, and 1, 2, 3, or 0 colors
+			or erases one.
+		</span>
+	</p>
+
+	<svg
+		aria-describedby={`${id}-instructions`}
+		aria-label={`Edges of G${blocks.toString()}`}
+		class="graph board"
+		role="group"
+		viewBox={getViewBox(graph, 5)}
+	>
+		{graph.edges.map(({ from, to }, index) => (
+			<path
+				aria-label={`Edge ${getName(from)} to ${getName(to)}: no color`}
+				class="edge"
+				d={drawEdge(graph, index)}
+				data-from={from}
+				data-name={`${getName(from)} to ${getName(to)}`}
+				data-solution={solution[index]}
+				data-to={to}
+				role="button"
+				tabindex={index ? -1 : 0}
+			/>
+		))}
+		<g aria-hidden="true" class="vertices">
+			{graph.vertices.map((vertex) => {
+				const { x, y } = locate(vertex);
+
+				return <circle cx={x} cy={y} r={getVertexRadius(graph)} />;
+			})}
+		</g>
+	</svg>
+
+	<div class="controls">
+		<p aria-live="polite" class="status">
+			{`0 of ${graph.edges.length.toString()} edges colored.`}
+		</p>
+		<div class="buttons">
+			<button data-action="best" type="button">
+				Show the best possible
+			</button>
+			<button data-action="reset" type="button">
+				Start over
+			</button>
+		</div>
+	</div>
+</edge-puzzle>
+
+<script>
+	import { EdgePuzzle } from "~/scripts/EdgePuzzle.ts";
+
+	customElements.define("edge-puzzle", EdgePuzzle);
+</script>
+
+<style>
+	edge-puzzle {
+		background: var(--colorRaised);
+		border-radius: 0.5rem;
+		box-shadow: inset 0 0 0 1px var(--colorRule);
+		display: grid;
+		gap: 1rem;
+		margin-block: 2rem;
+		padding: clamp(1rem, 4vw, 2rem);
+	}
+
+	/* Needs JavaScript to do anything */
+	edge-puzzle:not(:defined) {
+		visibility: hidden;
+	}
+
+	fieldset {
+		border: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		justify-content: center;
+		min-width: 0;
+		padding: 0;
+	}
+
+	legend {
+		clip-path: inset(50%);
+		height: 1px;
+		overflow: hidden;
+		position: absolute;
+		white-space: nowrap;
+		width: 1px;
+	}
+
+	label {
+		align-items: center;
+		border: 1.5px solid var(--colorRule);
+		border-radius: 2rem;
+		cursor: pointer;
+		display: flex;
+		font-family: var(--fontLabel);
+		font-size: var(--fontSizeSmall);
+		gap: 0.5rem;
+		line-height: 1.2;
+		min-height: 2.75rem;
+		padding: 0 1rem;
+		position: relative;
+	}
+
+	label:has(:checked) {
+		background: var(--colorBackground);
+		border-color: var(--colorForeground);
+	}
+
+	label:has(:focus-visible) {
+		outline: 2px solid var(--colorEmphasized);
+		outline-offset: 2px;
+	}
+
+	label .graph {
+		width: 2.25rem;
+	}
+
+	label .erase {
+		stroke-dasharray: none;
+	}
+
+	input {
+		cursor: pointer;
+		inset: 0;
+		margin: 0;
+		opacity: 0;
+		position: absolute;
+	}
+
+	.instructions {
+		color: var(--colorMuted);
+		font-size: 0.9em;
+		line-height: 1.4;
+		text-align: center;
+		text-wrap: balance;
+	}
+
+	@media (hover: none) {
+		.keyboard {
+			display: none;
+		}
+	}
+
+	.board {
+		cursor: crosshair;
+		margin: auto;
+		max-width: 34rem;
+		touch-action: manipulation;
+	}
+
+	.board .edge {
+		color: var(--colorMuted);
+		outline: none;
+	}
+
+	.board .edge:global([data-color]) {
+		stroke-width: 3.5px;
+	}
+
+	.board .edge:global([data-color="0"]) {
+		color: var(--jade);
+	}
+
+	.board .edge:global([data-color="1"]) {
+		color: var(--cornflower);
+		stroke-dasharray: 10 6;
+	}
+
+	.board .edge:global([data-color="2"]) {
+		color: var(--wisteria);
+		stroke-dasharray: 0.1 6;
+		stroke-width: 4px;
+	}
+
+	.board .edge:global([data-near]) {
+		stroke-width: 5px;
+	}
+
+	.board .edge:focus-visible {
+		filter: drop-shadow(0 0 1.5px var(--colorEmphasized))
+			drop-shadow(0 0 1.5px var(--colorEmphasized));
+		stroke-width: 6px;
+	}
+
+	.vertices {
+		color: var(--colorForegroundExtra);
+		pointer-events: none;
+	}
+
+	.vertices :global([data-clashing]) {
+		fill: var(--spare);
+		stroke: var(--spare);
+		stroke-width: 4px;
+	}
+
+	.controls {
+		align-items: center;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		justify-content: space-between;
+	}
+
+	.status {
+		font-weight: 500;
+		line-height: 1.35;
+	}
+
+	.buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	button {
+		background: var(--colorForegroundExtra);
+		border: 1.5px solid var(--colorForegroundExtra);
+		border-radius: 2rem;
+		color: var(--colorBackground);
+		cursor: pointer;
+		font-family: var(--fontLabel);
+		font-size: var(--fontSizeSmall);
+		line-height: 1.2;
+		min-height: 2.75rem;
+		padding: 0 1.1rem;
+	}
+
+	button[data-action="reset"] {
+		background: none;
+		color: var(--colorForegroundExtra);
+	}
+
+	button:hover {
+		border-color: var(--colorEmphasized);
+	}
+</style>

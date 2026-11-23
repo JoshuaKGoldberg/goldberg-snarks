@@ -1,0 +1,48 @@
+---
+/** Words that are colored as whatever they're describing is in drawings. */
+interface Props {
+	is: "blue" | "green" | "hub" | "middle" | "outer" | "purple" | "spare";
+}
+---
+
+<span class:list={["term", Astro.props.is]}>
+	<slot />
+</span>
+
+<style>
+	.term {
+		border-bottom: 3px solid var(--line);
+		font-weight: 500;
+		padding-bottom: 0.02em;
+	}
+
+	.green,
+	.middle {
+		--line: var(--jade);
+	}
+
+	.blue,
+	.outer {
+		--line: var(--cornflower);
+	}
+
+	.blue {
+		border-bottom-style: dashed;
+	}
+
+	.purple {
+		--line: var(--wisteria);
+
+		border-bottom-style: dotted;
+	}
+
+	.hub {
+		--line: var(--rose);
+	}
+
+	.spare {
+		--line: var(--spare);
+
+		border-bottom-width: 5px;
+	}
+</style>

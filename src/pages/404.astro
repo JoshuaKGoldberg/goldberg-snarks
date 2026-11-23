@@ -1,0 +1,19 @@
+---
+import Hero from "~/components/Hero.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+	description="There’s no page at this address."
+	image={{ alt: "The Goldberg snark G5.", path: "/images/g5.png" }}
+	title="Page not found: Goldberg snarks"
+>
+	<Hero blocks={3}>
+		<h1>No such snark</h1>
+		<p>
+			There’s no page at this address.
+			<a href="/#gallery">See the snarks that do have pages</a>, or
+			<a href="/">start from the beginning</a>.
+		</p>
+	</Hero>
+</BaseLayout>

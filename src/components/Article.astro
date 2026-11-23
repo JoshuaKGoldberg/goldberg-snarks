@@ -1,0 +1,71 @@
+---
+import Contents from "./Contents.astro";
+
+interface Props {
+	sections: { id: string; name: string }[];
+}
+---
+
+<div class="article">
+	<aside data-contents>
+		<Contents sections={Astro.props.sections} />
+	</aside>
+	<div class="body">
+		<slot />
+	</div>
+</div>
+
+<style>
+	.article {
+		display: grid;
+		justify-content: center;
+	}
+
+	aside {
+		display: none;
+	}
+
+	.body {
+		max-width: var(--widthText);
+		min-width: 0;
+		width: 100%;
+	}
+
+	.body :global(section) {
+		min-width: 0;
+	}
+
+	.body > :global(section + section) {
+		margin-top: clamp(4rem, 10vw, 6.5rem);
+	}
+
+	.body :global(h2) {
+		margin-bottom: 1.25rem;
+	}
+
+	.body :global(h3) {
+		margin: 2.5rem 0 0.75rem;
+	}
+
+	.body :global(section > p + p) {
+		margin-top: 1.1rem;
+	}
+
+	@media (min-width: 68rem) {
+		.article {
+			gap: 5rem;
+			grid-template-columns: 11rem minmax(0, var(--widthText));
+			justify-content: start;
+		}
+
+		aside {
+			align-self: start;
+			display: block;
+			max-height: 100vh;
+			overflow-y: auto;
+			padding-block: 0.5rem 2rem;
+			position: sticky;
+			top: 1.5rem;
+		}
+	}
+</style>

@@ -1,8 +1,12 @@
 import type { Config } from "prettier";
 
 export default {
-	overrides: [{ files: ".nvmrc", options: { parser: "yaml" } }],
+	overrides: [
+		{ files: "*.astro", options: { parser: "astro" } },
+		{ files: ".nvmrc", options: { parser: "yaml" } },
+	],
 	plugins: [
+		"prettier-plugin-astro",
 		"prettier-plugin-curly",
 		"prettier-plugin-packagejson",
 		"prettier-plugin-padding-lines",

@@ -1,0 +1,39 @@
+---
+import { references } from "~/references.ts";
+
+const sorted = Object.entries(references).sort(([, a], [, b]) =>
+	a.authors
+		.replace(/^(?:[A-Z]\. ?)+/, "")
+		.localeCompare(b.authors.replace(/^(?:[A-Z]\. ?)+/, "")),
+);
+---
+
+<ol>
+	{sorted.map(([id, { authors, details, href, title, year }]) => (
+		<li id={id}>
+			{authors} ({year}). <a href={href}>{title}</a>. {details}
+		</li>
+	))}
+</ol>
+
+<style>
+	ol {
+		display: grid;
+		font-size: 0.9em;
+		gap: 0.75rem;
+		line-height: 1.5;
+		list-style: none;
+		padding: 0;
+	}
+
+	li {
+		border-radius: 3px;
+		padding-left: 1.5rem;
+		text-indent: -1.5rem;
+	}
+
+	li:target {
+		background: var(--colorRaised);
+		box-shadow: 0 0 0 0.5rem var(--colorRaised);
+	}
+</style>

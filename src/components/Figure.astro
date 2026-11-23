@@ -1,0 +1,62 @@
+---
+interface Props {
+	id?: string;
+
+	/** Whether the figure's drawing should be at most as tall as it's wide. */
+	size?: "large" | "medium" | "small";
+}
+
+const { id, size = "medium" } = Astro.props;
+---
+
+<figure id={id}>
+	<div class:list={["drawing", size]}>
+		<slot name="drawing" />
+	</div>
+	<figcaption>
+		<slot />
+	</figcaption>
+</figure>
+
+<style>
+	figure {
+		display: grid;
+		gap: 1.25rem;
+		margin-block: 2.75rem;
+	}
+
+	figcaption :global(p) {
+		text-wrap: inherit;
+	}
+
+	.drawing {
+		align-items: center;
+		display: flex;
+		gap: 2rem;
+		justify-content: center;
+		margin-inline: auto;
+		width: 100%;
+	}
+
+	.large {
+		max-width: 34rem;
+	}
+
+	.medium {
+		max-width: 26rem;
+	}
+
+	.small {
+		max-width: 18rem;
+	}
+
+	figcaption {
+		color: var(--colorMuted);
+		font-size: 0.9em;
+		line-height: 1.45;
+		margin-inline: auto;
+		max-width: 34rem;
+		text-align: center;
+		text-wrap: balance;
+	}
+</style>

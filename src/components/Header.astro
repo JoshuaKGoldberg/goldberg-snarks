@@ -1,0 +1,95 @@
+---
+import { getSnarks } from "~/getSnarks.ts";
+
+import Snark from "./Snark.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const path = Astro.url.pathname.replace(/\/$/, "");
+const snarks = await getSnarks();
+---
+
+<header>
+	<a class="home" href="/" aria-current={path === "" ? "page" : undefined}>
+		Goldberg snarks
+	</a>
+	<nav aria-label="Snarks">
+		<ul>
+			{snarks.map(({ blocks, href }) => (
+				<li>
+					<a
+						aria-current={path === href ? "page" : undefined}
+						class="snark-link"
+						href={href}
+					>
+						<Snark n={blocks} />
+					</a>
+				</li>
+			))}
+		</ul>
+	</nav>
+	<ThemeToggle />
+</header>
+
+<style>
+	header {
+		align-items: center;
+		column-gap: 2rem;
+		display: grid;
+		grid-template: "home nav toggle" auto / 1fr auto auto;
+		margin-inline: auto;
+		max-width: calc(var(--widthFull) + 2 * var(--space));
+		padding: 1.5rem var(--space);
+	}
+
+	.home {
+		font-size: 1.25rem;
+		font-weight: 600;
+		grid-area: home;
+		justify-self: start;
+		line-height: 2rem;
+	}
+
+	nav {
+		grid-area: nav;
+	}
+
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		list-style: none;
+		padding: 0;
+	}
+
+	.snark-link {
+		display: block;
+		font-size: 1.125rem;
+		font-weight: 500;
+		line-height: 2rem;
+		min-width: 2.5rem;
+		padding: 0 0.4rem;
+		text-align: center;
+	}
+
+	[aria-current="page"] {
+		color: var(--colorEmphasized);
+		text-decoration: underline wavy currentcolor 1px;
+		text-underline-offset: 0.35em;
+	}
+
+	@media (max-width: 47rem) {
+		header {
+			grid-template: "home toggle" auto "nav nav" auto / 1fr auto;
+			row-gap: 0.25rem;
+		}
+
+		ul {
+			justify-content: space-between;
+			margin-inline: -0.4rem;
+		}
+
+		.snark-link {
+			line-height: 2.5rem;
+			min-width: 0;
+		}
+	}
+</style>

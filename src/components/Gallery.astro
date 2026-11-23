@@ -1,0 +1,111 @@
+---
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { getPartClass } from "~/graphs/edgeClasses.ts";
+import { getSnarks } from "~/getSnarks.ts";
+
+import Drawing from "./Drawing.astro";
+import Snark from "./Snark.astro";
+
+const snarks = await getSnarks();
+---
+
+<ul>
+	{snarks.map(({ blocks, href, teaser }) => {
+		const graph = createGoldbergGraph(blocks);
+
+		return (
+			<li>
+				<a class="plate" href={href}>
+					<Drawing
+						edgeClass={(index) => getPartClass(graph, index)}
+						graph={graph}
+						padding={4}
+					/>
+					<span class="name">
+						<Snark n={blocks} />
+					</span>
+					<span class="teaser">
+						{teaser
+							.split(/G(\d+)/)
+							.map((part, i) =>
+								i % 2 ? (
+									<Snark n={Number(part)} />
+								) : (
+									<Fragment>{part}</Fragment>
+								),
+							)}
+					</span>
+				</a>
+			</li>
+		);
+	})}
+</ul>
+
+<style>
+	ul {
+		--columns: 2;
+		--gap: 1.25rem;
+
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2.25rem var(--gap);
+		justify-content: center;
+		list-style: none;
+		margin-top: 2rem;
+		padding: 0;
+	}
+
+	li {
+		width: calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns));
+	}
+
+	/* Drawings are cropped to what's in them, but names should still line up */
+	.plate :global(.graph) {
+		aspect-ratio: 1;
+	}
+
+	.plate {
+		color: inherit;
+		display: grid;
+		text-align: center;
+	}
+
+	.plate :global(.graph path:not(.dots)) {
+		stroke-width: 1.35px;
+	}
+
+	.name {
+		color: var(--colorForegroundExtra);
+		font-size: 1.35rem;
+		font-weight: 500;
+		margin-top: 0.75rem;
+	}
+
+	.teaser {
+		color: var(--colorMuted);
+		font-size: 1rem;
+		line-height: 1.35;
+		text-wrap: balance;
+	}
+
+	.plate:hover .name {
+		color: var(--colorEmphasized);
+		text-decoration: underline wavy currentcolor 1.5px;
+		text-underline-offset: 0.3em;
+	}
+
+	@media (min-width: 40rem) {
+		ul {
+			--columns: 4;
+		}
+	}
+
+	/* There's room beside the text for more than it's as wide as */
+	@media (min-width: 68rem) {
+		ul {
+			--gap: 2rem;
+
+			width: min(var(--widthFull) - 16rem, 100vw - 2 * var(--space) - 18rem);
+		}
+	}
+</style>

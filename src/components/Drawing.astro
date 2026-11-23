@@ -1,0 +1,158 @@
+---
+import type { Graph } from "~/graphs/types.ts";
+
+import {
+	drawEdge,
+	drawEdgesByClass,
+	getVertexRadius,
+	getViewBox,
+	locate,
+} from "~/graphs/draw.ts";
+import { getDistances, getNeighbors } from "~/graphs/measure.ts";
+import { stub } from "~/graphs/createBlockChain.ts";
+
+interface Props {
+	class?: string;
+
+	/** Classes for each edge, by index. */
+	edgeClass?: (index: number) => string;
+
+	graph: Graph;
+
+	/** Whether edges draw themselves in, outward from the center. */
+	grows?: boolean;
+
+	/** What the drawing shows, or nothing if what's beside it already says. */
+	label?: string | undefined;
+
+	/** Names of vertices to show by index, and where to from each, in units. */
+	names?: (
+		index: number,
+	) => readonly [name: string, x: number, y: number] | undefined;
+
+	padding?: number;
+
+	/** Classes for each vertex, by index. */
+	vertexClass?: (index: number) => string | undefined;
+}
+
+const {
+	class: className,
+	edgeClass = () => "plain",
+	graph,
+	grows,
+	label,
+	names,
+	padding,
+	vertexClass,
+} = Astro.props;
+
+const radius = getVertexRadius(graph);
+const distances = grows ? getDistances(getNeighbors(graph), 0) : [];
+
+const dots = new Map<string, string>();
+
+// Dots are zero-length lines with round ends, which makes for much less markup
+for (const [index, vertex] of graph.vertices.entries()) {
+	if (vertex.role !== stub) {
+		const { x, y } = locate(vertex);
+		const name = vertexClass?.(index) ?? "";
+
+		dots.set(name, `${dots.get(name) ?? ""}M${x.toString()} ${y.toString()}h0`);
+	}
+}
+
+const accessibility = label
+	? ({ "aria-label": label, role: "img" } as const)
+	: ({ "aria-hidden": true } as const);
+---
+
+<svg
+	class:list={["graph", className, grows && "grows"]}
+	viewBox={getViewBox(graph, padding)}
+	{...accessibility}
+>
+	{grows
+		? graph.edges.map(({ from, to }, index) => (
+				<path
+					class={edgeClass(index)}
+					d={drawEdge(graph, index)}
+					pathLength="1"
+					style={`--step: ${Math.min(distances[from], distances[to]).toString()}`}
+				/>
+			))
+		: drawEdgesByClass(graph, edgeClass).map(([name, path]) => (
+				<path class={name} d={path} />
+			))}
+	{[...dots].map(([name, path]) => (
+		<path
+			class:list={["dots", name]}
+			d={path}
+			stroke-width={radius * 2}
+			style={`stroke-width: ${(radius * 2).toFixed(1)}px`}
+		/>
+	))}
+	{names &&
+		graph.vertices.map((vertex, index) => {
+			const [name, offsetX, offsetY] = names(index) ?? [];
+			const { x, y } = locate(vertex);
+
+			return (
+				name && (
+					<text x={x + (offsetX ?? 0)} y={y + (offsetY ?? 0)}>
+						{name.slice(0, 1)}
+						{name.length > 1 && (
+							<tspan class="text-subscript" dy="2">
+								{name.slice(1)}
+							</tspan>
+						)}
+					</text>
+				)
+			);
+		})}
+</svg>
+
+<style>
+	.graph .dots {
+		stroke: var(--colorForegroundExtra);
+		vector-effect: none;
+	}
+
+	/* Dashes are only measured correctly in strokes that scale */
+	.grows path:not(.dots) {
+		stroke-width: 1.1px;
+		vector-effect: none;
+	}
+
+	.grows path.spoke {
+		stroke-width: 0.8px;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.grows path:not(.dots) {
+			animation: grow 700ms calc(var(--step) * 170ms) ease-in-out backwards;
+		}
+
+		.grows .dots {
+			animation: appear 1.6s ease-in backwards;
+		}
+	}
+
+	@keyframes appear {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes grow {
+		from {
+			stroke-dasharray: 1 1;
+			stroke-dashoffset: 1;
+		}
+
+		to {
+			stroke-dasharray: 1 1;
+			stroke-dashoffset: 0;
+		}
+	}
+</style>

@@ -1,0 +1,75 @@
+---
+interface Props {
+	sections: { id: string; name: string }[];
+}
+---
+
+<nav aria-label="On this page">
+	<ul>
+		{Astro.props.sections.map(({ id, name }) => (
+			<li>
+				<a class="link" href={`#${id}`}>
+					{name}
+				</a>
+			</li>
+		))}
+	</ul>
+</nav>
+
+<script>
+	// Marks whichever section was most recently scrolled to
+	const links = new Map(
+		[...document.querySelectorAll<HTMLAnchorElement>("[data-contents] a")].map(
+			(link) => [link.hash.slice(1), link],
+		),
+	);
+
+	if (links.size) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const { isIntersecting, target } of entries) {
+					if (isIntersecting) {
+						for (const [id, link] of links) {
+							if (id === target.id) {
+								link.setAttribute("aria-current", "location");
+							} else {
+								link.removeAttribute("aria-current");
+							}
+						}
+					}
+				}
+			},
+			{ rootMargin: "-10% 0% -80% 0%" },
+		);
+
+		for (const section of document.querySelectorAll("section[id]")) {
+			observer.observe(section);
+		}
+	}
+</script>
+
+<style>
+	ul {
+		list-style: none;
+		padding: 0;
+	}
+
+	.link {
+		color: var(--colorMuted);
+		display: block;
+		font-family: var(--fontLabel);
+		font-size: var(--fontSizeSmall);
+		line-height: 1.35;
+		padding-block: 0.4rem;
+	}
+
+	.link:hover {
+		color: var(--colorEmphasized);
+	}
+
+	.link:global([aria-current]) {
+		color: var(--colorForegroundExtra);
+		text-decoration: underline wavy var(--squiggleMiddle) 1px;
+		text-underline-offset: 0.35em;
+	}
+</style>

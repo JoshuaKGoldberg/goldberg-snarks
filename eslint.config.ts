@@ -2,6 +2,7 @@ import comments from "@eslint-community/eslint-plugin-eslint-comments/configs";
 import eslint from "@eslint/js";
 import markdown from "@eslint/markdown";
 import vitest from "@vitest/eslint-plugin";
+import astro from "eslint-plugin-astro";
 import jsdoc from "eslint-plugin-jsdoc";
 import jsonc from "eslint-plugin-jsonc";
 import markdownLinks from "eslint-plugin-markdown-links";
@@ -15,7 +16,14 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig(
 	globalIgnores(
-		["**/*.snap", "coverage", "dist", "node_modules", "pnpm-lock.yaml"],
+		[
+			"**/*.snap",
+			".astro",
+			"coverage",
+			"dist",
+			"node_modules",
+			"pnpm-lock.yaml",
+		],
 		"Global Ignores",
 	),
 	{ linterOptions: { reportUnusedDisableDirectives: "error" } },
@@ -35,7 +43,7 @@ export default defineConfig(
 		files: ["**/*.{js,ts}"],
 		languageOptions: {
 			parserOptions: {
-				projectService: { allowDefaultProject: ["*.config.*s"] },
+				projectService: true,
 			},
 		},
 		rules: {
@@ -48,9 +56,14 @@ export default defineConfig(
 			"no-useless-rename": "error",
 			"object-shorthand": "error",
 			"operator-assignment": "error",
+
+			// TypeScript already checks imports, including Astro's virtual modules
+			"n/no-missing-import": "off",
+			"n/no-unpublished-import": "off",
 		},
 		settings: { perfectionist: { partitionByComment: true, type: "natural" } },
 	},
+	astro.configs.recommended,
 	{
 		extends: [jsonc.configs["flat/recommended-with-json"]],
 		files: ["**/*.json"],

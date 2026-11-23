@@ -1,0 +1,45 @@
+---
+import { colorNames } from "~/graphs/edgeClasses.ts";
+
+interface Props {
+	/** Whether there are edges that three colors weren't enough for. */
+	spare?: boolean;
+}
+
+const names = [...colorNames, ...(Astro.props.spare ? ["spare"] : [])];
+---
+
+<ul aria-label="Key">
+	{names.map((name) => (
+		<li>
+			<svg aria-hidden="true" class="graph" viewBox="0 0 36 8">
+				<path class={name} d="M3 4H33" />
+			</svg>
+			{name === "spare" ? "no color left" : name}
+		</li>
+	))}
+</ul>
+
+<style>
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		font-family: var(--fontLabel);
+		font-size: var(--fontSizeSmall);
+		gap: 0.25rem 1.25rem;
+		justify-content: center;
+		list-style: none;
+		margin-bottom: 0.75rem;
+		padding: 0;
+	}
+
+	li {
+		align-items: center;
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.graph {
+		width: 2.25rem;
+	}
+</style>

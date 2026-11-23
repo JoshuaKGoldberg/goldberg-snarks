@@ -1,0 +1,31 @@
+---
+import type { Graph } from "~/graphs/types.ts";
+
+import { colorMostEdges } from "~/graphs/colorEdges.ts";
+import { getColorClass } from "~/graphs/edgeClasses.ts";
+
+import ColoringKey from "./ColoringKey.astro";
+import Drawing from "./Drawing.astro";
+import Figure from "./Figure.astro";
+
+interface Props {
+	graph: Graph;
+	label: string;
+	size?: "large" | "medium" | "small";
+}
+
+const { graph, label, size } = Astro.props;
+const coloring = colorMostEdges(graph);
+---
+
+<Figure size={size}>
+	<Drawing
+		slot="drawing"
+		edgeClass={(index) => getColorClass(coloring[index])}
+		graph={graph}
+		label={label}
+		padding={5}
+	/>
+	<ColoringKey spare={coloring.includes(undefined)} />
+	<slot />
+</Figure>

@@ -1,0 +1,25 @@
+---
+import { source } from "~/constants.ts";
+---
+
+<footer>
+	<p>
+		Made in Boston by{" "}
+		<a href="https://www.joshuakgoldberg.com">Josh Goldberg</a>. Every count and
+		drawing here is computed by <a href={source}>its source</a>.
+	</p>
+</footer>
+
+<style>
+	footer {
+		color: var(--colorMuted);
+		font-family: var(--fontLabel);
+		font-size: var(--fontSizeSmall);
+		letter-spacing: 0.03em;
+		line-height: 2;
+		margin-top: 6rem;
+		padding: 0 var(--space) 4rem;
+		text-align: center;
+		text-wrap: balance;
+	}
+</style>
