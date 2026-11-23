@@ -1,0 +1,20 @@
+{
+	"dictionaries": ["npm", "node", "typescript"],
+	"ignorePaths": [
+		".all-contributorsrc",
+		"/_tmp_*",
+		"CHANGELOG.md",
+		"coverage",
+		"dist",
+		"node_modules",
+		"pnpm-lock.yaml"
+	],
+	"words": [
+		"MatteoGabriele",
+		"agentscan",
+		"octoguide",
+		"peakoss",
+		"zizmor",
+		"zizmorcore"
+	]
+}
