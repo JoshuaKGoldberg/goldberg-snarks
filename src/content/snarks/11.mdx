@@ -1,7 +1,6 @@
 ---
 blocks: 11
 summary: The Goldberg snark with eleven blocks, 88 vertices, and 132 edges. Its diameter is also 11.
-teaser: Diameter 11
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -22,12 +21,12 @@ It is the only Goldberg snark whose diameter equals its number of blocks.
 	A shortest path between two vertices at distance 11.
 </Highlight>
 
-A shortest path between distant vertices follows either the outer or middle ring, or the inner ring.
+A shortest path between vertices in distant blocks follows the outer ring, the middle ring, or the inner ring.
 The outer and middle rings take about two edges per block.
-In <Snark n={5} />, <Snark n={7} />, and <Snark n={9} />, the vertices that are farthest apart are joined by such a path, and the diameter is one more than the number of blocks: 6, 8, and 10.
+The inner ring takes one edge per block, but a path may need up to three edges to reach it and three to leave it.
 
-Every vertex is at most three edges from the inner ring, which takes one edge per block.
-In <Snark n={11} />, a path by way of the inner ring has at most 3 + 5 + 3 = 11 edges.
+In <Snark n={5} />, <Snark n={7} />, and <Snark n={9} />, the vertices that are farthest apart are joined by a path along the outer or middle ring, and the diameter is one more than the number of blocks: 6, 8, and 10.
+In <Snark n={11} />, no two blocks are more than five apart, so a path along the inner ring has at most 3 + 5 + 3 = 11 edges.
 For larger Goldberg snarks, every two additional blocks add one to the diameter.
 The diameters of <Snark n={13} /> and <Snark n={15} /> are 12 and 13.
 

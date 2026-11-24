@@ -1,7 +1,6 @@
 ---
 blocks: 9
 summary: The Goldberg snark with nine blocks, 72 vertices, and 108 edges. It is the smallest whose number of blocks is not prime.
-teaser: Nine blocks
 ---
 
 import Highlight from "~/components/Highlight.astro";
@@ -10,7 +9,7 @@ import Snark from "~/components/Snark.astro";
 ## Covering
 
 Number the blocks of <Snark n={9} /> in order around the ring: 1, 2, 3, 1, 2, 3, 1, 2, 3.
-If blocks with the same number are identified with each other, the result is the Goldberg graph [<Snark n={3} />](/g3), which is not a snark.
+Merging the blocks that have the same number gives the Goldberg graph [<Snark n={3} />](/g3), which is not a snark.
 
 <Highlight
 	blocks={9}
@@ -21,7 +20,7 @@ If blocks with the same number are identified with each other, the result is the
 </Highlight>
 
 This makes <Snark n={9} /> a _covering graph_ of <Snark n={3} />.
-Each vertex of <Snark n={3} /> corresponds to three vertices of <Snark n={9} />, and the three neighbors of each vertex correspond to the three neighbors of the vertex it covers.
+Each vertex of <Snark n={3} /> corresponds to three vertices of <Snark n={9} />, and the neighbors of those vertices correspond to the neighbors of the vertex of <Snark n={3} />.
 The triangle in <Snark n={3} /> corresponds to the inner ring of <Snark n={9} />, which has nine vertices.
 
 In general, <Snark n="m" /> is a covering graph of <Snark n="k" /> whenever _m_ is a multiple of _k_.

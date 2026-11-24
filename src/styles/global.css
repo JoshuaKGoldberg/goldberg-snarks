@@ -31,6 +31,7 @@
 
 		/* With red, the inks that old books were printed in */
 		--colorBlue: light-dark(#1c4f91, #86b4ee);
+		--colorGreen: light-dark(#2c6b45, #85c596);
 		--colorGold: light-dark(#a8720a, #dcab4c);
 
 		/* As text needs more contrast than lines do */
@@ -192,8 +193,9 @@
 	}
 
 	/* Edge colors, which dashes also tell apart */
-	.graph .ink {
-		stroke-width: 1.75px;
+	.graph .green {
+		color: var(--colorGreen);
+		stroke-width: 2px;
 	}
 
 	.graph .blue {

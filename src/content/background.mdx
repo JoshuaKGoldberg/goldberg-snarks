@@ -2,32 +2,32 @@ import Cite from "~/components/Cite.astro";
 import BlockFigure from "~/components/figures/BlockFigure.astro";
 import Snark from "~/components/Snark.astro";
 import Term from "~/components/Term.astro";
+import Vertex from "~/components/Vertex.astro";
 
 ## Background
 
 A _graph_ is a set of points, called vertices, joined by lines, called edges.
 In a _cubic_ graph, three edges meet at every vertex.
+A _cycle_ is a closed loop of edges that does not visit any vertex twice, and its _length_ is its number of edges.
 
 An _edge coloring_ gives each edge of a graph a color, with different colors for edges that meet.
-Most cubic graphs have an edge coloring with three colors.
-A _snark_ is a cubic graph that needs four.
-Some cubic graphs that need four are [not counted as snarks](/#snark), such as those that contain a triangle.
+Most cubic graphs have an edge coloring with three colors, called a _3-edge-coloring_.
+A _snark_ is a cubic graph that does not, and that meets [some other conditions](/#snark), such as having no triangle.
 
 The [Goldberg snarks](/) are a family of snarks that Mark K. Goldberg published in 1981 <Cite id="goldberg1981" />.
-Each is made of an odd number of copies of one block, joined in a ring.
-There must be at least five copies.
-The Goldberg snark with _k_ blocks is written <Snark n="k" />.
+The Goldberg snark <Snark n="k" /> is a ring of _k_ copies of a block, where _k_ is odd and at least 5.
 
 <BlockFigure>
 	A block and its links.
 </BlockFigure>
 
 A block has eight vertices, labeled _a_ to _h_.
+Those in block _i_ are labeled <Vertex i="i" role="a" /> to <Vertex i="i" role="h" />.
 Three edges, called links, join each block to the next.
 The links form part of three rings: the <Term is="outer">outer ring</Term>, the <Term is="middle">middle ring</Term>, and the <Term is="inner">inner ring</Term>.
 
 {!props.isSnark && (
 	<p>
-		The graph described here, <Snark n={props.blocks} />, is built in the same way from {props.blocks} blocks. It is not a snark.
+		The graph <Snark n={props.blocks} /> is built in the same way from three blocks.
 	</p>
 )}

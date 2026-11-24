@@ -10,9 +10,6 @@ export const collections = {
 
 			/** One or two sentences, for its page's lead and metadata. */
 			summary: z.string(),
-
-			/** A few words, for its picture in the gallery. */
-			teaser: z.string(),
 		}),
 	}),
 };

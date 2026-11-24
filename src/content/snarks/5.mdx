@@ -1,7 +1,6 @@
 ---
 blocks: 5
 summary: The smallest Goldberg snark, with five blocks, 40 vertices, and 60 edges.
-teaser: The smallest
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -9,11 +8,11 @@ import Highlight from "~/components/Highlight.astro";
 import Snark from "~/components/Snark.astro";
 import Vertex from "~/components/Vertex.astro";
 
-## Pentagons
+## Cycles of length 5
 
-<Snark n={5} />{" "}has eleven cycles of length 5.
+The graph <Snark n={5} /> has eleven cycles of length 5.
 Each block contains two, and the inner ring is the eleventh.
-It is the only Goldberg snark whose inner ring is a pentagon.
+It is the only Goldberg snark whose inner ring has length 5.
 
 <Highlight
 	blocks={5}
@@ -25,7 +24,7 @@ It is the only Goldberg snark whose inner ring is a pentagon.
 
 ## Longest cycle
 
-Like every snark, <Snark n={5} /> has [no Hamiltonian cycle](/#hamiltonian).
+Like every snark, <Snark n={5} /> has no [Hamiltonian cycle](/#hamiltonian), which is a cycle that visits every vertex.
 Its longest cycles visit 39 of its 40 vertices.
 
 <Highlight
@@ -38,12 +37,10 @@ Its longest cycles visit 39 of its 40 vertices.
 
 ## Connectivity
 
-The definition of a snark requires that at least four edges must be removed to separate it into two parts that each contain a cycle.
-For <Snark n={5} />, at least five must be removed.
+The _cyclic edge-connectivity_ of a graph is the smallest number of edges whose removal leaves two parts that each contain a cycle.
+It is at least 4 for every snark, and 5 for <Snark n={5} />.
 
 ## Number of snarks of this size
 
-As of 2026, all snarks with up to 38 vertices are known <Cite id="brinkmann2026" />.
-There are 1,051,945,967 snarks with exactly 38 vertices.
-A cubic graph always has an even number of vertices, so the next size is 40.
-The number of snarks with 40 vertices, the size of <Snark n={5} />, is not known.
+As of 2026, the number of snarks with 40 vertices, the size of <Snark n={5} />, is not known.
+The largest size for which it is known is 38 vertices, with 1,051,945,967 snarks <Cite id="brinkmann2026" />.

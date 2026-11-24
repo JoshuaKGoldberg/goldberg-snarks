@@ -21,11 +21,20 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 
 export const getStaticPaths = (async () => {
 	const graphs = await getGraphs();
+	const snarks = graphs.filter(({ isSnark }) => isSnark);
 
-	return graphs.map((graph, i) => ({
-		params: { snark: graph.href.slice(1) },
-		props: { entry: graph, next: graphs[i + 1], previous: graphs[i - 1] },
-	}));
+	return graphs.map((graph) => {
+		const index = snarks.indexOf(graph);
+
+		return {
+			params: { snark: graph.href.slice(1) },
+			props: {
+				entry: graph,
+				next: index === -1 ? undefined : snarks.at(index + 1),
+				previous: index > 0 ? snarks[index - 1] : undefined,
+			},
+		};
+	});
 }) satisfies GetStaticPaths;
 
 const { entry, next, previous } = Astro.props;
@@ -39,15 +48,15 @@ const rows = [
 	["Blocks", blocks],
 	["Vertices", facts.vertices],
 	["Edges", facts.edges],
-	["Chromatic index", 4],
-	["Resistance", 2],
-	["Girth", facts.girth],
-	["Circumference", facts.vertices - 1],
-	["Cycles of length 5", facts.pentagons],
-	["Diameter", facts.diameter],
-	["Radius", facts.radius],
-	["Symmetries", facts.symmetries],
-] as const;
+	["Chromatic index", 4, "/#properties"],
+	["Resistance", 2, "/#uncolored-edges"],
+	["Girth", facts.girth, "/#properties"],
+	["Circumference", facts.vertices - 1, "/#properties"],
+	["Cycles of length 5", facts.pentagons, "/#properties"],
+	["Diameter", facts.diameter, "/#properties"],
+	["Radius", facts.radius, "/#properties"],
+	["Symmetries", facts.symmetries, "/#properties"],
+] satisfies [string, number, string?][];
 
 const after = [
 	{ depth: 2, slug: "coloring", text: "Edge coloring" },
@@ -79,29 +88,31 @@ const after = [
 					{`The ${title} `}
 					<Snark n={blocks} />
 				</Fragment>
-				{rows.map(([label, value]) => (
+				{rows.map(([label, value, about]) => (
 					<tr>
-						<th scope="row">{label}</th>
+						<th scope="row">{about ? <a href={about}>{label}</a> : label}</th>
 						<td>{value}</td>
 					</tr>
 				))}
 				<tr>
-					<th scope="row">Crossing number</th>
+					<th scope="row">
+						<a href="/#properties">Crossing number</a>
+					</th>
 					<td>
 						{facts.crossings ?? `${(blocks * 2).toString()}, conjecturally`}
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Hamiltonian</th>
-					<td>
-						<a href="/#hamiltonian">No</a>
-					</td>
+					<th scope="row">
+						<a href="/#hamiltonian">Hamiltonian</a>
+					</th>
+					<td>No</td>
 				</tr>
 				<tr>
-					<th scope="row">Planar</th>
-					<td>
-						<a href="/#properties">No</a>
-					</td>
+					<th scope="row">
+						<a href="/#properties">Planar</a>
+					</th>
+					<td>No</td>
 				</tr>
 			</FactBox>
 		</Fragment>
@@ -119,23 +130,31 @@ const after = [
 			graph={graph}
 			inMargin
 			size="small"
-			label={`${name} with ${(facts.edges - 2).toString()} of its ${facts.edges.toString()} edges colored ink, blue, or gold. The two uncolored edges are from a1 to b1 and c1 to e1.`}
+			label={`${name} with ${(facts.edges - 2).toString()} of its ${facts.edges.toString()} edges colored green, blue, or gold. The two uncolored edges are from a1 to b1 and c1 to e1.`}
 		>
 			<Snark n={blocks} /> with all but <Term is="spare">two edges</Term>{" "}
 			colored.
 		</ColoredFigure>
 		<p>
-			Suppose that the edges of <Snark n={blocks} /> could be colored with three
-			colors. Then around the ring, the places where the outer and middle links
-			have the same color <a href="/#matching">would alternate</a> with the
-			places where they have different colors. This is impossible, because there
-			are {blocks} such places and {blocks} is odd.
+			In any 3-edge-coloring, the outer and middle links have the same color on
+			one side of each block and different colors on the other side (
+			<a href="/#matching">Lemma 4</a>). Around the ring, places between blocks
+			where those colors are the same would therefore alternate with places
+			where they differ. This is impossible in <Snark n={blocks} />, because
+			there are {blocks} places between blocks, and {blocks} is odd.
 		</p>
 		<p>
 			At most {facts.edges - 2} of the {facts.edges} edges can be colored,
 			because{" "}
 			<a href="/#uncolored-edges">at least two must be left uncolored</a>. The
 			figure shows one way to do so. There are others.
+		</p>
+		<p>
+			By Vizing’s theorem, four colors are enough for all of the edges. The
+			smallest number of colors in an edge coloring of a graph is its{" "}
+			<em>chromatic index</em>, which is 4 for <Snark n={blocks} />. The
+			smallest number of edges that must be left uncolored with three colors is
+			its <em>resistance</em>, which is 2.
 		</p>
 		<EdgePuzzle blocks={blocks} />
 
@@ -158,29 +177,31 @@ const after = [
 			</li>
 			<li>
 				<a download href={`/downloads${href}.g6`}>
-					graph6
+					Edge list (graph6)
 				</a>
 			</li>
 		</ul>
 		<details>
-			<summary>graph6 encoding</summary>
+			<summary>Edge list in graph6, a compact text format</summary>
 			<Code breaks code={toGraph6(graph)} />
 		</details>
 
-		<nav aria-label="Other graphs" class="siblings">
-			{previous && (
-				<a class="sibling" href={previous.href} rel="prev">
-					<span class="direction">Previous</span>
-					<Snark n={previous.blocks} />
-				</a>
-			)}
-			{next && (
-				<a class="sibling next" href={next.href} rel="next">
-					<span class="direction">Next</span>
-					<Snark n={next.blocks} />
-				</a>
-			)}
-		</nav>
+		{(previous ?? next) && (
+			<nav aria-label="Other Goldberg snarks" class="siblings">
+				{previous && (
+					<a class="sibling" href={previous.href} rel="prev">
+						<span class="direction">Previous</span>
+						<Snark n={previous.blocks} />
+					</a>
+				)}
+				{next && (
+					<a class="sibling next" href={next.href} rel="next">
+						<span class="direction">Next</span>
+						<Snark n={next.blocks} />
+					</a>
+				)}
+			</nav>
+		)}
 	</Article>
 </BaseLayout>
 

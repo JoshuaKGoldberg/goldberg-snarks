@@ -368,15 +368,15 @@ describe(findShortestPath, () => {
 });
 
 describe(getEccentricities, () => {
-	it("is smaller than the number of blocks past eleven, and larger before it", () => {
-		for (const blocks of [...odds, 17, 19, 21, 23, 25]) {
-			expect(
-				Math.sign(
-					getEccentricities(createGoldbergGraph(blocks)).diameter - blocks,
-				),
-			).toBe(Math.sign(11 - blocks));
-		}
-	});
+	it.each([5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25])(
+		"follows formulas for the snark of %i blocks",
+		(blocks) => {
+			expect(getEccentricities(createGoldbergGraph(blocks))).toEqual({
+				diameter: blocks > 9 ? (blocks + 11) / 2 : blocks + 1,
+				radius: (blocks + 5) / 2,
+			});
+		},
+	);
 });
 
 describe(getGirth, () => {

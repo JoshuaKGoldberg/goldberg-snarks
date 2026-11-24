@@ -13,13 +13,7 @@ const middleDepth = 0.58;
 /** How many times deeper the graph is than its depths, so that turning it shows more. */
 const deepening = 170;
 
-const {
-	cropped,
-	edgeClass = () => "plain",
-	graph,
-	label,
-	vertexClass,
-} = Astro.props;
+const { cropped, edgeClass = () => "plain", graph, vertexClass } = Astro.props;
 
 // Grouped in the same order as they're drawn in
 const group = (names: string[]) => {
@@ -57,11 +51,11 @@ const data = {
 	<div class="buttons">
 		{!cropped && (
 			<button data-action="turn" type="button">
-				Turn
+				Turn<span class="hidden"> drawing</span>
 			</button>
 		)}
 		<button data-action="reset" disabled type="button">
-			Reset<span class="hidden"> {label}</span>
+			Reset<span class="hidden"> drawing</span>
 		</button>
 	</div>
 </movable-drawing>

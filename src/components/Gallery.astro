@@ -5,13 +5,12 @@ import { getSnarks } from "~/getSnarks.ts";
 
 import Drawing from "./Drawing.astro";
 import Snark from "./Snark.astro";
-import WithSnarks from "./WithSnarks.astro";
 
 const snarks = await getSnarks();
 ---
 
 <ul class="gallery">
-	{snarks.map(({ blocks, href, teaser }) => {
+	{snarks.map(({ blocks, href }) => {
 		const graph = createGoldbergGraph(blocks);
 
 		return (
@@ -25,9 +24,7 @@ const snarks = await getSnarks();
 					<span class="name">
 						<Snark n={blocks} />
 					</span>
-					<span class="teaser">
-						<WithSnarks text={teaser} />
-					</span>
+					<span class="teaser">{graph.vertices.length} vertices</span>
 				</a>
 			</li>
 		);
