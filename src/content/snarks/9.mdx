@@ -20,13 +20,13 @@ Merging the blocks that have the same number gives the Goldberg graph [<Snark n=
 </Highlight>
 
 This makes <Snark n={9} /> a _covering graph_ of <Snark n={3} />.
-Each vertex of <Snark n={3} /> corresponds to three vertices of <Snark n={9} />, and the neighbors of those vertices correspond to the neighbors of the vertex of <Snark n={3} />.
+Each vertex of <Snark n={3} /> corresponds to three vertices of <Snark n={9} />, and the three edges at each of those correspond to the three edges at the vertex of <Snark n={3} />.
 The triangle in <Snark n={3} /> corresponds to the inner ring of <Snark n={9} />, which has nine vertices.
 
 In general, <Snark n="m" /> is a covering graph of <Snark n="k" /> whenever _m_ is a multiple of _k_.
 
 ## Coverings and edge colorings
 
-If a graph has a 3-edge-coloring, so does every covering graph of it: each edge is given the color of the edge that it covers.
+If a graph has a 3-edge-coloring, so does every covering graph of it: each edge is given the color of the edge that it corresponds to.
 The reverse is not true.
 For example, <Snark n={6} /> is a covering graph of <Snark n={3} />, and it has a 3-edge-coloring because 6 is even.

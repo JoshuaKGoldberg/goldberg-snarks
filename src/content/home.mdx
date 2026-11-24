@@ -151,15 +151,15 @@ Three further edges, called _links_, join each block to the next.
 </CutFigure>
 
 The block comes from the Petersen graph.
-Removing three vertices that lie on a path, such as _u_, _v_, and _w_, leaves seven vertices, which are _b_ through _h_.
-It makes no difference which path is chosen, because a symmetry of the Petersen graph takes any such path to any other.
+Removing a path of three vertices, such as _u_, _v_, _w_, leaves seven vertices, which are _b_ through _h_.
+It makes no difference which path is chosen, because a symmetry of the Petersen graph takes any path of three vertices to any other.
 Five edges led from the remaining vertices to _u_, _v_, and _w_.
 The one from _b_ now leads to a new vertex, _a_.
 The ones from _e_, _f_, _g_, and _h_ become links to the neighboring blocks.
 
 </Annotated>
 
-The blocks are arranged in a ring, and each is joined to the next by three links.
+The blocks are arranged in a ring.
 The links form part of three rings: the <Term is="outer">outer ring</Term>, which passes through _e_ and _f_ in every block; the <Term is="middle">middle ring</Term>, which passes through _g_ and _h_; and the <Term is="inner">inner ring</Term>, which passes through _a_.
 
 <RingFigure>
@@ -299,9 +299,9 @@ Values marked as computed were checked by computer for the Goldberg snarks with 
 | Chromatic index (fewest colors in an edge coloring) | 4 | [Theorem 5](#theorem) and Vizing's theorem |
 | Total chromatic number (fewest colors for the vertices and edges together, with different colors for neighboring vertices, for edges that meet, and for each edge and its ends) | 4 | <Cite id="campos2011" /> |
 | Resistance (fewest edges left uncolored by three colors) | 2 | [Uncolored edges](#uncolored-edges) |
-| Girth (length of the shortest cycle) | 5 | [Short cycles](/g7#cycle-of-length-7) |
+| Girth (length of the shortest cycle) | 5 | [Short cycles](/g7#other-short-cycles) |
 | Circumference (length of the longest cycle) | 8*k* − 1 | Computed for <span class="nowrap">_k_ ≤ 15</span> |
-| Cycles of length 5 | 2*k* <span class="nowrap">(11 if _k_ = 5)</span> | [Short cycles](/g7#cycle-of-length-7) |
+| Cycles of length 5 | 2*k* <span class="nowrap">(11 if _k_ = 5)</span> | [Short cycles](/g7#other-short-cycles) |
 | Diameter (largest distance between two vertices) | <span class="nowrap">_k_ + 1 if _k_ ≤ 9,</span> <span class="nowrap">else (_k_ + 11)/2</span> | Computed for <span class="nowrap">_k_ ≤ 25</span> |
 | Radius (smallest distance within which some vertex reaches all others) | <span class="nowrap">(_k_ + 5)/2</span> | Computed for <span class="nowrap">_k_ ≤ 25</span> |
 | Cyclic edge-connectivity (fewest edges whose removal leaves two parts that each contain a cycle) | 5 | Computed for <span class="nowrap">_k_ ≤ 9</span> |
@@ -330,8 +330,8 @@ A question mark indicates a conjectured crossing number.
 	</dd>
 	<dt>Loupekine snarks</dt>
 	<dd>
-		Loupekine's construction also removes three consecutive vertices from copies of a snark and joins the pieces in a ring.
-		A generalization of this construction also produces the Goldberg snarks <Cite id="berman2017" />.
+		Loupekine's construction also removes a path of three vertices from each of several copies of a snark, and joins the pieces in a ring.
+		A generalization of it produces the Goldberg snarks <Cite id="berman2017" />.
 	</dd>
 	<dt>Flower snarks</dt>
 	<dd>

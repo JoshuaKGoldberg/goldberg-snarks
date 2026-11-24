@@ -1,6 +1,6 @@
 ---
 blocks: 15
-summary: The Goldberg snark with fifteen blocks, 120 vertices, and 180 edges. Merging its blocks in threes gives G5.
+summary: The Goldberg snark with fifteen blocks, 120 vertices, and 180 edges. Merging the blocks that are five apart gives G5.
 ---
 
 import Highlight from "~/components/Highlight.astro";
@@ -27,6 +27,6 @@ Each block of <Snark n={3} /> corresponds to five blocks of <Snark n={15} />.
 
 ## Chinese remainder theorem
 
-Number the blocks of <Snark n={15} /> from 0 to 14 instead.
+Instead, number the blocks of <Snark n={15} /> from 0 to 14, those of <Snark n={3} /> from 0 to 2, and those of <Snark n={5} /> from 0 to 4.
 Block _i_ corresponds to the block of <Snark n={3} /> whose number is the remainder of _i_ divided by 3, and to the block of <Snark n={5} /> whose number is the remainder of _i_ divided by 5.
 By the Chinese remainder theorem, no two of the numbers from 0 to 14 have the same pair of remainders, so a block of <Snark n={15} /> is determined by the two blocks that it corresponds to.

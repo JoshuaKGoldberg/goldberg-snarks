@@ -130,7 +130,7 @@ const after = [
 			graph={graph}
 			inMargin
 			size="small"
-			label={`${name} with ${(facts.edges - 2).toString()} of its ${facts.edges.toString()} edges colored green, blue, or gold. The two uncolored edges are from a1 to b1 and c1 to e1.`}
+			label={`${name} with all but two of its ${facts.edges.toString()} edges colored. The uncolored edges are from a1 to b1 and from c1 to e1.`}
 		>
 			<Snark n={blocks} /> with all but <Term is="spare">two edges</Term>{" "}
 			colored.
