@@ -17,5 +17,6 @@
 		}
 	],
 	"patch": { "enabled": false },
+	"platformAutomerge": false,
 	"postUpdateOptions": ["pnpmDedupe"]
 }
