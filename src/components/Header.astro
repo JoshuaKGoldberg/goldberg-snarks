@@ -60,6 +60,10 @@ const snarks = await getSnarks();
 		text-decoration: none;
 	}
 
+	[aria-current="page"] {
+		cursor: default;
+	}
+
 	.home {
 		font-size: var(--fontSizeSubheading);
 		font-style: italic;
@@ -85,7 +89,7 @@ const snarks = await getSnarks();
 		padding-bottom: 0;
 	}
 
-	@media (width <= 40rem) {
+	@media (width < 40rem) {
 		.inside {
 			padding-top: 0.9rem;
 		}

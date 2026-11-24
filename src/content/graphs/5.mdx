@@ -1,5 +1,5 @@
 ---
-summary: A graph with 40 vertices and 60 edges, made of five identical blocks. It is the smallest Goldberg snark.
+fact: It is the smallest Goldberg snark.
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -25,20 +25,20 @@ No other Goldberg snark has an inner ring of length 5.
 
 A [_Hamiltonian cycle_](/#hamiltonian-cycles) is a cycle that visits every vertex.
 Like every snark, <Snark n={5} /> has none.
-Its longest cycles visit 39 of its 40 vertices.
+Its longest cycles visit 39 of its 40 vertices, so its _circumference_ is 39.
 
 <Highlight
 	blocks={5}
 	kind="longest"
 	label="A cycle in the Goldberg snark G5 that visits every vertex but one, c1, near the top."
 >
-	A cycle that visits every vertex except <Vertex i="1" role="c" />.
+	A cycle that visits every vertex except <Vertex block="1" role="c" />.
 </Highlight>
 
 ## Connectivity
 
 The _cyclic edge-connectivity_ of a graph is the smallest number of edges whose removal leaves two parts that each contain a cycle.
-It is at least 4 for every snark, and 5 for <Snark n={5} />.
+It is at least 4 for every snark, and [5 for <Snark n={5} />](/#cyclic-edge-connectivity).
 
 ## Number of snarks of this size
 

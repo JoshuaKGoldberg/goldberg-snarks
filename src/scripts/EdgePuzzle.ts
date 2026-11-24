@@ -10,8 +10,8 @@ import { colorNames } from "~/graphs/edgeClasses.ts";
 import { query } from "./query.ts";
 import { type ClientPoint, toDrawing } from "./toDrawing.ts";
 
-/** How far from an edge, in pixels, a press can be and still count. */
-const reach = 22;
+/** Farthest that a press can be from an edge. */
+const reachInPixels = 22;
 
 type Color = Coloring[number];
 
@@ -37,6 +37,9 @@ export class EdgePuzzle extends HTMLElement {
 	}
 
 	connectedCallback() {
+		const instructions = query(this, ".instructions", HTMLElement);
+
+		this.#board.setAttribute("aria-describedby", instructions.id);
 		this.#board.setAttribute("role", "toolbar");
 
 		for (const [index, edge] of this.#edges.entries()) {
@@ -120,7 +123,7 @@ export class EdgePuzzle extends HTMLElement {
 		const { scale, ...point } = toDrawing(this.#board, press);
 		const { edges, vertices } = this.#graph;
 		let nearest: number | undefined;
-		let nearestDistance = reach / scale;
+		let nearestDistance = reachInPixels / scale;
 
 		for (const [index, { from, to }] of edges.entries()) {
 			const distance = getDistance(

@@ -41,6 +41,22 @@ describe(describeProgress, () => {
 });
 
 describe(findClashes, () => {
+	it.each([0, 1, 2])("finds vertices when edges of color %i meet", (color) => {
+		const coloring = graph.edges.map((_, index) =>
+			index < 2 ? color : undefined,
+		);
+
+		expect(findClashes(graph, coloring)).toEqual(new Set([1]));
+	});
+
+	it("finds no vertices when edges of different colors meet", () => {
+		const coloring = graph.edges.map((_, index) =>
+			index < 2 ? index : undefined,
+		);
+
+		expect(findClashes(graph, coloring)).toEqual(new Set());
+	});
+
 	it("finds the vertices that have two edges of a color", () => {
 		expect(findClashes(graph, color(0, 1, 3))).toEqual(new Set([1, 2]));
 	});

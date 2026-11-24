@@ -76,6 +76,7 @@
 
 	html {
 		background: var(--colorPaper);
+		scrollbar-color: var(--colorInkFaint) var(--colorPaper);
 		-webkit-text-size-adjust: 100%;
 	}
 
@@ -86,6 +87,7 @@
 		font-size: var(--fontSizeBody);
 		line-height: 1.5;
 		overflow-wrap: break-word;
+		scrollbar-color: auto;
 	}
 
 	h1,
@@ -154,8 +156,7 @@
 		outline-offset: 2px;
 	}
 
-	sub,
-	sup {
+	sub {
 		font-size: 0.72em;
 		line-height: 0;
 	}
@@ -197,6 +198,13 @@
 	@media (prefers-reduced-motion: no-preference) {
 		@view-transition {
 			navigation: auto;
+		}
+
+		/* Nothing can be pressed until they're done */
+		::view-transition-group(*),
+		::view-transition-new(*),
+		::view-transition-old(*) {
+			animation-duration: var(--quickly);
 		}
 	}
 }

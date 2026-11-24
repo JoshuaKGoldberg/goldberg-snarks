@@ -16,8 +16,8 @@ const { edges, to } = Astro.props;
 <span class="formulas">
 	{edges.map((edge) => (
 		<span>
-			<Vertex i="i" role={edge.from} />
-			<Vertex i={to} role={edge.to} />,
+			<Vertex block="i" role={edge.from} /> <Vertex block={to} role={edge.to} />
+			,
 		</span>
 	))}
 </span>

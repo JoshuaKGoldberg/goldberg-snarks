@@ -3,7 +3,7 @@ import { Font } from "astro:assets";
 
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
-import { imageSize, siteName } from "~/constants.ts";
+import { author, imageSize, siteName } from "~/constants.ts";
 import { getPath } from "~/getPath.ts";
 import { palette } from "~/palette.ts";
 import "~/styles/global.css";
@@ -57,6 +57,7 @@ const colorStyles = [
 		<title>{title}</title>
 		<meta content={description} name="description" />
 		{!isMissing && <link href={pageUrl} rel="canonical" />}
+		<link href="/favicon.ico" rel="icon" sizes="32x32" />
 		<link href="/favicon.svg" rel="icon" type="image/svg+xml" />
 		<link href="/apple-touch-icon.png" rel="apple-touch-icon" />
 		<link href="/sitemap-index.xml" rel="sitemap" />
@@ -88,12 +89,7 @@ const colorStyles = [
 		<meta content={description} name="twitter:description" />
 		<meta content={imageUrl} name="twitter:image" />
 		<meta content={image.alt} name="twitter:image:alt" />
-		{schema && (
-			<meta
-				content="https://www.joshuakgoldberg.com"
-				property="article:author"
-			/>
-		)}
+		{schema && <meta content={author} property="article:author" />}
 		<style is:inline set:html={colorStyles}></style>
 		<Font
 			cssVariable="--fontText"
@@ -123,7 +119,7 @@ const colorStyles = [
 					author: {
 						"@type": "Person",
 						name: "Josh Goldberg",
-						url: "https://www.joshuakgoldberg.com",
+						url: author,
 					},
 					description,
 					image: imageUrl,

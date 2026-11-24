@@ -1,6 +1,12 @@
 import { palette } from "../palette.ts";
 import { createGoldbergGraph } from "./createGoldbergGraph.ts";
-import { drawEdge, getVertexRadius, groupEdges, locate } from "./draw.ts";
+import {
+	drawEdge,
+	getRingViewBox,
+	getVertexRadius,
+	groupEdges,
+	locate,
+} from "./draw.ts";
 import { getPartClass } from "./edgeClasses.ts";
 
 const colors: Record<ReturnType<typeof getPartClass>, string> = {
@@ -13,10 +19,10 @@ const colors: Record<ReturnType<typeof getPartClass>, string> = {
 /** Draws a Goldberg graph as an SVG that stands alone, over a background if there is one. */
 export function toSvg(blocks: number, background?: string) {
 	const backdrop = background
-		? `<rect x="-110" y="-110" width="220" height="220" fill="${background}"/>`
+		? `<rect x="-50%" y="-50%" width="100%" height="100%" fill="${background}"/>`
 		: "";
 
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-110 -110 220 220" width="1100" height="1100"><title>Goldberg graph G${blocks.toString()}</title>${backdrop}${toSvgContents(blocks)}</svg>\n`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${getRingViewBox(10)}" width="1100" height="1100"><title>Goldberg graph G${blocks.toString()}</title>${backdrop}${toSvgContents(blocks)}</svg>\n`;
 }
 
 /** Draws a Goldberg graph as what would be within an SVG. */

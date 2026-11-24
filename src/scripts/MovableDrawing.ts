@@ -43,8 +43,8 @@ const nudgeStep = 5;
 /** Pixels that a pointer can move without it being a drag. */
 const tapDistance = 4;
 
-/** Pixels that a press can be from the center of a vertex. */
-const reach = { coarse: 22, fine: 12 };
+/** Farthest that a press can be from the center of a vertex. */
+const reachInPixels = { coarse: 22, fine: 12 };
 
 const milliseconds = 350;
 
@@ -87,12 +87,12 @@ export class MovableDrawing extends HTMLElement {
 			y: element.y.baseVal[0].value - y,
 		};
 	});
-	readonly #move = query(this, "[data-action=move]", HTMLButtonElement);
 	#near: number | undefined;
-	readonly #nearMarker = query(this, ".near", SVGCircleElement);
+	readonly #nearMarker = createMarker(this, ".near");
+	readonly #next = query(this, "[data-action=next]", HTMLButtonElement);
 	readonly #reset = query(this, "[data-action=reset]", HTMLButtonElement);
 	#selected: number | undefined;
-	readonly #selectedMarker = query(this, ".selected", SVGCircleElement);
+	readonly #selectedMarker = createMarker(this, ".selected");
 	#selection = new AbortController();
 	readonly #status = query(this, "[role=status]", HTMLElement);
 	readonly #svg = query(this, "svg", SVGSVGElement);
@@ -132,11 +132,11 @@ export class MovableDrawing extends HTMLElement {
 			{ passive: false },
 		);
 
-		this.#move.addEventListener("click", () => {
+		this.#next.addEventListener("click", () => {
 			this.#selectNext();
 		});
-		this.#move.addEventListener("keydown", (event) => {
-			this.#onMoveKey(event);
+		this.#next.addEventListener("keydown", (event) => {
+			this.#onNextKey(event);
 		});
 		this.#reset.addEventListener("click", () => {
 			this.#onReset();
@@ -183,6 +183,7 @@ export class MovableDrawing extends HTMLElement {
 			}
 		};
 
+		this.#mark(undefined);
 		this.#setGoal(goal);
 
 		if (reducedMotion.matches) {
@@ -225,14 +226,16 @@ export class MovableDrawing extends HTMLElement {
 			[this.#nearMarker, this.#near],
 			[this.#selectedMarker, this.#selected],
 		] as const) {
-			marker.toggleAttribute("data-shown", index !== undefined);
+			marker.element.toggleAttribute("data-shown", index !== undefined);
 
-			if (index !== undefined) {
-				const { x, y } = rotate(this.#view.points[index], this.#view.angles);
+			// It stays with the vertex that it was on as it fades out
+			marker.index = index ?? marker.index;
 
-				marker.setAttribute("cx", x.toFixed(1));
-				marker.setAttribute("cy", y.toFixed(1));
-			}
+			const point = this.#view.points[marker.index];
+			const { x, y } = rotate(point, this.#view.angles);
+
+			marker.element.setAttribute("cx", x.toFixed(1));
+			marker.element.setAttribute("cy", y.toFixed(1));
 		}
 	}
 
@@ -242,7 +245,8 @@ export class MovableDrawing extends HTMLElement {
 		const { angles, points } = this.#view;
 		let nearest: number | undefined;
 		let nearestDistance =
-			(coarsePointer.matches ? reach.coarse : reach.fine) / scale;
+			(coarsePointer.matches ? reachInPixels.coarse : reachInPixels.fine) /
+			scale;
 
 		for (const index of this.#data.dots.flat()) {
 			const point = rotate(points[index], angles);
@@ -282,7 +286,7 @@ export class MovableDrawing extends HTMLElement {
 		}
 	}
 
-	#onMoveKey(event: KeyboardEvent) {
+	#onNextKey(event: KeyboardEvent) {
 		const step = getStep(nudges, event);
 
 		if (step) {
@@ -315,8 +319,8 @@ export class MovableDrawing extends HTMLElement {
 		const canDrag = index !== undefined || this.#isDeep;
 		const drag = new AbortController();
 		const { signal } = drag;
-		const start = this.#view;
-		const grip = this.#getGrip(event, index);
+		const start = this.#goal;
+		let grip = this.#getGrip(event, index);
 		let isDragging = false;
 		let { clientX, clientY } = event;
 
@@ -369,6 +373,12 @@ export class MovableDrawing extends HTMLElement {
 				}
 
 				isDragging = true;
+				this.#jumpTo(
+					index === undefined
+						? { angles: this.#view.angles, points: start.points }
+						: start,
+				);
+				grip = this.#getGrip(event, index);
 				this.toggleAttribute("data-moving", true);
 			}
 
@@ -410,7 +420,7 @@ export class MovableDrawing extends HTMLElement {
 
 		// It's about to be disabled, which would lose the focus it has
 		if (this.#reset.matches(":focus-visible")) {
-			this.#move.focus();
+			this.#next.focus();
 		}
 
 		this.#view = { angles: unwind(angles), points };
@@ -524,6 +534,10 @@ export class MovableDrawing extends HTMLElement {
 			points,
 		};
 	}
+}
+
+function createMarker(host: HTMLElement, selector: string) {
+	return { element: query(host, selector, SVGCircleElement), index: 0 };
 }
 
 function getStep(

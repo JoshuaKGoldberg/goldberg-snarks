@@ -1,8 +1,12 @@
 export interface Reference {
 	authors: string;
 	details: string;
+
 	/** Where it's available online, if it is. */
 	href?: string;
+
+	/** Language of the title, if it isn't English. */
+	lang?: string;
 
 	/** How it's mentioned within text. */
 	short: string;
@@ -13,7 +17,8 @@ export interface Reference {
 export const references = {
 	berman2017: {
 		authors: "L. W. Berman, D. Oliveros, and G. I. Williams",
-		details: "arXiv:1707.05294.",
+		details:
+			"arXiv:1707.05294. Published in 2024 as “Rotationally symmetric snarks from voltage graphs”, Discrete Mathematics 347(4), 113874.",
 		href: "https://arxiv.org/abs/1707.05294",
 		short: "Berman et al. 2017",
 		title: "Cyclic pseudo-Loupekine snarks",
@@ -23,6 +28,7 @@ export const references = {
 		authors: "D. Blanuša",
 		details:
 			"Glasnik Matematičko-Fizički i Astronomski, Series II 1, 31–42 (in Croatian).",
+		lang: "hr",
 		short: "Blanuša 1946",
 		title: "Problem četiriju boja",
 		year: 1946,
@@ -106,6 +112,7 @@ export const references = {
 	petersen1898: {
 		authors: "J. Petersen",
 		details: "L’Intermédiaire des Mathématiciens 5, 225–227.",
+		lang: "fr",
 		short: "Petersen 1898",
 		title: "Sur le théorème de Tait",
 		year: 1898,

@@ -1,5 +1,7 @@
 import { getCollection } from "astro:content";
 
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+
 /** Fewest blocks that a Goldberg graph has to have to be a snark. */
 const fewestBlocks = 5;
 
@@ -17,16 +19,22 @@ export async function getGraphs() {
 				);
 			}
 
+			const { edges, vertices } = createGoldbergGraph(blocks);
+			const isSnark = blocks >= fewestBlocks;
+			const kind = isSnark ? "Goldberg snark" : "Goldberg graph";
+			const name = `G${entry.id}`;
 			const slug = `g${entry.id}`;
 
 			return {
 				blocks,
+				description: `${kind} ${name}: ${blocks.toString()} blocks, ${vertices.length.toString()} vertices, and ${edges.length.toString()} edges. ${entry.data.fact}`,
 				entry,
 				href: `/${slug}`,
-				isSnark: blocks >= fewestBlocks,
-				name: `G${entry.id}`,
+				isSnark,
+				kind,
+				name,
 				slug,
-				summary: entry.data.summary,
+				summary: `A graph with ${vertices.length.toString()} vertices and ${edges.length.toString()} edges, made of ${blocks.toString()} identical blocks. ${entry.data.fact}`,
 			};
 		})
 		.sort((a, b) => a.blocks - b.blocks);

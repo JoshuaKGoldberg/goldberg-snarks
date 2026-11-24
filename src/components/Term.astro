@@ -1,7 +1,7 @@
 ---
 /** Words that are colored as whatever they're describing is in drawings. */
 interface Props {
-	is: "blue" | "gold" | "inner" | "middle" | "outer" | "spare";
+	is: "gold" | "inner" | "middle" | "outer" | "spare";
 }
 ---
 
@@ -14,7 +14,6 @@ interface Props {
 		border-bottom: 2px solid var(--line);
 	}
 
-	.blue,
 	.outer {
 		--line: var(--colorBlue);
 	}
@@ -22,10 +21,6 @@ interface Props {
 	.gold,
 	.middle {
 		--line: var(--colorGold);
-	}
-
-	.blue {
-		border-bottom-style: dashed;
 	}
 
 	.gold {

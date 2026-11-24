@@ -1,4 +1,4 @@
-/** Definitions and results on the main page, in the order that they're numbered. */
+/** Definitions and results on the homepage, in the order that they're numbered. */
 const ordered = [
 	["snark", "Definition"],
 	["petersen", "Lemma"],
@@ -9,6 +9,8 @@ const ordered = [
 	["connectivity", "Proposition"],
 	["hamiltonian", "Corollary"],
 ] as const;
+
+export const statementIds = ordered.map(([id]) => id);
 
 export type StatementId = (typeof ordered)[number][0];
 

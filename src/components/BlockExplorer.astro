@@ -74,10 +74,49 @@ const coloring = colorMostEdges(graph);
 	}
 
 	input {
-		accent-color: var(--colorRed);
 		cursor: pointer;
 		height: 1.75rem;
 		width: 100%;
+	}
+
+	/* Browsers' own would switch between themes all at once */
+	@media not (forced-colors: active) {
+		input {
+			--thumb: 1.5rem;
+			--track: 4px;
+
+			appearance: none;
+			background: none;
+		}
+
+		input::-webkit-slider-runnable-track {
+			background: var(--colorInkFaint);
+			border-radius: var(--track);
+			height: var(--track);
+		}
+
+		input::-moz-range-track {
+			background: var(--colorInkFaint);
+			border-radius: var(--track);
+			height: var(--track);
+		}
+
+		input::-webkit-slider-thumb {
+			appearance: none;
+			background: var(--colorRed);
+			border-radius: 50%;
+			height: var(--thumb);
+			margin-top: calc((var(--track) - var(--thumb)) / 2);
+			width: var(--thumb);
+		}
+
+		input::-moz-range-thumb {
+			background: var(--colorRed);
+			border: 0;
+			border-radius: 50%;
+			height: var(--thumb);
+			width: var(--thumb);
+		}
 	}
 
 	output {
@@ -104,7 +143,7 @@ const coloring = colorMostEdges(graph);
 	}
 
 	@media print, (scripting: none) {
-		.slider {
+		.slider > :not(output) {
 			display: none;
 		}
 	}

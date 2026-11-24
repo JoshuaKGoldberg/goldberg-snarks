@@ -1,5 +1,5 @@
 ---
-summary: A graph with 88 vertices and 132 edges, made of eleven identical blocks. The largest distance between two vertices is also eleven.
+fact: The largest distance between two vertices is also 11.
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -25,8 +25,8 @@ The outer and middle rings take about two edges per block.
 The inner ring takes one edge per block, but a path may need up to three edges to reach it and three to leave it.
 
 In <Snark n={5} />, <Snark n={7} />, and <Snark n={9} />, the vertices that are farthest apart are joined by a shortest path along the outer or middle ring, and the diameter is one more than the number of blocks: 6, 8, and 10.
-In <Snark n={11} />, no two blocks are more than five apart, so a path along the inner ring has at most 3 + 5 + 3 = 11 edges.
-The same argument gives at most (_k_ + 11)/2 for larger Goldberg snarks, and their diameters have been computed to be exactly that up to <span class="nowrap">_k_ = 25</span>.
+In <Snark n={11} />, no two blocks are more than five apart, so a path along the inner ring has at most <span class="nowrap">3 + 5 + 3 = 11</span> edges.
+The same argument gives at most <span class="nowrap">(_k_ + 11)/2</span> for larger Goldberg snarks, and their diameters have been computed to be exactly that up to <span class="nowrap">_k_ = 25</span>.
 The diameters of <Snark n={13} /> and <Snark n={15} /> are 12 and 13.
 
 ## Crossing number

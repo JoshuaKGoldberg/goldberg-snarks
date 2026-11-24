@@ -23,7 +23,7 @@ describe(countCycles, () => {
 		[9, 7, 0],
 		[15, 7, 0],
 	])(
-		"when there are %i blocks, counts cycles of length %i as %i",
+		"counts cycles when there are %i blocks and the length is %i",
 		(blocks, length, count) => {
 			expect(countCycles(createGoldbergGraph(blocks), length)).toBe(count);
 		},
@@ -72,7 +72,7 @@ describe(getEccentricities, () => {
 		[23, 17, 14],
 		[25, 18, 15],
 	])(
-		"when there are %i blocks, has a diameter of %i and radius of %i",
+		"measures distances when there are %i blocks",
 		(blocks, diameter, radius) => {
 			expect(getEccentricities(createGoldbergGraph(blocks))).toEqual({
 				diameter,

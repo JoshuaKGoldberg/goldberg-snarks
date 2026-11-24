@@ -32,15 +32,14 @@ const { kind, label } = getStatement(id);
 		background: var(--colorPaperShaded);
 		border-left: 3px solid var(--colorRed);
 		margin-block: 1.1rem;
+		outline: 1px solid
+			color-mix(in srgb, var(--colorRed) var(--lit), transparent);
 		padding: 0.6rem 1rem 0.7rem;
+		transition: --lit var(--quickly);
 	}
 
 	.statement:not(.definition) > :global(:not(.head)) {
 		font-style: italic;
-	}
-
-	.statement:not(.definition) > :global(:not(.head)) :global(em) {
-		font-style: normal;
 	}
 
 	.statement > :global(ul) {
@@ -48,7 +47,13 @@ const { kind, label } = getStatement(id);
 	}
 
 	.statement:target {
-		outline: 1px solid var(--colorRed);
+		--lit: 100%;
+	}
+
+	@media (forced-colors: active) {
+		.statement:not(:target) {
+			outline: none;
+		}
 	}
 
 	strong {

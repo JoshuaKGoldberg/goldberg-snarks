@@ -6,7 +6,6 @@ import { site } from "./src/constants.ts";
 
 const fontFiles = "@fontsource/libertinus-serif/files/libertinus-serif";
 
-// https://astro.build/config
 export default defineConfig({
 	build: { format: "file", inlineStylesheets: "always" },
 	fonts: [

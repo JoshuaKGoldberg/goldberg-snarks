@@ -10,6 +10,12 @@
 	"minimumReleaseAge": "7 days",
 	"packageRules": [
 		{
+			"description": "The age in config:best-practices would otherwise override the top-level one.",
+			"matchDatasources": ["npm"],
+			"matchUpdateTypes": ["major", "minor", "patch"],
+			"minimumReleaseAge": "7 days"
+		},
+		{
 			"description": "The Engines Check job's Node.js version is the minimum from engines.node.",
 			"enabled": false,
 			"matchDepNames": ["node"],

@@ -6,7 +6,6 @@ export interface Eccentricities {
 	radius: number;
 }
 
-/** Counts distinct cycles that are of a given length. */
 export function countCycles(graph: Graph, length: number) {
 	const neighbors = getNeighbors(graph);
 	const visited = new Set<number>();

@@ -4,7 +4,6 @@ import type { GetStaticPaths } from "astro";
 import { render } from "astro:content";
 
 import Article from "~/components/Article.astro";
-import Code from "~/components/Code.astro";
 import ColoredFigure from "~/components/ColoredFigure.astro";
 import EdgePuzzle from "~/components/EdgePuzzle.astro";
 import Fact from "~/components/Fact.astro";
@@ -19,7 +18,6 @@ import { getGraphs } from "~/getGraphs.ts";
 import { colorMostEdges } from "~/graphs/colorEdges.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import { describeGraph } from "~/graphs/describeGraph.ts";
-import { toGraph6 } from "~/graphs/serialize.ts";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 
 export const getStaticPaths = (async () => {
@@ -41,7 +39,8 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { next, previous } = Astro.props;
-const { blocks, entry, href, isSnark, name, slug, summary } = Astro.props.graph;
+const { blocks, description, entry, href, isSnark, kind, name, slug, summary } =
+	Astro.props.graph;
 const { Content, headings } = await render(entry);
 const facts = describeGraph(blocks);
 const graph = createGoldbergGraph(blocks);
@@ -53,43 +52,53 @@ const uncolored = graph.edges
 			`from ${graph.vertices[from].name} to ${graph.vertices[to].name}`,
 	);
 const formatter = new Intl.ListFormat("en");
-const title = isSnark ? "Goldberg snark" : "Goldberg graph";
 
 const after = [
 	{ depth: 2, slug: "coloring", text: "Edge coloring" },
 	{ depth: 2, slug: "downloads", text: "Downloads" },
 ];
 
+/** Finds where a fact is explained: here, or else on the homepage, if that covers this graph. */
+function explain(homeId: string, ...ids: string[]) {
+	const id = ids.find((id) => headings.some(({ slug }) => slug === id));
+
+	if (id) {
+		return `#${id}`;
+	}
+
+	return isSnark ? `/#${homeId}` : undefined;
+}
+
 const downloads = [
 	["svg", "Drawing (SVG)"],
 	["png", "Drawing (PNG)"],
 	["txt", "Edge list (text)"],
-	["g6", "Graph (graph6)"],
+	["g6", "Graph (graph6 text)"],
 ];
 ---
 
 <BaseLayout
-	description={summary.replace(/^A graph/, `The ${title} ${name} is a graph`)}
+	description={description}
 	image={{
-		alt: `${title} ${name}, with ${facts.vertices.toString()} vertices and ${facts.edges.toString()} edges, beside a drawing of its ${blocks.toString()} blocks in a ring.`,
+		alt: `${kind} ${name}, with ${facts.vertices.toString()} vertices and ${facts.edges.toString()} edges, beside a drawing of its ${blocks.toString()} blocks in a ring.`,
 		path: `/images${href}.png`,
 	}}
 	schema={{
 		"@type": "Article",
-		about: { "@type": "Thing", name: `${title} ${name}` },
-		headline: `${title} ${name}`,
+		about: { "@type": "Thing", name: `${kind} ${name}` },
+		headline: `${kind} ${name}`,
 	}}
-	title={`${title} ${name}: a graph whose edges need four colors`}
+	title={`${kind} ${name}: a graph whose edges need four colors`}
 >
 	<Article headings={[...getHeadings(), ...headings, ...after]}>
 		<Heading slot="heading" summary={summary}>
-			{`${title} `}
+			{`${kind} `}
 			<Snark n={blocks} />
 		</Heading>
 		<div class="annotated">
-			<FactBox blocks={blocks} kind={title}>
+			<FactBox blocks={blocks} kind={kind}>
 				<Fragment slot="caption">
-					{`The ${title} `}
+					{`The ${kind} `}
 					<Snark n={blocks} />
 				</Fragment>
 				<Fact label="Blocks">{blocks}</Fact>
@@ -101,35 +110,44 @@ const downloads = [
 				<Fact about="#coloring" label="Resistance">
 					{facts.resistance}
 				</Fact>
-				<Fact about="/#properties" label="Girth">
+				<Fact about={explain("girth")} label="Girth">
 					{facts.girth}
 				</Fact>
-				<Fact about="/#hamiltonian-cycles" label="Circumference">
+				<Fact
+					about={explain("hamiltonian-cycles", "longest-cycle")}
+					label="Circumference"
+				>
 					{facts.circumference}
 				</Fact>
 				<Fact
-					about={isSnark ? "/#short-cycles" : undefined}
+					about={explain("short-cycles", "cycles-of-length-5")}
 					label="Cycles of length 5"
 				>
 					{facts.pentagons}
 				</Fact>
-				<Fact about="/#properties" label="Diameter">
+				<Fact
+					about={explain("diameter", "diameter", "distances")}
+					label="Diameter"
+				>
 					{facts.diameter}
 				</Fact>
-				<Fact about="/#properties" label="Radius">
+				<Fact about={explain("radius", "distances")} label="Radius">
 					{facts.radius}
 				</Fact>
-				<Fact about="/#properties" label="Symmetries">
+				<Fact about={explain("symmetries", "symmetries")} label="Symmetries">
 					{facts.symmetries}
 				</Fact>
-				<Fact about="/#properties" label="Crossing number">
+				<Fact
+					about={explain("crossing-number", "crossing-number")}
+					label="Crossing number"
+				>
 					{facts.crossings}
 					{!facts.isCrossingsKnown && " (conjectured)"}
 				</Fact>
 				<Fact about="/#hamiltonian-cycles" label="Hamiltonian">
 					No
 				</Fact>
-				<Fact about="/#properties" label="Planar">
+				<Fact about={explain("planar")} label="Planar">
 					No
 				</Fact>
 			</FactBox>
@@ -193,10 +211,6 @@ const downloads = [
 				</li>
 			))}
 		</ul>
-		<details>
-			<summary>The graph in graph6, a compact text format</summary>
-			<Code breaks code={toGraph6(graph)} />
-		</details>
 
 		{(previous ?? next) && (
 			<nav aria-label="Other Goldberg snarks" class="siblings">
@@ -239,13 +253,11 @@ const downloads = [
 
 	.sibling {
 		line-height: 1.4;
-		text-decoration: none;
-	}
-
-	@media (hover: hover) {
-		.sibling:hover {
-			text-decoration: underline;
-		}
+		text-decoration-color: color-mix(
+			in srgb,
+			currentcolor var(--lit),
+			transparent
+		);
 	}
 
 	.next {

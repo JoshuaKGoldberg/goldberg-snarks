@@ -58,7 +58,7 @@ pnpm format --write
 
 ## Linting
 
-This package includes several forms of linting to enforce consistent code quality and styling.
+This repository includes several forms of linting to enforce consistent code quality and styling.
 Each should be shown in VS Code, and can be run manually on the command-line:
 
 - `pnpm lint` ([ESLint](https://eslint.org) with [typescript-eslint](https://typescript-eslint.io)): Lints source files, including Astro, Markdown, and TypeScript

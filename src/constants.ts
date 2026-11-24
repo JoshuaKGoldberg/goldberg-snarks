@@ -1,3 +1,5 @@
+export const author = "https://www.joshuakgoldberg.com";
+
 export const site = "https://goldbergsnarks.com";
 
 export const siteName = "Goldberg Snarks";
