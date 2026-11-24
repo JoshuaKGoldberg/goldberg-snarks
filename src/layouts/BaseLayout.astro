@@ -56,11 +56,7 @@ const colorStyles = [
 		<meta content="width=device-width, initial-scale=1" name="viewport" />
 		<title>{title}</title>
 		<meta content={description} name="description" />
-		{isMissing ? (
-			<meta content="noindex" name="robots" />
-		) : (
-			<link href={pageUrl} rel="canonical" />
-		)}
+		{!isMissing && <link href={pageUrl} rel="canonical" />}
 		<link href="/favicon.ico" rel="icon" sizes="32x32" />
 		<link href="/favicon.svg" rel="icon" type="image/svg+xml" />
 		<link href="/apple-touch-icon.png" rel="apple-touch-icon" />
