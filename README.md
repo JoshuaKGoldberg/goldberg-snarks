@@ -1,7 +1,7 @@
 <h1 align="center">Goldberg Snarks</h1>
 
 <p align="center">
-	Goldberg snarks, explained one number at a time.
+	A website about Goldberg snarks, a family of graphs.
 	🕸️
 </p>
 
@@ -18,11 +18,29 @@
 
 ## About
 
-A site that explains what Goldberg snarks are, how they're built, and why three colors are never enough for their edges.
-Each of the first few has its own page at `/g3`, `/g5`, and so on through `/g15`.
+This is the source of [goldbergsnarks.com](https://goldbergsnarks.com).
+
+A _graph_ is a set of points joined by lines.
+In most graphs where three lines meet at every point, the lines can be given three colors so that lines that meet have different colors.
+A _snark_ is one that needs four, with some exceptions.
+The _Goldberg snarks_ are a family of snarks that Mark Goldberg published in 1981.
+The six smallest are:
+
+<p align="center">
+	<a href="https://goldbergsnarks.com/g5"><img alt="Drawing of the Goldberg snark G5" src=".github/images/g5.svg" width="30%" /></a>
+	<a href="https://goldbergsnarks.com/g7"><img alt="Drawing of the Goldberg snark G7" src=".github/images/g7.svg" width="30%" /></a>
+	<a href="https://goldbergsnarks.com/g9"><img alt="Drawing of the Goldberg snark G9" src=".github/images/g9.svg" width="30%" /></a>
+	<br />
+	<a href="https://goldbergsnarks.com/g11"><img alt="Drawing of the Goldberg snark G11" src=".github/images/g11.svg" width="30%" /></a>
+	<a href="https://goldbergsnarks.com/g13"><img alt="Drawing of the Goldberg snark G13" src=".github/images/g13.svg" width="30%" /></a>
+	<a href="https://goldbergsnarks.com/g15"><img alt="Drawing of the Goldberg snark G15" src=".github/images/g15.svg" width="30%" /></a>
+</p>
+
+The [homepage](https://goldbergsnarks.com) explains Goldberg snarks in general.
+There are also pages for these six, from [G5](https://goldbergsnarks.com/g5) to [G15](https://goldbergsnarks.com/g15), and for [G3](https://goldbergsnarks.com/g3), a related graph that is not a snark.
 
 The site is built with [Astro](https://astro.build).
-Its drawings, and most of what it says about each graph, are computed by code in [`src/graphs`](./src/graphs).
+Its drawings, and most of its numbers, are computed by the code in [`src/graphs`](./src/graphs).
 
 ## Development
 
@@ -49,4 +67,4 @@ Thanks! 🕸️
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 <!-- spellchecker: enable -->
 
-> 💝 This package was templated with [`create-typescript-app`](https://github.com/JoshuaKGoldberg/create-typescript-app) using the [Bingo framework](https://create.bingo).
+> 💝 This repository was templated with [`create-typescript-app`](https://github.com/JoshuaKGoldberg/create-typescript-app) using the [Bingo framework](https://create.bingo).

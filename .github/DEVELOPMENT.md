@@ -6,7 +6,10 @@ After [forking the repo from GitHub](https://help.github.com/articles/fork-a-rep
 git clone https://github.com/(your-name-here)/goldberg-snarks
 cd goldberg-snarks
 pnpm install
+pnpm astro sync
 ```
+
+`pnpm astro sync` generates types that linting and type checking use.
 
 > This repository includes a list of suggested VS Code extensions.
 > It's a good idea to use [VS Code](https://code.visualstudio.com) and accept its suggestion to install them, as they'll help with development.
@@ -27,7 +30,7 @@ pnpm build
 pnpm preview
 ```
 
-To add a page for another snark, add an `.mdx` file to `src/content/snarks`.
+To add a page for another Goldberg graph, add an `.mdx` file named for its number of blocks, such as `17.mdx`, to `src/content/graphs`.
 Prettier doesn't format those, as it'd split sentences that start with components.
 
 ## Formatting
@@ -46,7 +49,7 @@ pnpm format --write
 This package includes several forms of linting to enforce consistent code quality and styling.
 Each should be shown in VS Code, and can be run manually on the command-line:
 
-- `pnpm lint` ([ESLint](https://eslint.org) with [typescript-eslint](https://typescript-eslint.io)): Lints source files, including JavaScript, Markdown, and TypeScript
+- `pnpm lint` ([ESLint](https://eslint.org) with [typescript-eslint](https://typescript-eslint.io)): Lints source files, including Astro, Markdown, and TypeScript
 - `pnpm lint:knip` ([knip](https://github.com/webpro/knip)): Detects unused files, dependencies, and code exports
 - `pnpm lint:spelling` ([cspell](https://cspell.org)): Spell checks across all source files
 
