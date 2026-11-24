@@ -1,0 +1,67 @@
+---
+import { describeSnark } from "~/graphs/describeSnark.ts";
+import { getSnarks } from "~/getSnarks.ts";
+
+import Snark from "./Snark.astro";
+
+const snarks = await getSnarks();
+---
+
+<div class="table wide">
+	<table>
+		<thead>
+			<tr>
+				<th scope="col">Snark</th>
+				<th scope="col">Blocks</th>
+				<th scope="col">Vertices</th>
+				<th scope="col">Edges</th>
+				<th scope="col">Most colored</th>
+				<th scope="col">Girth</th>
+				<th scope="col">Pentagons</th>
+				<th scope="col">Diameter</th>
+				<th scope="col">Radius</th>
+				<th scope="col">Symmetries</th>
+				<th scope="col">Crossings</th>
+			</tr>
+		</thead>
+		<tbody>
+			{snarks.map(({ blocks, href }) => {
+				const facts = describeSnark(blocks);
+
+				return (
+					<tr>
+						<th scope="row">
+							<a href={href}>
+								<Snark n={blocks} />
+							</a>
+						</th>
+						<td>{blocks}</td>
+						<td>{facts.vertices}</td>
+						<td>{facts.edges}</td>
+						<td>{facts.edges - 2}</td>
+						<td>{facts.girth}</td>
+						<td>{facts.pentagons}</td>
+						<td>{facts.diameter}</td>
+						<td>{facts.radius}</td>
+						<td>{facts.symmetries}</td>
+						<td>{facts.crossings ?? `${(blocks * 2).toString()}?`}</td>
+					</tr>
+				);
+			})}
+		</tbody>
+	</table>
+</div>
+
+<style>
+	:is(td, th) {
+		min-width: 3.2rem;
+	}
+
+	:is(td, th):not(:first-child) {
+		text-align: right;
+	}
+
+	:is(td, th):last-child {
+		padding-right: 0;
+	}
+</style>

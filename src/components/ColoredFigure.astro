@@ -10,6 +10,7 @@ import Figure from "./Figure.astro";
 
 interface Props {
 	graph: Graph;
+	inMargin?: boolean;
 	label: string;
 	size?: "large" | "medium" | "small";
 
@@ -17,11 +18,11 @@ interface Props {
 	spares?: Set<number>;
 }
 
-const { graph, label, size, spares } = Astro.props;
+const { graph, inMargin, label, size, spares } = Astro.props;
 const coloring = colorMostEdges(graph, spares);
 ---
 
-<Figure size={size}>
+<Figure inMargin={inMargin} size={size}>
 	<Drawing
 		slot="drawing"
 		edgeClass={(index) => getColorClass(coloring[index])}

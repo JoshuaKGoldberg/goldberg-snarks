@@ -34,16 +34,7 @@ const pageUrl = new URL(getPath(Astro.url), Astro.site);
 		<link href={pageUrl} rel="canonical" />
 		<link href="/favicon.svg" rel="icon" type="image/svg+xml" />
 		<link href="/sitemap-index.xml" rel="sitemap" />
-		<meta
-			content="#ecf4f9"
-			media="(prefers-color-scheme: light)"
-			name="theme-color"
-		/>
-		<meta
-			content="#0b1220"
-			media="(prefers-color-scheme: dark)"
-			name="theme-color"
-		/>
+		<meta content="#fffdf8" name="theme-color" />
 		<meta content={schema ? "article" : "website"} property="og:type" />
 		<meta content="Goldberg snarks" property="og:site_name" />
 		<meta content={title} property="og:title" />
@@ -55,21 +46,17 @@ const pageUrl = new URL(getPath(Astro.url), Astro.site);
 		<meta content={image.alt} property="og:image:alt" />
 		<meta content="summary_large_image" name="twitter:card" />
 		<Font
-			cssVariable="--fontDisplay"
-			preload={[{ style: "normal", subset: "latin" }]}
-		/>
-		<Font
 			cssVariable="--fontText"
-			preload={[{ style: "normal", subset: "latin" }]}
+			preload={[
+				{ style: "normal", subset: "latin", weight: 400 },
+				{ style: "italic", subset: "latin", weight: 400 },
+			]}
 		/>
-		<Font cssVariable="--fontLabel" />
 		<script is:inline>
 			// Before first paint, so as to not flash the other theme
 			try {
-				const theme = localStorage.getItem("theme");
-
-				if (theme === "dark" || theme === "light") {
-					document.documentElement.dataset.theme = theme;
+				if (localStorage.getItem("theme") === "dark") {
+					document.documentElement.dataset.theme = "dark";
 				}
 			} catch {
 				// Browsers may block storage
@@ -114,7 +101,7 @@ const pageUrl = new URL(getPath(Astro.url), Astro.site);
 	}
 
 	.skip {
-		background: var(--colorRaised);
+		background: var(--colorPaper);
 		left: 1rem;
 		padding: 0.5rem 1rem;
 		position: absolute;

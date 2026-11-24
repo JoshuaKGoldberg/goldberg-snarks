@@ -3,14 +3,12 @@ import type { Graph } from "~/graphs/types.ts";
 
 import { stub } from "~/graphs/createBlockChain.ts";
 import {
-	drawEdge,
 	drawEdgesByClass,
 	getCroppedViewBox,
 	getRingViewBox,
 	getVertexRadius,
 	locate,
 } from "~/graphs/draw.ts";
-import { getDistances, getNeighbors } from "~/graphs/measure.ts";
 
 interface Props {
 	/** Whether the graph is of a shape other than a ring around its center. */
@@ -20,9 +18,6 @@ interface Props {
 	edgeClass?: (index: number) => string;
 
 	graph: Graph;
-
-	/** Whether edges draw themselves in, outward from the center. */
-	grows?: boolean;
 
 	/** What the drawing shows, or nothing if what's beside it already says. */
 	label?: string | undefined;
@@ -45,7 +40,6 @@ const {
 	cropped,
 	edgeClass = () => "plain",
 	graph,
-	grows,
 	label,
 	names,
 	nameSize = 9,
@@ -53,7 +47,6 @@ const {
 	vertexClass,
 } = Astro.props;
 
-const distances = grows ? getDistances(getNeighbors(graph), 0) : [];
 const dots = new Map<string, string>();
 
 // Dots are zero-length lines with round ends, which makes for much less markup
@@ -92,25 +85,16 @@ const dotSize = (getVertexRadius(graph) * 2).toFixed(1);
 ---
 
 <svg
-	class:list={["graph", grows && "grows"]}
+	class="graph"
 	style={`--dot: ${dotSize}px; --name: ${nameSize.toString()}px`}
 	viewBox={
 		cropped ? getCroppedViewBox(graph, padding) : getRingViewBox(padding)
 	}
 	{...accessibility}
 >
-	{grows
-		? graph.edges.map(({ from, to }, index) => (
-				<path
-					class={edgeClass(index)}
-					d={drawEdge(graph, index)}
-					pathLength="1"
-					style={`--step: ${Math.min(distances[from], distances[to]).toString()}`}
-				/>
-			))
-		: drawEdgesByClass(graph, edgeClass).map(([name, path]) => (
-				<path class={name} d={path} />
-			))}
+	{drawEdgesByClass(graph, edgeClass).map(([name, path]) => (
+		<path class={name} d={path} />
+	))}
 	{[...dots].map(([name, path]) => (
 		<path class:list={["dots", name]} d={path} />
 	))}
@@ -124,13 +108,13 @@ const dotSize = (getVertexRadius(graph) * 2).toFixed(1);
 
 <style>
 	.graph .dots {
-		stroke: var(--colorForegroundExtra);
+		stroke: var(--colorInk);
 		stroke-width: var(--dot);
 		vector-effect: none;
 	}
 
 	.graph .dots.faint {
-		stroke: var(--colorFaint);
+		stroke: var(--colorInkFaint);
 	}
 
 	text {
@@ -138,69 +122,11 @@ const dotSize = (getVertexRadius(graph) * 2).toFixed(1);
 		font-family: var(--fontText);
 		font-size: var(--name);
 		font-style: italic;
-		font-weight: 450;
 		text-anchor: middle;
 	}
 
 	tspan {
 		font-size: 0.7em;
 		font-style: normal;
-	}
-
-	/* Dashes are only measured correctly in strokes that scale */
-	.grows path:not(.dots) {
-		stroke-width: 1.1px;
-		vector-effect: none;
-	}
-
-	.grows path.spoke {
-		stroke-width: 0.8px;
-	}
-
-	.grows path.spare {
-		stroke-width: 2.8px;
-	}
-
-	.grows path.blue {
-		stroke-dasharray: 0.16 0.09;
-	}
-
-	.grows path.purple {
-		stroke-dasharray: 0.001 0.08;
-		stroke-width: 1.4px;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		.grows path:not(.dots) {
-			animation: grow 700ms calc(var(--step) * 170ms) ease-in-out backwards;
-		}
-
-		.grows .dots {
-			animation: appear 1.6s ease-in backwards;
-		}
-	}
-
-	@keyframes appear {
-		from {
-			opacity: 0;
-		}
-	}
-
-	@keyframes grow {
-		from {
-			stroke-dasharray: 1 1;
-			stroke-dashoffset: 1;
-		}
-
-		99% {
-			stroke-dasharray: 1 1;
-			stroke-dashoffset: 0;
-		}
-	}
-
-	@media print {
-		.grows path {
-			animation: none !important;
-		}
 	}
 </style>

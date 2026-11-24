@@ -24,10 +24,10 @@ const names = [...colorNames, ...(Astro.props.spare ? ["spare"] : [])];
 	ul {
 		display: flex;
 		flex-wrap: wrap;
-		font-family: var(--fontLabel);
-		font-size: var(--fontSizeSmall);
-		gap: 0.25rem 1.25rem;
+		font-size: 0.875rem;
+		gap: 0.1rem 1rem;
 		justify-content: center;
+		line-height: 1.4;
 		list-style: none;
 		padding: 0;
 	}
@@ -35,7 +35,7 @@ const names = [...colorNames, ...(Astro.props.spare ? ["spare"] : [])];
 	li {
 		align-items: center;
 		display: flex;
-		gap: 0.5rem;
+		gap: 0.4rem;
 	}
 
 	.graph {

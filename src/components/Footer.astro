@@ -4,7 +4,7 @@ import { source } from "~/constants.ts";
 
 <footer>
 	<p>
-		Made in Boston by{" "}
+		Compiled in Boston by{" "}
 		<a href="https://www.joshuakgoldberg.com">Josh Goldberg</a>. Its drawings,
 		and most of its numbers, are computed by <a href={source}>its source</a>.
 	</p>
@@ -12,13 +12,12 @@ import { source } from "~/constants.ts";
 
 <style>
 	footer {
-		color: var(--colorMuted);
-		font-family: var(--fontLabel);
+		border-top: 1px solid var(--colorRule);
+		color: var(--colorInkMuted);
 		font-size: var(--fontSizeSmall);
-		letter-spacing: 0.03em;
-		line-height: 2;
-		margin-top: 6rem;
-		padding: 0 var(--space) 4rem;
+		font-style: italic;
+		margin-top: 4rem;
+		padding: 1.25rem var(--space) 2.5rem;
 		text-align: center;
 		text-wrap: balance;
 	}

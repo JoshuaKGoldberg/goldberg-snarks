@@ -1,7 +1,7 @@
 ---
 /** Words that are colored as whatever they're describing is in drawings. */
 interface Props {
-	is: "blue" | "green" | "hub" | "middle" | "outer" | "purple" | "spare";
+	is: "blue" | "gold" | "hub" | "middle" | "outer" | "spare";
 }
 ---
 
@@ -11,38 +11,33 @@ interface Props {
 
 <style>
 	.term {
-		border-bottom: 3px solid var(--line);
-		font-weight: 500;
-		padding-bottom: 0.02em;
-	}
-
-	.green,
-	.middle {
-		--line: var(--jade);
+		border-bottom: 2px solid var(--line);
 	}
 
 	.blue,
 	.outer {
-		--line: var(--cornflower);
+		--line: var(--colorBlue);
+	}
+
+	.gold,
+	.middle {
+		--line: var(--colorGold);
 	}
 
 	.blue {
 		border-bottom-style: dashed;
 	}
 
-	.purple {
-		--line: var(--wisteria);
-
-		border-bottom-style: dotted;
+	.gold {
+		border-bottom: 3px dotted var(--line);
 	}
 
-	.hub {
-		--line: var(--rose);
+	.hub,
+	.spare {
+		--line: var(--colorRed);
 	}
 
 	.spare {
-		--line: var(--spare);
-
-		border-bottom-width: 5px;
+		border-bottom-width: 4px;
 	}
 </style>

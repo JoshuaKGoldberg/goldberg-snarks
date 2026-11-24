@@ -39,7 +39,7 @@ export const getStaticPaths = (async () => {
 
 const fontFile = fileURLToPath(
 	import.meta
-		.resolve("@fontsource/redaction/files/redaction-latin-400-normal.woff"),
+		.resolve("@fontsource/libertinus-serif/files/libertinus-serif-latin-400-normal.woff"),
 );
 
 /** Draws a snark and its name, as an image for links to its page. */
@@ -63,7 +63,7 @@ export const GET: APIRoute<Props> = async ({ props: { blocks, lines } }) => {
 			);
 		})
 		.join("");
-	const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-231 -121 462 242" width="1200" height="630"><rect x="-231" y="-121" width="462" height="242" fill="#ecf4f9"/><g fill="#142842">${text}</g><g transform="translate(112)"><circle r="108" fill="#fff"/><g transform="scale(0.9)">${toSvgContents(blocks)}</g></g></svg>`;
+	const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-231 -121 462 242" width="1200" height="630"><rect x="-231" y="-121" width="462" height="242" fill="#fffdf8"/><rect x="-231" y="-121" width="462" height="5" fill="#9c1c2b"/><g fill="#1d1a16">${text}</g><g transform="translate(112)"><g transform="scale(0.9)">${toSvgContents(blocks)}</g></g></svg>`;
 
 	return new Response(
 		new Uint8Array(

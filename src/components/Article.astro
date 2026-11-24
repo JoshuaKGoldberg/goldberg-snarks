@@ -10,15 +10,21 @@ interface Props {
 const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 ---
 
-<div class="article">
-	<nav aria-label="On this page" class="beside" data-contents>
+<div class="page">
+	<nav
+		aria-label="On this page"
+		class="beside"
+		data-contents
+		hidden={!headings.length}
+	>
 		<Contents headings={headings} />
 	</nav>
-	<details class="above">
-		<summary>On this page</summary>
-		<Contents headings={headings} />
-	</details>
 	<article>
+		<slot name="top" />
+		<details class="above" hidden={!headings.length}>
+			<summary>Contents</summary>
+			<Contents headings={headings} />
+		</details>
 		<slot />
 	</article>
 </div>
@@ -30,95 +36,157 @@ const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 </script>
 
 <style>
-	.article {
+	.page {
+		--outset: 0px;
+
 		margin-inline: auto;
 		max-width: var(--widthText);
+		padding-top: 2rem;
 	}
 
 	.beside {
 		display: none;
 	}
 
+	[hidden] {
+		display: none !important;
+	}
+
 	.above {
-		margin-bottom: 3rem;
+		border-block: 1px solid var(--colorRule);
+		margin-block: 1.5rem;
+		padding-block: 0.4rem;
 	}
 
 	summary {
-		cursor: pointer;
-		font-family: var(--fontLabel);
-		font-size: var(--fontSizeSmall);
-		padding-block: 0.6rem;
+		font-style: italic;
 	}
 
 	article {
-		max-width: var(--widthText);
+		counter-reset: figure section;
 		min-width: 0;
 	}
 
+	/* Rubricated, as chapters' numbers were */
 	article :global(h2) {
-		margin-block: var(--spaceSection) 1.25rem;
+		counter-increment: section;
+		margin-block: 2.25rem 0.6rem;
 	}
 
-	article :global(h2:first-child) {
-		margin-top: 0;
+	article :global(h2)::before {
+		color: var(--colorRed);
+		content: counter(section);
+		margin-right: 0.6em;
+	}
+
+	/* Wide enough to cover the column beside the text */
+	article :global(.wide) {
+		clear: both;
+		margin-right: calc(-1 * var(--outset));
 	}
 
 	article :global(h3) {
-		margin: 2.5rem 0 0.75rem;
+		margin: 1.75rem 0 0.4rem;
 	}
 
-	article > :global(:is(p, ul) + :is(p, ul)) {
-		margin-top: 1.1rem;
+	article > :global(:is(p, ul, ol):not([class])) {
+		margin-top: 0.7rem;
+	}
+
+	article > :global(:is(h2, h3) + p) {
+		margin-top: 0;
+	}
+
+	/* Side by side, whenever there's room */
+	article :global(.pair) {
+		column-gap: 1.5rem;
+		display: grid;
+	}
+
+	article :global(.pair figure) {
+		align-content: start;
+	}
+
+	@media (min-width: 40rem) {
+		article :global(.pair) {
+			grid-template-columns: 1fr 1fr;
+		}
 	}
 
 	article > :global(ul:not([class])) {
 		display: grid;
-		gap: 0.6rem;
-		padding-left: 1.25rem;
+		gap: 0.4rem;
+		padding-left: 1.2rem;
+	}
+
+	article > :global(ul:not([class])) :global(::marker) {
+		color: var(--colorRed);
 	}
 
 	article :global(.table) {
-		margin-block: 1.5rem;
+		margin-block: 1.1rem;
 		overflow-x: auto;
 	}
 
 	article :global(table) {
+		border-bottom: 1px solid var(--colorInk);
 		border-collapse: collapse;
-		font-size: 0.9em;
-		line-height: 1.4;
+		border-top: 1px solid var(--colorInk);
+		font-size: 0.9375rem;
+		font-feature-settings: "lnum", "tnum";
+		line-height: 1.35;
 		width: 100%;
 	}
 
 	article :global(:is(td, th)) {
 		border-bottom: 1px solid var(--colorRule);
 		font-weight: inherit;
-		padding: 0.6rem 1rem 0.6rem 0;
+		padding: 0.32rem 0.9rem 0.32rem 0;
 		text-align: left;
 		text-wrap: pretty;
 		vertical-align: baseline;
 	}
 
+	article :global(tbody tr:last-child > *) {
+		border-bottom: 0;
+	}
+
 	article :global(thead th) {
-		color: var(--colorMuted);
-		font-family: var(--fontLabel);
-		font-size: var(--fontSizeSmall);
+		border-bottom: 1px solid var(--colorInk);
+		color: var(--colorRed);
+		font-style: italic;
+		vertical-align: bottom;
 	}
 
-	article :global(dt) {
-		color: var(--colorForegroundExtra);
-		font-weight: 600;
+	article > :global(dl) {
+		display: grid;
+		gap: 0.55rem;
 	}
 
-	article :global(dd) {
-		margin: 0.35rem 0 1.25rem;
+	article > :global(dl) :global(dt) {
+		font-weight: 700;
 	}
 
+	article > :global(dl) :global(dd) {
+		margin: 0 0 0.25rem 1.2rem;
+	}
+
+	/* Room for a column of notes and small figures beside the text */
 	@media (min-width: 60rem) {
-		.article {
+		.page {
+			--outset: calc(var(--widthMargin) + var(--gap));
+
+			max-width: calc(var(--widthText) + var(--outset));
+			padding-right: var(--outset);
+		}
+	}
+
+	@media (min-width: 75rem) {
+		.page {
+			column-gap: var(--gap);
 			display: grid;
-			gap: clamp(3rem, 6vw, 5rem);
-			grid-template-columns: 11rem minmax(0, var(--widthText));
-			max-width: none;
+			grid-template-columns: var(--widthContents) minmax(0, 1fr);
+			max-width: var(--widthFull);
 		}
 
 		.beside {
@@ -128,7 +196,7 @@ const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 			overflow-y: auto;
 			padding-block: 0.5rem 2rem;
 			position: sticky;
-			top: 1.5rem;
+			top: 1rem;
 		}
 
 		.above {

@@ -1,0 +1,34 @@
+---
+import WithSnarks from "./WithSnarks.astro";
+
+interface Props {
+	summary: string;
+}
+---
+
+<div class="heading">
+	<h1>
+		<slot />
+	</h1>
+	<p>
+		<WithSnarks text={Astro.props.summary} />
+	</p>
+</div>
+
+<style>
+	.heading {
+		border-bottom: 1px solid var(--colorInk);
+		margin-bottom: 1rem;
+		margin-right: calc(-1 * var(--outset));
+		padding-bottom: 0.9rem;
+	}
+
+	.heading p {
+		color: var(--colorInkMuted);
+		font-size: var(--fontSizeSubheading);
+		font-style: italic;
+		line-height: 1.35;
+		margin-top: 0.3rem;
+		text-wrap: balance;
+	}
+</style>

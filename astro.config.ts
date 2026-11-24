@@ -10,31 +10,13 @@ export default defineConfig({
 
 	fonts: [
 		{
-			cssVariable: "--fontDisplay",
-			fallbacks: ["serif"],
-			name: "Redaction",
-			provider: fontProviders.google(),
-			styles: ["normal"],
-			subsets: ["latin"],
-			weights: [400],
-		},
-		{
 			cssVariable: "--fontText",
 			fallbacks: ["serif"],
-			name: "Newsreader",
+			name: "Libertinus Serif",
 			provider: fontProviders.google(),
 			styles: ["normal", "italic"],
 			subsets: ["latin"],
-			weights: ["300 600"],
-		},
-		{
-			cssVariable: "--fontLabel",
-			fallbacks: ["sans-serif"],
-			name: "Hedvig Letters Sans",
-			provider: fontProviders.google(),
-			styles: ["normal"],
-			subsets: ["latin"],
-			weights: [400],
+			weights: [400, 700],
 		},
 	],
 	integrations: [mdx(), sitemap()],

@@ -1,8 +1,11 @@
 ---
 import Article from "~/components/Article.astro";
 import Code from "~/components/Code.astro";
-import Hero from "~/components/Hero.astro";
+import FactBox from "~/components/FactBox.astro";
+import Gallery from "~/components/Gallery.astro";
+import Heading from "~/components/Heading.astro";
 import References from "~/components/References.astro";
+import Snark from "~/components/Snark.astro";
 import { site } from "~/constants.ts";
 import { Content, getHeadings } from "~/content/home.mdx";
 import BaseLayout from "~/layouts/BaseLayout.astro";
@@ -28,21 +31,99 @@ const citation = `@misc{goldbergsnarks,
 	}}
 	title="Goldberg snarks, explained"
 >
-	<Hero blocks={5} colored>
-		<h1>Goldberg snarks</h1>
-		<p>
-			Link an odd number of identical pieces in a ring, and you get a graph
-			whose edges can’t be colored with three colors. Nobody has to take that on
-			faith: here’s what they are, how they’re built, and why it’s true.
-		</p>
-	</Hero>
-
 	<Article
 		headings={[
 			...getHeadings(),
 			{ depth: 2, slug: "references", text: "References" },
 		]}
 	>
+		<Fragment slot="top">
+			<Heading summary="An infinite family of graphs whose edges can’t be colored with three colors, for a reason that fits on a page.">
+				Goldberg snarks
+			</Heading>
+			<div class="lead">
+				<FactBox blocks={5} kind="Goldberg snark">
+					<Fragment slot="caption">
+						The smallest one, <Snark n={5} />
+					</Fragment>
+					<tr>
+						<th scope="row">Named for</th>
+						<td>Mark K. Goldberg</td>
+					</tr>
+					<tr>
+						<th scope="row">Published</th>
+						<td>1981</td>
+					</tr>
+					<tr>
+						<th scope="row">Members</th>
+						<td>
+							Odd <i>k</i> ≥ 5 blocks
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Vertices</th>
+						<td>
+							8<i>k</i>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Edges</th>
+						<td>
+							12<i>k</i>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Degree</th>
+						<td>3 (cubic)</td>
+					</tr>
+					<tr>
+						<th scope="row">Chromatic index</th>
+						<td>4 (class 2)</td>
+					</tr>
+					<tr>
+						<th scope="row">Resistance</th>
+						<td>2</td>
+					</tr>
+					<tr>
+						<th scope="row">Girth</th>
+						<td>5</td>
+					</tr>
+					<tr>
+						<th scope="row">Symmetries</th>
+						<td>
+							4<i>k</i>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Hamiltonian</th>
+						<td>No</td>
+					</tr>
+					<tr>
+						<th scope="row">Planar</th>
+						<td>No</td>
+					</tr>
+					<tr>
+						<th scope="row">Subject (MSC)</th>
+						<td>05C15</td>
+					</tr>
+				</FactBox>
+				<p>
+					Take any odd number of copies of one small piece, five or more, and
+					link them in a ring. The graph they make is a{" "}
+					<strong>Goldberg snark</strong>. Three lines meet at each of its dots,
+					and yet its lines can’t be colored with only three colors such that
+					those meeting are always different.
+				</p>
+				<p>
+					Graphs like that are rare, and where several of the hardest problems
+					in graph theory live. This page defines Goldberg snarks, builds them,
+					and proves that they’re what they’re said to be, assuming nothing but
+					a willingness to count. Each of the first few has a page of its own:
+				</p>
+				<Gallery />
+			</div>
+		</Fragment>
+
 		<Content />
 
 		<h2 id="references">References</h2>
@@ -52,3 +133,20 @@ const citation = `@misc{goldbergsnarks,
 		<Code code={citation} />
 	</Article>
 </BaseLayout>
+
+<style>
+	.lead > :global(p + p) {
+		margin-top: 0.7rem;
+	}
+
+	@media (max-width: 59.99rem) {
+		.lead {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.lead > :global(:is(.fact-box, ul)) {
+			order: 1;
+		}
+	}
+</style>

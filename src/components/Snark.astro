@@ -17,12 +17,6 @@ const { n } = Astro.props;
 		white-space: nowrap;
 	}
 
-	/* The display font has no italics of its own */
-	:is(h1, h2, h3) i {
-		font-family: var(--fontText);
-		font-weight: 400;
-	}
-
 	sub {
 		font-feature-settings: "lnum";
 		margin-left: 0.05em;

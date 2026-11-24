@@ -9,35 +9,39 @@ interface Props {
 const { id, kind, name, number } = Astro.props;
 ---
 
-<div class="statement" id={id}>
+<div class:list={["statement", kind.toLowerCase()]} id={id}>
 	<p class="head">
 		<strong>
 			{kind} {number}
 		</strong>
-		{name && ` (${name})`}
+		{name && ` (${name})`}.
 	</p>
 	<slot />
 </div>
 
 <style>
 	.statement {
-		background: var(--colorRaised);
-		border-radius: 0.5rem;
-		box-shadow: inset 0 0 0 1px var(--colorRule);
-		margin-block: 2rem;
-		padding: 1.25rem 1.5rem 1.4rem;
+		background: var(--colorPaperShaded);
+		border-left: 3px solid var(--colorRed);
+		margin-block: 1.1rem;
+		padding: 0.6rem 1rem 0.7rem;
 	}
 
-	.head {
-		color: var(--colorForegroundExtra);
-		margin-bottom: 0.4rem;
+	.statement:not(.definition) > :global(:not(.head)) {
+		font-style: italic;
 	}
 
-	.statement > :global(* + :not(.formulas + .formulas, .head + p)) {
-		margin-top: 0.75rem;
+	/* Emphasis within what's already italic */
+	.statement:not(.definition) > :global(:not(.head)) :global(em) {
+		font-style: normal;
 	}
 
 	strong {
-		font-weight: 600;
+		color: var(--colorRed);
+		font-weight: 700;
+	}
+
+	.statement > :global(* + :not(.formulas + .formulas, .head + p)) {
+		margin-top: 0.4rem;
 	}
 </style>

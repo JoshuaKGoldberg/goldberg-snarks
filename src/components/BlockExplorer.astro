@@ -10,7 +10,7 @@ const graph = createGoldbergGraph(blocks);
 const coloring = colorEdges(graph);
 ---
 
-<block-explorer>
+<block-explorer class="wide">
 	<div class="picture">
 		<Drawing
 			edgeClass={(index) => getColorClass(coloring?.[index])}
@@ -42,18 +42,19 @@ const coloring = colorEdges(graph);
 
 <style>
 	block-explorer {
-		background: var(--colorRaised);
-		border-radius: 0.5rem;
-		box-shadow: inset 0 0 0 1px var(--colorRule);
+		align-items: center;
+		background: var(--colorPaperShaded);
+		border: 1px solid var(--colorRule);
+		border-top: 3px solid var(--colorRed);
 		display: grid;
-		gap: 1.5rem;
-		margin-block: 2rem;
-		padding: clamp(1rem, 4vw, 2rem);
+		gap: 1rem 2rem;
+		margin-block: 1.25rem;
+		padding: 1rem;
 	}
 
 	.picture {
 		margin-inline: auto;
-		max-width: 26rem;
+		max-width: 27rem;
 		width: 100%;
 	}
 
@@ -69,21 +70,15 @@ const coloring = colorEdges(graph);
 
 	.slider {
 		display: grid;
-		gap: 0.75rem;
-		margin-inline: auto;
-		max-width: 26rem;
-		text-align: center;
-		width: 100%;
+		gap: 0.6rem;
 	}
 
 	label {
-		color: var(--colorMuted);
-		font-family: var(--fontLabel);
-		font-size: var(--fontSizeSmall);
+		font-style: italic;
 	}
 
 	input {
-		accent-color: var(--colorEmphasized);
+		accent-color: var(--colorRed);
 		cursor: pointer;
 		height: 1.75rem;
 		width: 100%;
@@ -92,10 +87,18 @@ const coloring = colorEdges(graph);
 	output {
 		display: grid;
 		line-height: 1.4;
-		text-wrap: balance;
+		min-height: 4.2em;
 	}
 
 	output :global(strong) {
-		font-weight: 600;
+		font-size: var(--fontSizeHeading);
+		font-weight: 400;
+	}
+
+	@media (min-width: 60rem) {
+		block-explorer {
+			grid-template-columns: minmax(0, 1fr) 16rem;
+			padding: 1.25rem;
+		}
 	}
 </style>

@@ -4,7 +4,7 @@ interface Props {
 }
 ---
 
-<ul>
+<ol>
 	{Astro.props.headings.map(({ slug, text }) => (
 		<li>
 			<a class="link" href={`#${slug}`}>
@@ -12,30 +12,42 @@ interface Props {
 			</a>
 		</li>
 	))}
-</ul>
+</ol>
 
 <style>
-	ul {
+	ol {
+		counter-reset: link;
 		list-style: none;
 		padding: 0;
 	}
 
-	.link {
-		color: var(--colorMuted);
-		display: block;
-		font-family: var(--fontLabel);
-		font-size: var(--fontSizeSmall);
-		line-height: 1.35;
-		padding-block: 0.4rem;
+	li {
+		counter-increment: link;
 	}
 
-	.link:hover {
-		color: var(--colorEmphasized);
+	.link {
+		color: var(--colorInkMuted);
+		display: grid;
+		font-size: 0.9375rem;
+		gap: 0.6em;
+		grid-template-columns: 1.1em 1fr;
+		line-height: 1.25;
+		padding-block: 0.3rem;
+		text-decoration: none;
+	}
+
+	.link::before {
+		color: var(--colorRed);
+		content: counter(link);
+		text-align: right;
+	}
+
+	.link:hover,
+	.link:global([aria-current]) {
+		color: var(--colorRed);
 	}
 
 	.link:global([aria-current]) {
-		color: var(--colorForegroundExtra);
-		text-decoration: underline wavy var(--squiggleMiddle) 1px;
-		text-underline-offset: 0.35em;
+		font-style: italic;
 	}
 </style>

@@ -21,22 +21,23 @@ const sorted = entries.sort(([, a], [, b]) =>
 
 <style>
 	ol {
-		display: grid;
-		font-size: 0.9em;
-		gap: 0.75rem;
-		line-height: 1.5;
+		font-size: 0.9375rem;
+		line-height: 1.4;
 		list-style: none;
 		padding: 0;
 	}
 
 	li {
-		border-radius: 3px;
+		padding-block: 0.22rem;
 		padding-left: 1.5rem;
 		text-indent: -1.5rem;
 	}
 
 	li:target {
-		background: var(--colorRaised);
-		box-shadow: 0 0 0 0.5rem var(--colorRaised);
+		background: var(--colorPaperShaded);
+	}
+
+	a {
+		font-style: italic;
 	}
 </style>

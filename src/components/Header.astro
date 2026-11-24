@@ -10,101 +10,102 @@ const snarks = await getSnarks();
 ---
 
 <header>
-	<a class="home" href="/" aria-current={path === "/" ? "page" : undefined}>
-		Goldberg snarks
-	</a>
-	<nav aria-label="Snarks">
-		<ul>
-			{snarks.map(({ blocks, href }) => (
-				<li>
-					<a
-						aria-current={path === href ? "page" : undefined}
-						class="snark-link"
-						href={href}
-					>
-						<Snark n={blocks} />
-					</a>
-				</li>
-			))}
-		</ul>
-	</nav>
-	<ThemeToggle />
+	<div class="inside">
+		<a aria-current={path === "/" ? "page" : undefined} class="home" href="/">
+			Goldberg Snarks
+		</a>
+		<nav aria-label="Snarks">
+			<ul>
+				{snarks.map(({ blocks, href }) => (
+					<li>
+						<a
+							aria-current={path === href ? "page" : undefined}
+							class="snark-link"
+							href={href}
+						>
+							<Snark n={blocks} />
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+		<ThemeToggle />
+	</div>
 </header>
 
 <style>
+	/* A double rule, as around the title pages of old books */
 	header {
-		--widthHeader: var(--widthText);
+		border-bottom: 1px solid var(--colorRule);
+		border-top: 4px solid var(--colorRed);
+	}
 
+	.inside {
 		align-items: center;
-		column-gap: 2rem;
-		display: grid;
-		grid-template: "home nav toggle" auto / 1fr auto auto;
+		column-gap: 1.5rem;
+		display: flex;
+		flex-wrap: wrap;
 		margin-inline: auto;
-		max-width: calc(var(--widthHeader) + 2 * var(--space));
-		padding: 1.5rem var(--space);
+		max-width: calc(var(--widthFull) + 2 * var(--space));
+		padding: 0.35rem var(--space);
+	}
+
+	.home,
+	.snark-link {
+		color: var(--colorInk);
+		line-height: 2.25rem;
+		text-decoration: none;
 	}
 
 	.home {
-		font-size: 1.25rem;
-		font-weight: 600;
-		grid-area: home;
-		justify-self: start;
-		line-height: 2rem;
-	}
-
-	nav {
-		grid-area: nav;
+		font-size: 1.1875rem;
+		font-style: italic;
+		margin-right: auto;
 	}
 
 	ul {
 		display: flex;
-		flex-wrap: wrap;
 		list-style: none;
 		padding: 0;
 	}
 
 	.snark-link {
+		border-bottom: 2px solid transparent;
 		display: block;
-		font-size: 1.125rem;
-		font-weight: 500;
-		line-height: 2rem;
 		min-width: 2.5rem;
-		padding: 0 0.4rem;
+		padding: 0 0.45rem;
 		text-align: center;
 	}
 
+	.home:hover,
+	.snark-link:hover,
 	[aria-current="page"] {
-		color: var(--colorEmphasized);
-		text-decoration: underline wavy currentcolor 1px;
-		text-underline-offset: 0.35em;
+		color: var(--colorRed);
 	}
 
-	@media (min-width: 60rem) {
-		header {
-			--widthHeader: var(--widthFull);
+	.snark-link[aria-current="page"] {
+		border-color: var(--colorRed);
+	}
+
+	@media (max-width: 40rem) {
+		nav {
+			order: 1;
+			width: 100%;
+		}
+
+		ul {
+			justify-content: space-between;
+			margin-inline: -0.45rem;
+		}
+
+		.snark-link {
+			min-width: 0;
 		}
 	}
 
 	@media print {
 		nav {
 			display: none;
-		}
-	}
-
-	@media (max-width: 47rem) {
-		header {
-			grid-template: "home toggle" auto "nav nav" auto / 1fr auto;
-			row-gap: 0.25rem;
-		}
-
-		ul {
-			justify-content: space-between;
-			margin-inline: -0.4rem;
-		}
-
-		.snark-link {
-			line-height: 2.5rem;
-			min-width: 0;
 		}
 	}
 </style>

@@ -4,12 +4,11 @@
 
 <style>
 	.proof {
-		display: flow-root;
-		margin-block: 1.5rem 2rem;
+		margin-block: 1rem 1.25rem;
 	}
 
 	.proof > :global(p + p) {
-		margin-top: 0.75rem;
+		margin-top: 0.6rem;
 	}
 
 	.proof > :global(p:first-child)::before {
@@ -18,8 +17,7 @@
 	}
 
 	.proof > :global(p:last-child)::after {
-		content: "∎" / "";
-		float: right;
-		margin-left: 1rem;
+		color: var(--colorRed);
+		content: "\2003\25A0" / "";
 	}
 </style>

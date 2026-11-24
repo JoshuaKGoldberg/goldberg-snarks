@@ -1,5 +1,7 @@
 ---
-import Hero from "~/components/Hero.astro";
+import Article from "~/components/Article.astro";
+import Gallery from "~/components/Gallery.astro";
+import Heading from "~/components/Heading.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 ---
 
@@ -11,12 +13,12 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 	}}
 	title="Page not found: Goldberg snarks"
 >
-	<Hero blocks={3}>
-		<h1>No such snark</h1>
+	<Article headings={[]}>
+		<Heading summary="There’s no page at this address.">No such snark</Heading>
 		<p>
-			There’s no page at this address.{" "}
-			<a href="/#each-snark">See the snarks that do have pages</a>, or{" "}
+			These ones do have pages. You can also{" "}
 			<a href="/">start from the beginning</a>.
 		</p>
-	</Hero>
+		<Gallery />
+	</Article>
 </BaseLayout>

@@ -1,5 +1,11 @@
 {
-	"dictionaries": ["css", "html", "node", "npm", "typescript"],
+	"dictionaries": [
+		"css",
+		"html",
+		"node",
+		"npm",
+		"typescript"
+	],
 	"ignorePaths": [
 		".all-contributorsrc",
 		".astro",
@@ -21,6 +27,7 @@
 		"Ghebleh",
 		"Hedvig",
 		"Jing",
+		"Libertinus",
 		"Loupekine",
 		"MatteoGabriele",
 		"Mello",
@@ -45,9 +52,11 @@
 		"goldbergsnarks",
 		"gstub",
 		"hstub",
+		"libertinus",
 		"lnum",
 		"multigraphs",
 		"nauty",
+		"noninteractive",
 		"octoguide",
 		"peakoss",
 		"pentadecagon",

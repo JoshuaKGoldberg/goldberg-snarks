@@ -3,10 +3,10 @@ import { drawEdgesByClass, getVertexRadius, locate } from "./draw.ts";
 import { getPartClass } from "./edgeClasses.ts";
 
 const colors: Record<string, string> = {
-	hub: "#b52e63",
-	middle: "#0d7d5b",
-	outer: "#1b6bb5",
-	spoke: "#4d5b7b",
+	hub: "#9c1c2b",
+	middle: "#a8720a",
+	outer: "#1c4f91",
+	spoke: "#1d1a16",
 };
 
 /** Draws a Goldberg graph as an SVG that stands alone. */
@@ -28,5 +28,5 @@ export function toSvgContents(blocks: number) {
 		)
 		.join("");
 
-	return `<g fill="none" stroke-linecap="round" stroke-width="0.9">${edges}</g><g fill="#142842">${vertices}</g>`;
+	return `<g fill="none" stroke-linecap="round" stroke-width="0.9">${edges}</g><g fill="#1d1a16">${vertices}</g>`;
 }

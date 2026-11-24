@@ -19,88 +19,66 @@
 
 @layer base {
 	:root {
-		color-scheme: light dark;
+		color-scheme: light;
 
-		--colorBackground: light-dark(#ecf4f9, #0b1220);
-		--colorEmphasized: light-dark(#0a58aa, #77bbff);
-		--colorFaint: light-dark(#7d8aa6, #5f7190);
-		--colorForeground: light-dark(#283556, #dae7f3);
-		--colorForegroundExtra: light-dark(#142842, #f1f6fb);
-		--colorMuted: light-dark(#4d5b7b, #93a5bf);
-		--colorRaised: light-dark(#f8fbfd, #101a2c);
-		--colorRule: light-dark(#c5d8e6, #22344f);
+		--colorPaper: light-dark(#fffdf8, #191613);
+		--colorPaperShaded: light-dark(#f8f3e8, #221e19);
+		--colorInk: light-dark(#1d1a16, #eae3d5);
+		--colorInkMuted: light-dark(#5c554a, #b3a996);
+		--colorInkFaint: light-dark(#8d8576, #7f7666);
+		--colorRule: light-dark(#d8cfbd, #453d33);
+		--colorRed: light-dark(#9c1c2b, #f0838a);
 
-		/* Low to high, as in auroras */
-		--jade: light-dark(#0d7d5b, #45e0a4);
-		--cornflower: light-dark(#1b6bb5, #56bdff);
-		--wisteria: light-dark(#7a3fb5, #bd91ff);
-		--rose: light-dark(#b52e63, #ff7fab);
-
-		/* For edges that three colors aren't enough for, and nothing else */
-		--spare: light-dark(#d1006f, #ff4fa3);
-
-		--squiggleStart: light-dark(hsl(230 64% 30% / 74%), hsl(230 44% 74% / 64%));
-		--squiggleMiddle: light-dark(
-			hsl(170 64% 30% / 74%),
-			hsl(170 44% 74% / 64%)
-		);
-		--squiggleEnd: light-dark(hsl(266 64% 30% / 74%), hsl(266 44% 74% / 64%));
+		/* With red, the inks that old books were printed in */
+		--colorBlue: light-dark(#1c4f91, #86b4ee);
+		--colorGold: light-dark(#a8720a, #dcab4c);
 
 		--fontSizeSmall: 0.875rem;
-		--fontSizeMedium: 1rem;
-		--fontSizeBody: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
-		--fontSizeSubtitle: clamp(1.35rem, 1.2rem + 0.9vw, 1.7rem);
-		--fontSizeHeading: clamp(1.75rem, 1.5rem + 1.3vw, 2.25rem);
-		--fontSizeTitle: clamp(2.75rem, 2rem + 4vw, 4.75rem);
+		--fontSizeBody: 1.0625rem;
+		--fontSizeSubheading: 1.1875rem;
+		--fontSizeHeading: 1.4375rem;
+		--fontSizeTitle: clamp(2rem, 1.6rem + 2vw, 2.75rem);
 
-		--fontWeightText: 350;
-		--lineHeightBase: 1.3;
-		--lineHeightText: 1.55;
-
+		--gap: 2.75rem;
 		--space: clamp(1rem, 4vw, 2rem);
-		--spaceSection: clamp(4rem, 10vw, 6.5rem);
-		--widthFull: 68rem;
-		--widthText: 42rem;
+		--widthContents: 10.5rem;
+		--widthMargin: 17.5rem;
+		--widthText: 37rem;
+
+		/* All three columns, and the gaps between them */
+		--widthFull: 70.5rem;
 	}
 
 	:root[data-theme="dark"] {
 		color-scheme: dark;
 	}
 
-	:root[data-theme="light"] {
-		color-scheme: light;
-	}
-
 	html {
-		background: var(--colorBackground);
+		background: var(--colorPaper);
 		-webkit-text-size-adjust: 100%;
-		scroll-padding-top: 2rem;
+		scroll-padding-top: 1.5rem;
 	}
 
 	body {
-		color: var(--colorForeground);
+		color: var(--colorInk);
 		font-family: var(--fontText);
-		font-optical-sizing: auto;
+		font-feature-settings: "kern", "liga";
 		font-size: var(--fontSizeBody);
-		font-weight: var(--fontWeightText);
-		line-height: var(--lineHeightText);
+		line-height: 1.5;
 		overflow-wrap: break-word;
 	}
 
 	h1,
 	h2,
 	h3 {
-		color: var(--colorForegroundExtra);
-		font-family: var(--fontDisplay);
 		font-weight: 400;
-		letter-spacing: -0.02em;
-		line-height: 1.1;
+		line-height: 1.2;
 		text-wrap: balance;
 	}
 
 	h1 {
 		font-size: var(--fontSizeTitle);
-		line-height: 1;
+		line-height: 1.1;
 	}
 
 	h2 {
@@ -108,7 +86,8 @@
 	}
 
 	h3 {
-		font-size: var(--fontSizeSubtitle);
+		font-size: var(--fontSizeSubheading);
+		font-style: italic;
 	}
 
 	p,
@@ -117,43 +96,30 @@
 	}
 
 	a {
-		color: var(--colorForegroundExtra);
-		text-decoration: none;
-	}
-
-	/* Wavy and slow to change hue, and still an underline for links of many lines */
-	:where(p, li, dd, figcaption, td) a:not([class]) {
-		text-decoration: underline wavy var(--squiggleMiddle) 1px;
-		text-decoration-skip-ink: none;
-		text-underline-offset: 0.22em;
-
-		&:nth-of-type(3n + 2) {
-			text-decoration-color: var(--squiggleEnd);
-		}
-
-		&:nth-of-type(3n) {
-			text-decoration-color: var(--squiggleStart);
-		}
-
-		&:hover {
-			text-decoration-color: currentcolor;
-		}
+		color: var(--colorRed);
+		text-decoration: underline 1px;
+		text-decoration-color: color-mix(in srgb, currentcolor 45%, transparent);
+		text-underline-offset: 0.17em;
 	}
 
 	a:hover {
-		color: var(--colorEmphasized);
+		text-decoration-color: currentcolor;
+		text-decoration-thickness: 2px;
 	}
 
 	:focus-visible {
-		border-radius: 3px;
-		outline: 2px solid var(--colorEmphasized);
-		outline-offset: 3px;
+		outline: 2px solid var(--colorRed);
+		outline-offset: 2px;
 	}
 
 	sub,
 	sup {
 		font-size: 0.72em;
 		line-height: 0;
+	}
+
+	summary {
+		cursor: pointer;
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
@@ -174,7 +140,7 @@
 		fill: none;
 		stroke: currentcolor;
 		stroke-linecap: round;
-		stroke-width: 1.5px;
+		stroke-width: 1.25px;
 		vector-effect: non-scaling-stroke;
 	}
 
@@ -184,70 +150,67 @@
 
 	/* Places in a graph's structure */
 	.graph .hub {
-		color: var(--rose);
-		stroke-width: 2.25px;
-	}
-
-	.graph .spoke {
-		color: var(--colorMuted);
+		color: var(--colorRed);
+		stroke-width: 2px;
 	}
 
 	.graph .middle {
-		color: var(--jade);
-		stroke-width: 2.25px;
+		color: var(--colorGold);
+		stroke-width: 2px;
 	}
 
 	.graph .outer {
-		color: var(--cornflower);
-		stroke-width: 2.25px;
+		color: var(--colorBlue);
+		stroke-width: 2px;
 	}
 
 	/* Edge colors, which dashes also tell apart */
-	.graph .green {
-		color: var(--jade);
-		stroke-width: 2.25px;
+	.graph .ink {
+		stroke-width: 1.75px;
 	}
 
 	.graph .blue {
-		color: var(--cornflower);
-		stroke-dasharray: 9 5;
+		color: var(--colorBlue);
+		stroke-dasharray: 8 5;
 		stroke-width: 2.25px;
 	}
 
-	.graph .purple {
-		color: var(--wisteria);
+	.graph .gold {
+		color: var(--colorGold);
 		stroke-dasharray: 0.1 5;
-		stroke-width: 3px;
+		stroke-width: 3.25px;
 	}
 
 	.graph .spare {
-		color: var(--spare);
+		color: var(--colorRed);
 		stroke-width: 6px;
+	}
+
+	.graph .cut {
+		color: var(--colorInkMuted);
+		stroke-dasharray: 3 4;
 	}
 
 	/* Emphasis, and its lack */
 	.graph .faint {
-		color: var(--colorFaint);
+		color: var(--colorInkFaint);
+		stroke-width: 1px;
 	}
 
 	.graph .strong {
-		color: var(--rose);
-		stroke-width: 3.5px;
-	}
-
-	.graph .cut {
-		color: var(--colorMuted);
-		stroke-dasharray: 4 5;
+		color: var(--colorRed);
+		stroke-width: 3px;
 	}
 
 	.graph .heavy {
-		stroke-width: 3.5px;
+		stroke-width: 3px;
 	}
 }
 
 /* Beats every other style for graphs, as each of them only matters for its colors */
 @media (forced-colors: active) {
-	:root[data-theme] {
+	:root[data-theme],
+	:root {
 		color-scheme: light dark;
 	}
 

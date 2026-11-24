@@ -4,14 +4,13 @@ import type { GetStaticPaths } from "astro";
 import { render } from "astro:content";
 
 import Article from "~/components/Article.astro";
-import Cite from "~/components/Cite.astro";
 import Code from "~/components/Code.astro";
 import ColoredFigure from "~/components/ColoredFigure.astro";
 import EdgePuzzle from "~/components/EdgePuzzle.astro";
-import Hero from "~/components/Hero.astro";
+import FactBox from "~/components/FactBox.astro";
+import Heading from "~/components/Heading.astro";
 import Snark from "~/components/Snark.astro";
 import Term from "~/components/Term.astro";
-import WithSnarks from "~/components/WithSnarks.astro";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import { describeSnark } from "~/graphs/describeSnark.ts";
 import { toGraph6 } from "~/graphs/serialize.ts";
@@ -39,20 +38,19 @@ const rows = [
 	["Blocks", blocks],
 	["Vertices", facts.vertices],
 	["Edges", facts.edges],
-	["Colors for edges (chromatic index)", 4],
-	["Edges that three colors can cover", facts.edges - 2],
-	["Shortest cycle (girth)", facts.girth],
+	["Chromatic index", 4],
+	["Most edges three colors cover", facts.edges - 2],
+	["Girth (shortest cycle)", facts.girth],
+	["Circumference (longest cycle)", facts.vertices - 1],
 	["Pentagons", facts.pentagons],
-	["Most steps between vertices (diameter)", facts.diameter],
-	["Most steps from a center (radius)", facts.radius],
+	["Diameter", facts.diameter],
+	["Radius", facts.radius],
 	["Symmetries", facts.symmetries],
-	["Longest cycle", facts.vertices - 1],
 ] as const;
 
 const after = [
 	{ depth: 2, slug: "coloring", text: "How far three colors get" },
 	{ depth: 2, slug: "try", text: "Try to color it" },
-	{ depth: 2, slug: "facts", text: "Facts and figures" },
 	{ depth: 2, slug: "downloads", text: "Downloads" },
 ];
 ---
@@ -70,47 +68,70 @@ const after = [
 	}}
 	title={`${title} ${name}: ${nickname}`}
 >
-	<Hero blocks={blocks}>
-		<h1>
-			<span class="kind">{title}</span> <Snark n={blocks} />
-		</h1>
-		<p>
-			<WithSnarks text={summary} />
-		</p>
-		<dl class="glance">
-			{(
-				[
-					["vertices", facts.vertices],
-					["edges", facts.edges],
-					["symmetries", facts.symmetries],
-				] as const
-			).map(([label, value]) => (
-				<div>
-					<dt>{label}</dt>
-					<dd>{value}</dd>
-				</div>
-			))}
-		</dl>
-	</Hero>
-
 	<Article headings={[...headings, ...after]}>
+		<Fragment slot="top">
+			<Heading summary={summary}>
+				{`${title} `}
+				<Snark n={blocks} />
+			</Heading>
+			<FactBox blocks={blocks} kind={title}>
+				<Fragment slot="caption">
+					<Snark n={blocks} />
+					{`, ${nickname}`}
+				</Fragment>
+				{rows.map(([label, value]) => (
+					<tr>
+						<th scope="row">{label}</th>
+						<td>{value}</td>
+					</tr>
+				))}
+				<tr>
+					<th scope="row">Crossing number</th>
+					<td>
+						{facts.crossings ?? `${(blocks * 2).toString()}, conjecturally`}
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Hamiltonian</th>
+					<td>
+						<a href="/#hamiltonian">No</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Planar</th>
+					<td>
+						<a href="/#properties">No</a>
+					</td>
+				</tr>
+			</FactBox>
+		</Fragment>
+
 		<Content />
 
 		<h2 id="coloring">How far three colors get</h2>
-		<p>
-			There are {blocks} blocks, which is an odd number, so{" "}
-			<a href="/#why-three-colors-fail">three colors can’t be enough</a>. One
-			edge is never all that’s missing, either. Two can be: here are{" "}
-			{facts.edges - 2} of the {facts.edges} edges of <Snark n={blocks} />,
-			colored, with all of the <Term is="spare">trouble</Term> in one block.
-		</p>
 		<ColoredFigure
 			graph={graph}
-			label={`${name} with ${(facts.edges - 2).toString()} of its ${facts.edges.toString()} edges colored green, blue, or purple. The two left over are from a1 to b1 and c1 to e1.`}
-			size="large"
+			inMargin
+			label={`${name} with ${(facts.edges - 2).toString()} of its ${facts.edges.toString()} edges colored ink, blue, or gold. The two left over are from a1 to b1 and c1 to e1.`}
 		>
 			No coloring of <Snark n={blocks} /> with three colors covers more edges.
 		</ColoredFigure>
+		<p>
+			There are {blocks} blocks, which is an odd number, so{" "}
+			<a href="/#why-three-colors-fail">three colors can’t be enough</a>. Each
+			block has to flip whether the outer and middle links on its sides match,
+			and going once around the ring would flip them {blocks} times, without
+			ever getting back to how they started.
+		</p>
+		<p>
+			Leaving out one edge is{" "}
+			<a href="/#why-exactly-two-edges-are-left-over">never enough</a> to fix
+			that, but leaving out two is: here are {facts.edges - 2} of the{" "}
+			{facts.edges} edges of <Snark n={blocks} />, colored. The{" "}
+			<Term is="spare">two left over</Term> are both in one block, which frees
+			it from having to flip. The other {blocks - 1} blocks all do, and as
+			that’s an even number, everything meets back up.
+		</p>
 
 		<h2 id="try">Try to color it</h2>
 		<p>
@@ -118,40 +139,6 @@ const after = [
 			another?
 		</p>
 		<EdgePuzzle blocks={blocks} />
-
-		<h2 id="facts">Facts and figures</h2>
-		<div class="table facts">
-			<table>
-				<tbody>
-					{rows.map(([label, value]) => (
-						<tr>
-							<th scope="row">{label}</th>
-							<td>{value}</td>
-						</tr>
-					))}
-					<tr>
-						<th scope="row">
-							Fewest crossings in a drawing <Cite id="weisstein" />
-						</th>
-						<td>
-							{facts.crossings ?? `${(blocks * 2).toString()}, conjecturally`}
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">Has a Hamiltonian cycle</th>
-						<td>
-							<a href="/#hamiltonian">No</a>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">Planar</th>
-						<td>
-							<a href="/#properties">No</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
 
 		<h2 id="downloads">Downloads</h2>
 		<ul class="downloads">
@@ -204,7 +191,7 @@ const after = [
 					{`: ${next.nickname}`}
 				</a>
 			) : (
-				<a class="sibling next" href="/#each-snark">
+				<a class="sibling next" href="/">
 					<span class="direction">See them all</span>
 					Goldberg snarks
 				</a>
@@ -214,96 +201,49 @@ const after = [
 </BaseLayout>
 
 <style>
-	h1 :global(sub) {
-		font-size: 0.6em;
-		margin-left: 0;
-		vertical-align: -0.18em;
-	}
-
-	.kind {
-		display: block;
-		font-size: 0.5em;
-		letter-spacing: -0.01em;
-		margin-bottom: 0.3em;
-	}
-
-	.glance {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem 2.25rem;
-		margin-top: 2rem;
-	}
-
-	.glance div {
-		display: flex;
-		flex-direction: column-reverse;
-	}
-
-	.glance dt {
-		color: var(--colorMuted);
-		font-family: var(--fontLabel);
-		font-size: var(--fontSizeSmall);
-	}
-
-	.glance dd {
-		color: var(--colorForegroundExtra);
-		font-size: 1.9rem;
-		font-weight: 400;
-		line-height: 1.15;
-		margin: 0;
-	}
-
-	.facts td {
-		color: var(--colorForegroundExtra);
-		font-weight: 500;
-		padding-right: 0;
-		text-align: right;
-	}
-
 	.downloads {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.75rem 2rem;
+		gap: 0.3rem 1.75rem;
 		list-style: none;
-		margin-bottom: 1.25rem;
+		margin-bottom: 0.75rem;
 		padding: 0;
-	}
-
-	summary {
-		cursor: pointer;
-	}
-
-	@media print {
-		.siblings {
-			display: none;
-		}
 	}
 
 	.siblings {
 		border-top: 1px solid var(--colorRule);
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1.5rem;
+		gap: 1rem;
 		justify-content: space-between;
-		margin-top: 5rem;
-		padding-top: 1.5rem;
+		margin-top: 2.5rem;
+		padding-top: 0.75rem;
 	}
 
 	.sibling {
-		font-weight: 500;
 		line-height: 1.4;
+		text-decoration: none;
+	}
+
+	.sibling:hover {
+		text-decoration: underline;
 	}
 
 	.next {
-		text-align: right;
 		margin-left: auto;
+		text-align: right;
 	}
 
 	.direction {
-		color: var(--colorMuted);
+		color: var(--colorInkMuted);
 		display: block;
-		font-family: var(--fontLabel);
 		font-size: var(--fontSizeSmall);
-		font-weight: 400;
+		font-style: italic;
+	}
+
+	@media print {
+		.siblings {
+			display: none;
+		}
 	}
 </style>

@@ -1,0 +1,93 @@
+---
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { getPartClass } from "~/graphs/edgeClasses.ts";
+
+import Drawing from "./Drawing.astro";
+
+interface Props {
+	blocks: number;
+
+	/** What the drawing is of, such as "Goldberg snark". */
+	kind: string;
+}
+
+const { blocks, kind } = Astro.props;
+const graph = createGoldbergGraph(blocks);
+---
+
+<div class="fact-box">
+	<Drawing
+		edgeClass={(index) => getPartClass(graph, index)}
+		graph={graph}
+		label={`The ${kind} G${blocks.toString()}: ${blocks.toString()} identical blocks of vertices and edges in a ring around a central ${blocks.toString()}-sided loop.`}
+		padding={4}
+	/>
+	<p class="caption">
+		<slot name="caption" />
+	</p>
+	<table>
+		<tbody>
+			<slot />
+		</tbody>
+	</table>
+</div>
+
+<style>
+	.fact-box {
+		background: var(--colorPaperShaded);
+		border: 1px solid var(--colorRule);
+		border-top: 3px solid var(--colorRed);
+		display: grid;
+		gap: 0.5rem;
+		margin-block: 1.25rem;
+		padding: 0.9rem 1rem 0.5rem;
+	}
+
+	.fact-box > :global(.graph) {
+		margin: auto;
+		max-width: 22rem;
+	}
+
+	.caption {
+		color: var(--colorInkMuted);
+		font-size: 0.875rem;
+		font-style: italic;
+		line-height: 1.35;
+		text-align: center;
+		text-wrap: balance;
+	}
+
+	.fact-box table {
+		border: 0;
+		border-top: 1px solid var(--colorInk);
+		font-size: 0.9375rem;
+	}
+
+	.fact-box :global(th) {
+		color: var(--colorInkMuted);
+	}
+
+	.fact-box :global(td) {
+		padding-right: 0;
+		text-align: right;
+	}
+
+	.fact-box :global(:is(td, th)) {
+		padding-block: 0.22rem;
+	}
+
+	@media (min-width: 60rem) {
+		.fact-box {
+			clear: right;
+			float: right;
+			margin: 0 calc(-1 * var(--outset)) 1.75rem 0;
+			width: var(--widthMargin);
+		}
+	}
+
+	@media print {
+		.fact-box {
+			break-inside: avoid;
+		}
+	}
+</style>
