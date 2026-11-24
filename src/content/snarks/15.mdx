@@ -1,41 +1,31 @@
 ---
 blocks: 15
-nickname: the one that’s two at once
-summary: Fifteen blocks around a pentadecagon. It wraps around both G3 and G5, which makes it the smallest Goldberg snark to wrap around another.
-teaser: Wraps around both G3 and G5
+summary: The Goldberg snark with fifteen blocks, 120 vertices, and 180 edges. It is a covering graph of G5.
+teaser: Covers G5
 ---
 
 import Highlight from "~/components/Highlight.astro";
 import Snark from "~/components/Snark.astro";
 
-## Five threes, three fives
+## Coverings
 
-Like [<Snark n={9} />](/g9) before it, <Snark n={15} /> wraps around [<Snark n={3} />](/g3).
-Unlike <Snark n={9} />, it also wraps around [<Snark n={5} />](/g5), as fifteen is both five threes and three fives.
-That makes it the smallest Goldberg snark that wraps around one that [everybody agrees is a snark](/g3).
-
-<Highlight
-	blocks={15}
-	kind="every-third"
-	label="The Goldberg snark G15, with every third of its fifteen blocks emphasized: five of them."
->
-	Every third block lands on the same block of <Snark n={3} />, which <Snark n={15} /> goes around five times.
-</Highlight>
+Since 15 is a multiple of 5, <Snark n={15} /> is a [covering graph](/g9#covering) of [<Snark n={5} />](/g5).
+Each block of <Snark n={5} /> corresponds to three blocks of <Snark n={15} />.
+It is the smallest Goldberg snark that is a covering graph of another Goldberg snark.
 
 <Highlight
 	blocks={15}
 	kind="every-fifth"
 	label="The Goldberg snark G15, with every fifth of its fifteen blocks emphasized: three of them."
 >
-	Every fifth block lands on the same block of <Snark n={5} />, which <Snark n={15} /> goes around three times.
+	The three blocks of <Snark n={15} /> that correspond to one block of <Snark n={5} />.
 </Highlight>
 
-Those two numbers are enough to say where you are.
-Tell a friend which block of <Snark n={3} /> you're above and which block of <Snark n={5} /> you're above, and they'll know which of the fifteen blocks you're on.
-That's the Chinese remainder theorem, well over 1,500 years old, as a walk around a graph.
+Since 15 is also a multiple of 3, <Snark n={15} /> is a covering graph of the Goldberg graph [<Snark n={3} />](/g3), which is not a snark.
+Each block of <Snark n={3} /> corresponds to five blocks of <Snark n={15} />.
 
-## And so on
+## Chinese remainder theorem
 
-There's nothing special about stopping here.
-Every odd number from five up has a Goldberg snark, and whenever one number is a multiple of another, its graph wraps around the other's.
-With 120 vertices and 180 edges, <Snark n={15} /> is only about where a drawing this size stops being readable.
+Number the blocks of <Snark n={15} /> from 0 to 14.
+Block _i_ corresponds to the block of <Snark n={3} /> whose number is the remainder of _i_ divided by 3, and to the block of <Snark n={5} /> whose number is the remainder of _i_ divided by 5.
+By the Chinese remainder theorem, each pair of remainders occurs exactly once, so the two blocks together identify one of the fifteen.

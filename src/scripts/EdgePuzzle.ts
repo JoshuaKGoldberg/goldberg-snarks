@@ -241,16 +241,14 @@ function describe(colored: number, total: number, clashes: string[]) {
 	const count = `${colored.toString()} of ${total.toString()} edges colored`;
 
 	if (clashes.length > listedClashes) {
-		return `${count}, with clashes at ${clashes.length.toString()} vertices.`;
+		return `${count}. Same color twice at ${clashes.length.toString()} vertices.`;
 	}
 
 	if (clashes.length) {
-		return `${count}, with ${clashes.length === 1 ? "a clash" : "clashes"} at ${formatter.format(clashes)}.`;
+		return `${count}. Same color twice at ${formatter.format(clashes)}.`;
 	}
 
-	return colored === total - 2
-		? `${count}. Nobody can do better!`
-		: `${count}${colored ? ", and no clashes" : ""}.`;
+	return colored === total - 2 ? `${count}. This is the maximum.` : `${count}.`;
 }
 
 function findClashes(edges: SVGPathElement[]) {

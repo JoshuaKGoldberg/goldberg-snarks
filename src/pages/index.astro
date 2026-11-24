@@ -4,6 +4,8 @@ import Code from "~/components/Code.astro";
 import FactBox from "~/components/FactBox.astro";
 import Gallery from "~/components/Gallery.astro";
 import Heading from "~/components/Heading.astro";
+import LinkedHeading from "~/components/LinkedHeading.astro";
+import LinkedSubheading from "~/components/LinkedSubheading.astro";
 import References from "~/components/References.astro";
 import Snark from "~/components/Snark.astro";
 import { site } from "~/constants.ts";
@@ -19,7 +21,7 @@ const citation = `@misc{goldbergsnarks,
 ---
 
 <BaseLayout
-	description="What Goldberg snarks are, how they’re built, and a short proof of why three colors are never enough for their edges, with interactive diagrams."
+	description="The Goldberg snarks are an infinite family of cubic graphs that have no 3-edge-coloring. Their construction, proofs, properties, and history, with diagrams."
 	image={{
 		alt: "Goldberg snarks, beside a drawing of the Goldberg snark G5.",
 		path: "/images/home.png",
@@ -29,7 +31,7 @@ const citation = `@misc{goldbergsnarks,
 		about: { "@type": "Thing", name: "Goldberg snark" },
 		headline: "Goldberg snarks",
 	}}
-	title="Goldberg snarks, explained"
+	title="Goldberg snarks"
 >
 	<Article
 		headings={[
@@ -38,13 +40,13 @@ const citation = `@misc{goldbergsnarks,
 		]}
 	>
 		<Fragment slot="top">
-			<Heading summary="An infinite family of graphs whose edges can’t be colored with three colors, for a reason that fits on a page.">
+			<Heading summary="A family of graphs whose edges cannot be colored with three colors">
 				Goldberg snarks
 			</Heading>
 			<div class="lead">
 				<FactBox blocks={5} kind="Goldberg snark">
 					<Fragment slot="caption">
-						The smallest one, <Snark n={5} />
+						The Goldberg snark <Snark n={5} />
 					</Fragment>
 					<tr>
 						<th scope="row">Named for</th>
@@ -74,7 +76,7 @@ const citation = `@misc{goldbergsnarks,
 					</tr>
 					<tr>
 						<th scope="row">Degree</th>
-						<td>3 (cubic)</td>
+						<td>3</td>
 					</tr>
 					<tr>
 						<th scope="row">Chromatic index</th>
@@ -103,34 +105,42 @@ const citation = `@misc{goldbergsnarks,
 						<td>No</td>
 					</tr>
 					<tr>
-						<th scope="row">Subject (MSC)</th>
+						<th scope="row">MSC 2020</th>
 						<td>05C15</td>
 					</tr>
 				</FactBox>
 				<p>
-					Take any odd number of copies of one small piece, five or more, and
-					link them in a ring. The graph they make is a{" "}
-					<strong>Goldberg snark</strong>. Three lines meet at each of its dots,
-					and yet its lines can’t be colored with only three colors such that
-					those meeting are always different.
+					In graph theory, a <em>graph</em> is a set of points joined by lines.
+					The points are called vertices, and the lines are called edges. A
+					graph is <em>cubic</em> if three edges meet at every vertex.
 				</p>
 				<p>
-					Graphs like that are rare, and where several of the hardest problems
-					in graph theory live. This page defines Goldberg snarks, builds them,
-					and proves that they’re what they’re said to be, assuming nothing but
-					a willingness to count. Each of the first few has a page of its own:
+					An <em>edge coloring</em> gives each edge of a graph a color, with
+					different colors for edges that meet. Most cubic graphs have an edge
+					coloring with three colors. A <strong>snark</strong> is a cubic graph
+					that needs four. Snarks are named after the elusive creature in Lewis
+					Carroll’s poem <cite>The Hunting of the Snark</cite>.
+				</p>
+				<p>
+					The <strong>Goldberg snarks</strong> are an infinite family of snarks
+					that Mark K. Goldberg published in 1981. Each is made of an odd number
+					of copies of a block of eight vertices, joined in a ring. The Goldberg
+					snark with <i>k</i> blocks is written <Snark n="k" />, and there is
+					one for each odd <i>k</i> ≥ 5. The first six are:
 				</p>
 				<Gallery />
 			</div>
 		</Fragment>
 
-		<Content />
+		<Content components={{ h2: LinkedHeading, h3: LinkedSubheading }} />
 
-		<h2 id="references">References</h2>
+		<LinkedHeading id="references">References</LinkedHeading>
 		<References />
 
-		<h3 id="citing">Citing this site</h3>
-		<Code code={citation} />
+		<LinkedHeading id="citing" level="h3">
+			Citing this site
+		</LinkedHeading>
+		<Code code={citation} lang="bibtex" />
 	</Article>
 </BaseLayout>
 

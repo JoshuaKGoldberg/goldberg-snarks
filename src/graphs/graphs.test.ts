@@ -20,6 +20,7 @@ import {
 	getGirth,
 	getNeighbors,
 } from "./measure.ts";
+import { rotate, unrotate } from "./rotate.ts";
 import { toEdgeList, toGraph6 } from "./serialize.ts";
 
 /** Whether no two colored edges that share a vertex have the same color. */
@@ -446,5 +447,26 @@ describe(toEdgeList, () => {
 
 		expect(list.split("\n")).toHaveLength(61);
 		expect(list.startsWith("a1 b1\nb1 c1\n")).toBe(true);
+	});
+});
+
+describe(rotate, () => {
+	it("turns what's on the right away from the viewer", () => {
+		const turned = rotate({ x: 1, y: 2, z: 0 }, { pitch: 0, yaw: Math.PI / 2 });
+
+		expect(turned.x).toBeCloseTo(0);
+		expect(turned.y).toBeCloseTo(2);
+		expect(turned.z).toBeCloseTo(-1);
+	});
+});
+
+describe(unrotate, () => {
+	it("undoes a rotation", () => {
+		const angles = { pitch: 0.7, yaw: -1.9 };
+		const point = unrotate(rotate({ x: 3, y: -5, z: 7 }, angles), angles);
+
+		expect(point.x).toBeCloseTo(3);
+		expect(point.y).toBeCloseTo(-5);
+		expect(point.z).toBeCloseTo(7);
 	});
 });

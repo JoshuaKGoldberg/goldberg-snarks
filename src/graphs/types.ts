@@ -19,5 +19,9 @@ export interface Point {
 
 export interface Vertex extends Point {
 	block: number;
+
+	/** How far it is toward the viewer, if it isn't flat with the rest. */
+	depth?: number;
+
 	role: string;
 }

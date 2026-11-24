@@ -1,0 +1,33 @@
+import Cite from "~/components/Cite.astro";
+import BlockFigure from "~/components/figures/BlockFigure.astro";
+import Snark from "~/components/Snark.astro";
+import Term from "~/components/Term.astro";
+
+## Background
+
+A _graph_ is a set of points, called vertices, joined by lines, called edges.
+In a _cubic_ graph, three edges meet at every vertex.
+
+An _edge coloring_ gives each edge of a graph a color, with different colors for edges that meet.
+Most cubic graphs have an edge coloring with three colors.
+A _snark_ is a cubic graph that needs four.
+Some cubic graphs that need four are [not counted as snarks](/#snark), such as those that contain a triangle.
+
+The [Goldberg snarks](/) are a family of snarks that Mark K. Goldberg published in 1981 <Cite id="goldberg1981" />.
+Each is made of an odd number of copies of one block, joined in a ring.
+There must be at least five copies.
+The Goldberg snark with _k_ blocks is written <Snark n="k" />.
+
+<BlockFigure>
+	A block and its links.
+</BlockFigure>
+
+A block has eight vertices, labeled _a_ to _h_.
+Three edges, called links, join each block to the next.
+The links form part of three rings: the <Term is="outer">outer ring</Term>, the <Term is="middle">middle ring</Term>, and the <Term is="inner">inner ring</Term>.
+
+{!props.isSnark && (
+	<p>
+		The graph described here, <Snark n={props.blocks} />, is built in the same way from {props.blocks} blocks. It is not a snark.
+	</p>
+)}

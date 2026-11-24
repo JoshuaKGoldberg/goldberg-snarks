@@ -22,14 +22,14 @@ const coloring = colorEdges(graph);
 		<input
 			id="explorer-blocks"
 			max="15"
-			min="3"
+			min="4"
 			step="1"
 			type="range"
 			value={blocks}
 		/>
 		<output for="explorer-blocks">
 			<strong>{blocks} blocks</strong>
-			<span>Three colors are enough for all {graph.edges.length} edges.</span>
+			<span>All {graph.edges.length} edges can be colored.</span>
 		</output>
 	</div>
 </block-explorer>

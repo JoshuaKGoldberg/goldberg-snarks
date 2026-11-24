@@ -24,7 +24,7 @@ const id = `puzzle-${blocks.toString()}`;
 <edge-puzzle class="wide">
 	<div class="panel">
 		<fieldset class="scripted">
-			<legend>Color to use</legend>
+			<legend>Color</legend>
 			{[...colorNames, "erase"].map((name, i) => (
 				<label>
 					<input
@@ -44,13 +44,13 @@ const id = `puzzle-${blocks.toString()}`;
 			Pick a color, then <span class="click">click</span>
 			<span class="tap">tap</span> edges to color them.{" "}
 			<span class="keyboard">
-				With a keyboard, the left and right arrow keys move to the next edge,
-				and up and down to the same edge of the next block. Then 1, 2, 3, and 0
-				color or erase it.
+				Keyboard: use the left and right arrow keys to move between edges, and
+				the up and down arrow keys to move between blocks. Press 1, 2, or 3 to
+				color an edge, or 0 to erase it.
 			</span>
 		</p>
 		<noscript>
-			<p class="instructions">Coloring edges here needs JavaScript.</p>
+			<p class="instructions">Coloring edges requires JavaScript.</p>
 		</noscript>
 	</div>
 	<div class="scroller">
@@ -102,7 +102,7 @@ const id = `puzzle-${blocks.toString()}`;
 				Start over
 			</button>
 			<button data-action="best" type="button">
-				Show a best coloring
+				Show a solution
 			</button>
 		</div>
 	</div>

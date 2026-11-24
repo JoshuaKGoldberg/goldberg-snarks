@@ -66,6 +66,11 @@ const { id, inMargin, size = "medium" } = Astro.props;
 		text-wrap: inherit;
 	}
 
+	figure:target {
+		box-shadow: 0 0 0 0.5rem var(--colorPaperShaded);
+		background: var(--colorPaperShaded);
+	}
+
 	@media (min-width: 60rem) {
 		.in-margin {
 			clear: right;

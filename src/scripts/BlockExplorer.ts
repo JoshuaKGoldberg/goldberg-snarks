@@ -62,8 +62,8 @@ export class BlockExplorer extends HTMLElement {
 
 		heading.textContent = `${blocks.toString()} blocks`;
 		result.textContent = isSnark
-			? `Three colors can manage only ${(total - 2).toString()} of the ${total.toString()} edges.`
-			: `Three colors are enough for all ${total.toString()} edges.`;
+			? `At most ${(total - 2).toString()} of the ${total.toString()} edges can be colored.`
+			: `All ${total.toString()} edges can be colored.`;
 		query(this, "output", HTMLElement).replaceChildren(heading, result);
 	}
 }

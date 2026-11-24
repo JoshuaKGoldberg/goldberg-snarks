@@ -1,31 +1,48 @@
 ---
+import { Code as HighlightedCode } from "astro:components";
+
 interface Props {
 	/** Whether lines may be broken anywhere. */
 	breaks?: boolean;
 	code: string;
+	lang?: "bibtex" | "plaintext" | "python";
 }
 
-const { breaks, code } = Astro.props;
+const { breaks, code, lang = "plaintext" } = Astro.props;
 ---
 
-{/* Anything that scrolls needs to be focusable to be scrolled with a keyboard */}
-{/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex */}
-<pre class:list={[breaks && "breaks"]} tabindex="0"><code>{code}</code></pre>
+<div class:list={["code", breaks && "breaks"]}>
+	<HighlightedCode code={code.trimEnd()} lang={lang} theme="css-variables" />
+</div>
 
 <style>
-	pre {
-		background: var(--colorPaperShaded);
+	.code {
+		--astro-code-background: var(--colorPaperShaded);
+		--astro-code-foreground: var(--colorInk);
+		--astro-code-token-comment: var(--colorInkMuted);
+		--astro-code-token-constant: var(--colorBlue);
+		--astro-code-token-function: var(--colorBlue);
+		--astro-code-token-keyword: var(--colorRed);
+		--astro-code-token-link: var(--colorBlue);
+		--astro-code-token-parameter: var(--colorInk);
+		--astro-code-token-punctuation: var(--colorInkMuted);
+		--astro-code-token-string: var(--colorGoldText);
+		--astro-code-token-string-expression: var(--colorGoldText);
+
+		margin-block: 0.9rem;
+	}
+
+	.code :global(pre) {
 		border-left: 3px solid var(--colorRule);
 		font-size: 0.8125rem;
-		line-height: 1.45;
-		margin-block: 0.9rem;
-		max-height: 22rem;
+		line-height: 1.5;
+		max-height: 24rem;
 		overflow: auto;
 		padding: 0.7rem 1rem;
 		tab-size: 4;
 	}
 
-	.breaks {
+	.breaks :global(pre) {
 		overflow-wrap: anywhere;
 		white-space: pre-wrap;
 	}

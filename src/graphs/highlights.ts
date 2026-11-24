@@ -16,7 +16,7 @@ export type HighlightKind =
 	| "every-fifth"
 	| "every-third"
 	| "farthest"
-	| "hub"
+	| "inner"
 	| "longest"
 	| "swapped";
 
@@ -55,7 +55,7 @@ export function getHighlight(graph: Graph, kind: HighlightKind): Highlight {
 		case "farthest":
 			return highlightPath(graph, findFarthest(graph));
 
-		case "hub":
+		case "inner":
 			return highlightPath(graph, [
 				...[...vertices.keys()].filter((index) => vertices[index].role === "a"),
 				0,

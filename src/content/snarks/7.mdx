@@ -1,45 +1,43 @@
 ---
 blocks: 7
-nickname: the one with a heptagon
-summary: Seven blocks around a heptagon, which is the only cycle of seven edges in any Goldberg snark.
-teaser: Home of the only heptagon
+summary: The Goldberg snark with seven blocks, 56 vertices, and 84 edges. It is the only one that has a cycle of length 7.
+teaser: Has a cycle of length 7
 ---
 
 import Highlight from "~/components/Highlight.astro";
 import Snark from "~/components/Snark.astro";
 
-## The only heptagon
+## Cycle of length 7
 
-Look through any Goldberg snark for cycles and you'll find some of five edges, some of six, and some of eight.
-There are never any of seven, with one exception.
+The inner ring of <Snark n={7} /> is a cycle of length 7.
+It is the only such cycle in <Snark n={7} />, and no other Goldberg snark has one.
 
 <Highlight
 	blocks={7}
-	kind="hub"
+	kind="inner"
 	label="The Goldberg snark G7, with the heptagon in its center emphasized."
 >
-	The hub of <Snark n={7} /> is a cycle of seven edges, and no Goldberg snark has another.
+	The inner ring of <Snark n={7} />.
 </Highlight>
 
-It's because short cycles come in two kinds.
-Some stay within a few neighboring blocks, so they look the same in every ring that's large enough.
-The rest go all the way around: the hub does so in as few edges as there are blocks, and every other way takes at least ten.
-None of the first kind have seven edges, so a Goldberg snark only has a cycle of seven if its hub is one.
+A short cycle in a Goldberg snark either stays within neighboring blocks or goes all the way around the ring.
+Cycles that stay within neighboring blocks have length 5, 6, or at least 8.
+Of the cycles that go around the ring, the inner ring has length _k_, and all others have length at least 10.
+A Goldberg snark therefore has a cycle of length 7 only if _k_ is 7.
 
-## The cycles that every block has
+## Other short cycles
 
-Each block has two pentagons, which share the path from _c_ through _b_ to _d_.
-Leave out _b_ and go around both of them, and that's a hexagon.
+Each block contains two cycles of length 5, which share the path _c_–_b_–_d_.
+The remaining edges of the two cycles form a cycle of length 6.
 There are no other cycles within a block.
 
 <Highlight
 	blocks={7}
 	kind="block-cycles"
-	label="The Goldberg snark G7, with a pentagon in its first block, from b through c, e, f, and d, and a hexagon in its third block, around c, e, f, d, h, and g, each emphasized."
+	label="The Goldberg snark G7, with a pentagon in its first block, through b, c, e, f, and d, and a hexagon in its third block, through c, e, f, d, h, and g, each emphasized."
 >
-	One of the fourteen pentagons, at the top, and one of the seven hexagons, at the right.
+	A cycle of length 5, at the top, and a cycle of length 6, at the right.
 </Highlight>
 
-Crossing into a neighboring block and coming back again takes at least eight edges, which is why the next cycles after those are so much longer.
-With seven blocks, that comes to fourteen pentagons, seven hexagons, one heptagon, and 42 cycles of eight.
-It's the first Goldberg snark whose only pentagons are its blocks' own.
+A cycle that uses edges of two blocks has length at least 8.
+In total, <Snark n={7} /> has 14 cycles of length 5, seven of length 6, one of length 7, and 42 of length 8.

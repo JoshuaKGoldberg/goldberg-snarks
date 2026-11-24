@@ -1,42 +1,35 @@
 ---
 blocks: 3
-nickname: the almost-snark
-summary: Three blocks around a triangle. It can’t be colored with three colors, yet many mathematicians wouldn’t call it a snark.
-teaser: The almost-snark, with a triangle
+summary: The Goldberg graph with three blocks, 24 vertices, and 36 edges. It is not a snark, because it contains a triangle.
+teaser: Not a snark
 ---
 
 import Cite from "~/components/Cite.astro";
 import Highlight from "~/components/Highlight.astro";
 import Snark from "~/components/Snark.astro";
 
-## Is it a snark?
+## Triangle
 
-With only three blocks, the hub closes up into a triangle.
-That triangle is the whole controversy.
+The inner ring of <Snark n={3} /> is a triangle.
+The [usual definition of a snark](/#snark) does not allow cycles of fewer than five edges, so the smallest Goldberg snark is [<Snark n={5} />](/g5) <Cite id="mohar2006" />.
 
 <Highlight
 	blocks={3}
-	kind="hub"
+	kind="inner"
 	label="The Goldberg graph G3, with the triangle in its center emphasized."
 >
-	The hub of <Snark n={3} /> is its one triangle.
+	The triangle in <Snark n={3} />.
 </Highlight>
 
-The proof that three colors fail never asks how big the ring is, only whether it's odd.
-So <Snark n={3} /> is as impossible to color as any of its larger siblings.
-Where authors disagree is whether that's interesting enough:
+A triangle in a cubic graph can be shrunk to a single vertex without changing whether the graph has a 3-edge-coloring.
+Some authors use a definition of a snark that allows triangles, and include <Snark n={3} /> among the Goldberg snarks <Cite id="campos2011" />.
 
-- The [common definition of a snark](/#snark) has no cycles shorter than five, because they never make a cubic graph any harder to color.
-  A triangle, for one, can be shrunk to a single vertex without changing the answer.
-  By that standard the family starts at [five blocks](/g5) <Cite id="mohar2006" />.
-- Others only ask that three colors fail, and that the graph doesn't fall apart by removing one edge.
-  They count <Snark n={3} /> as the first Goldberg snark <Cite id="campos2011" />.
+## Relation to the Loupekine snarks
 
-## What's inside of it
+Shrinking the triangle of <Snark n={3} /> to a vertex leaves a graph with 22 vertices that is a snark.
+It is one of the two smallest [Loupekine snarks](/#related-graphs) <Cite id="berman2017" />.
 
-Shrink the triangle to a vertex, and the 22 vertices left do form a snark by anybody's definition.
-It's one of the two smallest [Loupekine snarks](/#relatives), which were published in 1976, a few years before the Goldberg snarks <Cite id="berman2017" />.
+## Distances
 
-There's one more distinction to having only three blocks.
-Of all the graphs with pages here, this is the only one in which no vertex is more central than any other.
-From anywhere, the farthest vertex is exactly four steps away.
+For every vertex of <Snark n={3} />, the farthest other vertex is four edges away.
+The radius and the diameter are therefore both 4.

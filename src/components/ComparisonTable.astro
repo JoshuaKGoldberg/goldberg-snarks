@@ -15,9 +15,8 @@ const snarks = await getSnarks();
 				<th scope="col">Blocks</th>
 				<th scope="col">Vertices</th>
 				<th scope="col">Edges</th>
-				<th scope="col">Most colored</th>
 				<th scope="col">Girth</th>
-				<th scope="col">Pentagons</th>
+				<th scope="col">5-cycles</th>
 				<th scope="col">Diameter</th>
 				<th scope="col">Radius</th>
 				<th scope="col">Symmetries</th>
@@ -38,7 +37,6 @@ const snarks = await getSnarks();
 						<td>{blocks}</td>
 						<td>{facts.vertices}</td>
 						<td>{facts.edges}</td>
-						<td>{facts.edges - 2}</td>
 						<td>{facts.girth}</td>
 						<td>{facts.pentagons}</td>
 						<td>{facts.diameter}</td>

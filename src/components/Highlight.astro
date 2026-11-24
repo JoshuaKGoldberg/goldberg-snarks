@@ -2,7 +2,7 @@
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import { getHighlight, type HighlightKind } from "~/graphs/highlights.ts";
 
-import Drawing from "./Drawing.astro";
+import MovableDrawing from "./MovableDrawing.astro";
 import Figure from "./Figure.astro";
 
 interface Props {
@@ -17,7 +17,7 @@ const { edgeClass, vertexClass } = getHighlight(graph, kind);
 ---
 
 <Figure size="medium">
-	<Drawing
+	<MovableDrawing
 		slot="drawing"
 		edgeClass={edgeClass}
 		graph={graph}

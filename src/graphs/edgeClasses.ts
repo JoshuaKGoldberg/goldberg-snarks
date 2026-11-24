@@ -10,7 +10,7 @@ export function getPartClass({ edges, vertices }: Graph, index: number) {
 	switch (names) {
 		case "aa":
 		case "astub":
-			return "hub";
+			return "inner";
 		case "ef":
 		case "estub":
 		case "fstub":

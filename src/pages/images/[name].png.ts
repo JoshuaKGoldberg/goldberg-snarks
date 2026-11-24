@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import opentype from "opentype.js";
 import sharp from "sharp";
 
-import { getSnarks } from "~/getSnarks.ts";
+import { getGraphs } from "~/getSnarks.ts";
 import { toSvgContents } from "~/graphs/toSvg.ts";
 
 interface Props {
@@ -16,20 +16,20 @@ interface Props {
 }
 
 export const getStaticPaths = (async () => {
-	const snarks = await getSnarks();
+	const graphs = await getGraphs();
 
 	return [
 		{
 			params: { name: "home" },
 			props: { blocks: 5, lines: ["Goldberg", "snarks"] },
 		},
-		...snarks.map(({ blocks, href }) => ({
+		...graphs.map(({ blocks, href, isSnark }) => ({
 			params: { name: href.slice(1) },
 			props: {
 				blocks,
 				lines: [
 					"Goldberg",
-					blocks < 5 ? "graph" : "snark",
+					isSnark ? "snark" : "graph",
 					`G_${blocks.toString()}`,
 				],
 			},

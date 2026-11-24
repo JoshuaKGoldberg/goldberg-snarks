@@ -11,9 +11,13 @@ const { id, kind, name, number } = Astro.props;
 
 <div class:list={["statement", kind.toLowerCase()]} id={id}>
 	<p class="head">
-		<strong>
-			{kind} {number}
-		</strong>
+		{id ? (
+			<a class="anchor" href={`#${id}`}>
+				<strong>{`${kind} ${number.toString()}`}</strong>
+			</a>
+		) : (
+			<strong>{`${kind} ${number.toString()}`}</strong>
+		)}
 		{name && ` (${name})`}.
 	</p>
 	<slot />
@@ -34,6 +38,28 @@ const { id, kind, name, number } = Astro.props;
 	/* Emphasis within what's already italic */
 	.statement:not(.definition) > :global(:not(.head)) :global(em) {
 		font-style: normal;
+	}
+
+	.anchor {
+		text-decoration: none;
+	}
+
+	.anchor:hover {
+		text-decoration: underline;
+	}
+
+	.anchor::after {
+		content: "\00a0#" / "";
+		display: none;
+	}
+
+	.anchor:is(:hover, :focus-visible)::after,
+	.statement:target .anchor::after {
+		display: inline;
+	}
+
+	.statement:target {
+		box-shadow: 0 0 0 1px var(--colorRed);
 	}
 
 	strong {

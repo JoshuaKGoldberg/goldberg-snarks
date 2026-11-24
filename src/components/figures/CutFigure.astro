@@ -1,7 +1,7 @@
 ---
 import { createPetersenAroundBlock } from "~/graphs/createPetersenAroundBlock.ts";
 
-import Drawing from "../Drawing.astro";
+import MovableDrawing from "../MovableDrawing.astro";
 import Figure from "../Figure.astro";
 import { nameFlatVertices } from "./names.ts";
 
@@ -9,7 +9,7 @@ const graph = createPetersenAroundBlock();
 ---
 
 <Figure inMargin id="cut">
-	<Drawing
+	<MovableDrawing
 		slot="drawing"
 		cropped
 		edgeClass={(index) => (graph.edges[index].isLink ? "cut" : "plain")}

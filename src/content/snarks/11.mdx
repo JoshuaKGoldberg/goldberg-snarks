@@ -1,41 +1,38 @@
 ---
 blocks: 11
-nickname: the balanced one
-summary: Eleven blocks around a hendecagon. It’s the only Goldberg snark that’s exactly as many steps across as it has blocks.
-teaser: As many steps across as blocks
+summary: The Goldberg snark with eleven blocks, 88 vertices, and 132 edges. Its diameter is also 11.
+teaser: Diameter 11
 ---
 
 import Cite from "~/components/Cite.astro";
 import Highlight from "~/components/Highlight.astro";
 import Snark from "~/components/Snark.astro";
 
-## Eleven steps across
+## Diameter
 
-The _diameter_ of a graph is how many steps apart its two farthest vertices are.
-The diameter of <Snark n={11} /> is eleven: the same as its number of blocks.
-No other Goldberg snark's is.
+The _distance_ between two vertices is the number of edges in a shortest path between them, and the _diameter_ of a graph is its largest distance.
+The diameter of <Snark n={11} /> is 11.
+It is the only Goldberg snark whose diameter equals its number of blocks.
 
 <Highlight
 	blocks={11}
 	kind="farthest"
-	label="The Goldberg snark G11, with a path of eleven edges from one side to the other emphasized. It goes in to the hub, around half of it, and back out."
+	label="The Goldberg snark G11, with a path of eleven edges from one side to the other emphasized. It goes in to the inner ring, around half of it, and back out."
 >
-	A shortest path between two vertices that are as far apart as any. It takes eleven steps.
+	A shortest path between two vertices at distance 11.
 </Highlight>
 
-It's a race between two routes.
+A shortest path between distant vertices follows either the outer or middle ring, or the inner ring.
+The outer and middle rings take about two edges per block.
+In <Snark n={5} />, <Snark n={7} />, and <Snark n={9} />, the vertices that are farthest apart are joined by such a path, and the diameter is one more than the number of blocks: 6, 8, and 10.
 
-Going around by the outer or middle ring takes about two steps per block, and never has to pass more than half of them.
-In small Goldberg snarks, the farthest vertices are nearest by that route, and one more step apart than there are blocks: five blocks are six steps across, seven are eight, and nine are ten.
+Every vertex is at most three edges from the inner ring, which takes one edge per block.
+In <Snark n={11} />, a path by way of the inner ring has at most 3 + 5 + 3 = 11 edges.
+For larger Goldberg snarks, every two additional blocks add one to the diameter.
+The diameters of <Snark n={13} /> and <Snark n={15} /> are 12 and 13.
 
-Going through the hub takes up to three steps in and three back out, but only one for each block passed.
-At eleven blocks, the hub wins.
-Three steps in, five around, and three out make eleven.
+## Crossing number
 
-From there, every two blocks more add only one step.
-Thirteen blocks are twelve steps across, fifteen are thirteen, and the diameter never catches up again.
-
-## The end of the record
-
-On a flat page, <Snark n={11} /> can't be drawn with fewer than 22 pairs of its edges crossing.
-It's the largest Goldberg snark for which that fewest number is on record <Cite id="weisstein" />.
+The _crossing number_ of a graph is the smallest number of edge crossings in any drawing of it.
+The crossing number of <Snark n={11} /> is 22 <Cite id="weisstein" />.
+It is the largest Goldberg snark with a known crossing number.

@@ -2,7 +2,7 @@ import type { APIRoute, GetStaticPaths } from "astro";
 
 import sharp from "sharp";
 
-import { getSnarks } from "~/getSnarks.ts";
+import { getGraphs } from "~/getSnarks.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import { toEdgeList, toGraph6 } from "~/graphs/serialize.ts";
 import { toSvg } from "~/graphs/toSvg.ts";
@@ -33,9 +33,9 @@ interface Props {
 }
 
 export const getStaticPaths = (async () => {
-	const snarks = await getSnarks();
+	const graphs = await getGraphs();
 
-	return snarks.flatMap(({ blocks, href }) =>
+	return graphs.flatMap(({ blocks, href }) =>
 		(Object.keys(formats) as Extension[]).map((extension) => ({
 			params: { file: `${href.slice(1)}.${extension}` },
 			props: { blocks, extension },

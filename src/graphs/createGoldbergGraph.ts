@@ -21,12 +21,13 @@ export function createGoldbergGraph(blocks: number): Graph {
 
 	for (let block = 0; block < blocks; block += 1) {
 		for (const role of roles) {
-			const { angle, radius } = polarPositions[role];
+			const { angle, depth, radius } = polarPositions[role];
 			// Blocks are narrower the more of them there are to fit
 			const turned = (angle * 5) / blocks + (block / blocks) * Math.PI * 2;
 
 			vertices.push({
 				block,
+				depth,
 				role,
 				x: Math.sin(turned) * radius,
 				y: -Math.cos(turned) * radius,

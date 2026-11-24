@@ -3,7 +3,7 @@ import { drawEdgesByClass, getVertexRadius, locate } from "./draw.ts";
 import { getPartClass } from "./edgeClasses.ts";
 
 const colors: Record<string, string> = {
-	hub: "#9c1c2b",
+	inner: "#9c1c2b",
 	middle: "#a8720a",
 	outer: "#1c4f91",
 	spoke: "#1d1a16",

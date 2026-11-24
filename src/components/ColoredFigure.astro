@@ -5,7 +5,7 @@ import { colorMostEdges } from "~/graphs/colorEdges.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import ColoringKey from "./ColoringKey.astro";
-import Drawing from "./Drawing.astro";
+import MovableDrawing from "./MovableDrawing.astro";
 import Figure from "./Figure.astro";
 
 interface Props {
@@ -23,7 +23,7 @@ const coloring = colorMostEdges(graph, spares);
 ---
 
 <Figure inMargin={inMargin} size={size}>
-	<Drawing
+	<MovableDrawing
 		slot="drawing"
 		edgeClass={(index) => getColorClass(coloring[index])}
 		graph={graph}

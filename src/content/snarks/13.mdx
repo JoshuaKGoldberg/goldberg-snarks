@@ -1,40 +1,38 @@
 ---
 blocks: 13
-nickname: the deck of cards
-summary: Thirteen blocks around a tridecagon. It has 52 symmetries, half of which its drawing doesn’t hint at.
-teaser: 52 symmetries, half of them well hidden
+summary: The Goldberg snark with thirteen blocks, 104 vertices, and 156 edges. It has 52 symmetries.
+teaser: 52 symmetries
 ---
 
 import Highlight from "~/components/Highlight.astro";
 import Snark from "~/components/Snark.astro";
 
-## A symmetry for each card
+## Symmetries
 
-A _symmetry_ of a graph rearranges its vertices such that any two that shared an edge still do.
-With thirteen blocks there are 52 of them, as many as there are cards in a deck, and they're organized like one too: in thirteen ranks and four suits.
+A _symmetry_, or _automorphism_, of a graph is a rearrangement of its vertices in which vertices joined by an edge remain joined by an edge.
+There are 52 symmetries of <Snark n={13} />.
+Each is a combination of:
 
-- The thirteen ranks are turns: each of the thirteen blocks can be moved to where any other was.
-- The four suits are ways to do so: as it is, as if seen in a mirror, inside out, or both.
+- a rotation by any number of blocks, for which there are 13 choices;
+- a reflection, or no reflection; and
+- an exchange of the outer and middle rings, or no exchange.
 
-## Turning it inside out
+The same is true of every Goldberg snark, so <Snark n="k" /> has 4*k* symmetries.
 
-The drawing shows the turns.
-It hints at the mirror, though not perfectly, as its blocks are drawn at a slant.
-Nothing about it suggests that it can be turned inside out.
+## Exchanging the outer and middle rings
+
+In every block, exchange _c_ with _d_, _e_ with _h_, and _f_ with _g_.
+Vertices that were joined by an edge are still joined by an edge, so this is a symmetry.
+It moves the outer ring to the middle ring and the middle ring to the outer ring, and no vertex leaves its block.
 
 <Highlight
 	blocks={13}
 	kind="swapped"
 	label="The Goldberg snark G13, with its outer ring and its middle ring emphasized in different colors."
 >
-	The outer and middle rings can trade places, without a single block moving.
+	The outer and middle rings of <Snark n={13} />.
 </Highlight>
 
-In every block, swap _c_ with _d_, _e_ with _h_, and _f_ with _g_.
-Each edge lands on an edge.
-The outer ring has become the middle ring, the middle ring has become the outer one, and the graph is the same as it ever was.
-That the one is drawn around the other is only a choice that the drawing made.
-
-Every Goldberg snark can do this.
-With _k_ blocks it has 4*k* symmetries, so only <Snark n={13} /> has a full deck.
-Its 104 vertices even come to two per card.
+The outer and middle rings are drawn at different distances from the center, so this symmetry is not visible in the drawing.
+The rotations are visible.
+The reflections are only approximate in the drawing, because its blocks are not drawn symmetrically.

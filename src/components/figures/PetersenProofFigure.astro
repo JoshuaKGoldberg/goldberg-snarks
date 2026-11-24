@@ -3,7 +3,7 @@ import { createPetersenGraph } from "~/graphs/createPetersenGraph.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import ColoringKey from "../ColoringKey.astro";
-import Drawing from "../Drawing.astro";
+import MovableDrawing from "../MovableDrawing.astro";
 import Figure from "../Figure.astro";
 
 const graph = createPetersenGraph();
@@ -14,7 +14,7 @@ const inward = [1, 2, 2, 2, 0];
 ---
 
 <Figure size="small">
-	<Drawing
+	<MovableDrawing
 		slot="drawing"
 		edgeClass={(index) => {
 			const corner = Math.floor(index / 3);

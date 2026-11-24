@@ -8,9 +8,6 @@ export const collections = {
 		schema: z.object({
 			blocks: z.number().int().min(3),
 
-			/** What sets this snark apart, as a short phrase. */
-			nickname: z.string(),
-
 			/** One or two sentences, for its page's lead and metadata. */
 			summary: z.string(),
 

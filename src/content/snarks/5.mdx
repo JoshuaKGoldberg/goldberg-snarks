@@ -1,8 +1,7 @@
 ---
 blocks: 5
-nickname: the first of the family
-summary: Five blocks around a pentagon. This is the smallest Goldberg snark, and the one that’s drawn the most often.
-teaser: The first, and most often drawn
+summary: The smallest Goldberg snark, with five blocks, 40 vertices, and 60 edges.
+teaser: The smallest
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -10,41 +9,41 @@ import Highlight from "~/components/Highlight.astro";
 import Snark from "~/components/Snark.astro";
 import Vertex from "~/components/Vertex.astro";
 
-## Where the family begins
+## Pentagons
 
-When someone draws "the" Goldberg snark, it's nearly always this one.
-Five is the smallest odd number of blocks whose hub isn't a triangle, so <Snark n={5} /> is the first that everybody agrees is a snark.
-
-It's also the only Goldberg snark whose hub is a pentagon.
-Every block brings two pentagons of its own, which makes ten, and the hub is the eleventh.
+<Snark n={5} />{" "}has eleven cycles of length 5.
+Each block contains two, and the inner ring is the eleventh.
+It is the only Goldberg snark whose inner ring is a pentagon.
 
 <Highlight
 	blocks={5}
-	kind="hub"
+	kind="inner"
 	label="The Goldberg snark G5, with the pentagon in its center emphasized."
 >
-	The hub of <Snark n={5} /> is its eleventh pentagon.
+	The inner ring of <Snark n={5} />.
 </Highlight>
 
-It's sturdy, too.
-To cut <Snark n={5} /> into two parts that both still have cycles, you'd have to cut at least five edges, which is one more than snarks are required to withstand.
+## Longest cycle
 
-## Nearly a grand tour
-
-As with every snark, [no loop visits all of its vertices](/#hamiltonian).
-This one visits 39 of the 40.
+Like every snark, <Snark n={5} /> has [no Hamiltonian cycle](/#hamiltonian).
+Its longest cycles visit 39 of its 40 vertices.
 
 <Highlight
 	blocks={5}
 	kind="longest"
-	label="A loop along the edges of the Goldberg snark G5 that passes through every vertex but one, c1, near the top."
+	label="A cycle in the Goldberg snark G5 that visits every vertex but one, c1, near the top."
 >
-	A loop that misses only one vertex, <Vertex i="1" role="c" />, near the top.
+	A cycle that visits every vertex except <Vertex i="1" role="c" />.
 </Highlight>
 
-## Just out of reach
+## Connectivity
 
-As of 2026, computers have listed every snark of up to 38 vertices, by [the definition used here](/#snark).
-There are 1,051,945,967 of exactly 38, and listing those took decades' worth of computing time <Cite id="brinkmann2026" />.
-Cubic graphs always have an even number of vertices, so the next size up is 40, which is the size of <Snark n={5} />.
-Nobody knows just how many other snarks are as large as it is.
+The definition of a snark requires that at least four edges must be removed to separate it into two parts that each contain a cycle.
+For <Snark n={5} />, at least five must be removed.
+
+## Number of snarks of this size
+
+As of 2026, all snarks with up to 38 vertices are known <Cite id="brinkmann2026" />.
+There are 1,051,945,967 snarks with exactly 38 vertices.
+A cubic graph always has an even number of vertices, so the next size is 40.
+The number of snarks with 40 vertices, the size of <Snark n={5} />, is not known.

@@ -15,7 +15,7 @@ const names = [...colorNames, ...(Astro.props.spare ? ["spare"] : [])];
 			<svg aria-hidden="true" class="graph" viewBox="0 0 42 8">
 				<path class={name} d="M2.5 4h37" />
 			</svg>
-			{name === "spare" ? "no color left" : name}
+			{name === "spare" ? "uncolored" : name}
 		</li>
 	))}
 </ul>

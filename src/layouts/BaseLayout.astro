@@ -55,8 +55,10 @@ const pageUrl = new URL(getPath(Astro.url), Astro.site);
 		<script is:inline>
 			// Before first paint, so as to not flash the other theme
 			try {
-				if (localStorage.getItem("theme") === "dark") {
-					document.documentElement.dataset.theme = "dark";
+				const theme = localStorage.getItem("theme");
+
+				if (theme === "dark" || theme === "light") {
+					document.documentElement.dataset.theme = theme;
 				}
 			} catch {
 				// Browsers may block storage
@@ -96,7 +98,7 @@ const pageUrl = new URL(getPath(Astro.url), Astro.site);
 <style>
 	main {
 		margin-inline: auto;
-		max-width: calc(var(--widthFull) + 2 * var(--space));
+		max-width: calc(var(--widthPage) + 2 * var(--space));
 		padding-inline: var(--space);
 	}
 

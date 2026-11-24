@@ -3,7 +3,7 @@ import { createPetersenAroundBlock } from "~/graphs/createPetersenAroundBlock.ts
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import ColoringKey from "../ColoringKey.astro";
-import Drawing from "../Drawing.astro";
+import MovableDrawing from "../MovableDrawing.astro";
 import Figure from "../Figure.astro";
 import { nameFlatVertices } from "./names.ts";
 
@@ -28,7 +28,7 @@ const getName = (index: number) => {
 ---
 
 <Figure inMargin>
-	<Drawing
+	<MovableDrawing
 		slot="drawing"
 		cropped
 		edgeClass={(index) =>

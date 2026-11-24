@@ -4,7 +4,7 @@ import { createBlockChain } from "~/graphs/createBlockChain.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import ColoringKey from "../ColoringKey.astro";
-import Drawing from "../Drawing.astro";
+import MovableDrawing from "../MovableDrawing.astro";
 import Figure from "../Figure.astro";
 
 const graph = createBlockChain(2);
@@ -20,7 +20,7 @@ const coloring = colorEdges(graph, {
 ---
 
 <Figure id="chain">
-	<Drawing
+	<MovableDrawing
 		slot="drawing"
 		cropped
 		edgeClass={(index) => getColorClass(coloring?.[index])}

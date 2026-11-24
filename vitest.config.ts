@@ -9,5 +9,8 @@ export default defineConfig({
 		},
 		exclude: ["dist", "node_modules"],
 		setupFiles: ["console-fail-test/setup"],
+
+		// Ruling out every coloring of the larger snarks takes a while
+		testTimeout: 30_000,
 	},
 });

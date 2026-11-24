@@ -1,0 +1,11 @@
+---
+import LinkedHeading from "./LinkedHeading.astro";
+
+interface Props {
+	id: string;
+}
+---
+
+<LinkedHeading id={Astro.props.id} level="h3">
+	<slot />
+</LinkedHeading>
