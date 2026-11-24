@@ -20,13 +20,24 @@ interface Props {
 	/** Whether this is shown in place of pages that don't exist. */
 	isMissing?: boolean;
 
+	/** Title for links to this page, without a colon: iMessage can remove what's before one. */
+	previewTitle?: string;
+
 	/** What's said about the page to search engines, per schema.org. */
 	schema?: Record<string, unknown>;
 
 	title: string;
 }
 
-const { bold, description, image, isMissing, schema, title } = Astro.props;
+const {
+	bold,
+	description,
+	image,
+	isMissing,
+	title,
+	previewTitle = title,
+	schema,
+} = Astro.props;
 const imageUrl = new URL(image.path, Astro.site);
 const pageUrl = new URL(getPath(Astro.url), Astro.site);
 
@@ -75,7 +86,7 @@ const colorStyles = [
 		/>
 		<meta content={schema ? "article" : "website"} property="og:type" />
 		<meta content={siteName} property="og:site_name" />
-		<meta content={title} property="og:title" />
+		<meta content={previewTitle} property="og:title" />
 		<meta content="en_US" property="og:locale" />
 		<meta content={description} property="og:description" />
 		{!isMissing && <meta content={pageUrl} property="og:url" />}
@@ -85,7 +96,7 @@ const colorStyles = [
 		<meta content={imageSize.height.toString()} property="og:image:height" />
 		<meta content={image.alt} property="og:image:alt" />
 		<meta content="summary_large_image" name="twitter:card" />
-		<meta content={title} name="twitter:title" />
+		<meta content={previewTitle} name="twitter:title" />
 		<meta content={description} name="twitter:description" />
 		<meta content={imageUrl} name="twitter:image" />
 		<meta content={image.alt} name="twitter:image:alt" />

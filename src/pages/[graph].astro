@@ -83,6 +83,7 @@ const downloads = [
 		alt: `${kind} ${name}, with ${facts.vertices.toString()} vertices and ${facts.edges.toString()} edges, beside a drawing of its ${blocks.toString()} blocks in a ring.`,
 		path: `/images${href}.png`,
 	}}
+	previewTitle={`${kind} ${name}`}
 	schema={{
 		"@type": "Article",
 		about: { "@type": "Thing", name: `${kind} ${name}` },

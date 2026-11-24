@@ -19,12 +19,16 @@ const citation = `@misc{goldbergsnarks,
   year   = {2026},
   url    = {${site}}
 }`;
+
+const summary =
+	"A family of graphs whose edges cannot be colored with three colors";
 ---
 
 <BaseLayout
 	bold
-	description="An infinite family of graphs whose edges cannot be colored with three colors: proofs, drawings, properties, and history."
+	description="Definitions, proofs, drawings, properties, and history of Goldberg snarks, an infinite family of graphs."
 	image={homeImage}
+	previewTitle={summary}
 	schema={{
 		"@type": ["Article", "WebSite"],
 		about: { "@type": "Thing", name: "Goldberg snark" },
@@ -39,10 +43,7 @@ const citation = `@misc{goldbergsnarks,
 			{ depth: 2, slug: "references", text: "References" },
 		]}
 	>
-		<Heading
-			slot="heading"
-			summary="A family of graphs whose edges cannot be colored with three colors"
-		>
+		<Heading slot="heading" summary={summary}>
 			Goldberg snarks
 		</Heading>
 		<div class="annotated">
