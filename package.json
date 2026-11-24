@@ -24,6 +24,7 @@
 		"lint:spelling": "cspell \"**\" \".github/**/*\"",
 		"prepare": "husky",
 		"preview": "astro preview",
+		"preview:worker": "wrangler dev",
 		"test": "vitest",
 		"tsc": "tsc"
 	},
@@ -70,7 +71,8 @@
 		"pretty-quick": "4.2.2",
 		"typescript": "6.0.3",
 		"typescript-eslint": "8.73.0",
-		"vitest": "5.1.0"
+		"vitest": "5.1.0",
+		"wrangler": "4.165.0"
 	},
 	"packageManager": "pnpm@11.22.0",
 	"engines": {
