@@ -87,6 +87,7 @@
 		font-size: var(--fontSizeBody);
 		line-height: 1.5;
 		overflow-wrap: break-word;
+		scrollbar-color: auto;
 	}
 
 	h1,

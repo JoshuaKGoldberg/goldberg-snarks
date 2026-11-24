@@ -7,10 +7,12 @@
 		"replacements:all"
 	],
 	"labels": ["dependencies"],
+	"minimumReleaseAge": "7 days",
 	"packageRules": [
 		{
-			"description": "A top-level age would be overridden by the one in config:best-practices.",
-			"matchPackageNames": ["*"],
+			"description": "The age in config:best-practices would otherwise override the top-level one.",
+			"matchDatasources": ["npm"],
+			"matchUpdateTypes": ["major", "minor", "patch"],
 			"minimumReleaseAge": "7 days"
 		},
 		{

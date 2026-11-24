@@ -83,7 +83,7 @@ A _snark_ is a connected cubic graph with these properties:
 </Statement>
 
 Definitions vary.
-Some authors exclude only graphs that can be disconnected by removing one edge <Cite id="campos2011" />.
+Some authors require only the first property, and that removing one edge never disconnects the graph <Cite id="campos2011" />.
 
 The smallest snark is the Petersen graph, which has 10 vertices and 15 edges.
 It can be drawn as a pentagon, a five-pointed star inside it, and five edges joining the two.
@@ -380,7 +380,7 @@ These are properties of <Snark n="k" /> for odd <span class="nowrap">_k_ ≥ 5</
 | Cycles of length 5 | 2*k* <span class="nowrap">(11 if _k_ = 5)</span> | <Ref id="short-cycles" /> |
 | <span id="diameter">Diameter</span> (largest distance between two vertices) | <span class="nowrap">_k_ + 1 if _k_ ≤ 9,</span> <span class="nowrap">else (_k_ + 11)/2</span> | Computed for <span class="nowrap">_k_ ≤ 25</span> |
 | <span id="radius">Radius</span> (smallest _r_ such that some vertex is at distance at most _r_ from every other) | <span class="nowrap">(_k_ + 5)/2</span> | Computed for <span class="nowrap">_k_ ≤ 25</span> |
-| Cyclic edge-connectivity (fewest edges whose removal leaves two parts that each contain a cycle) | 5 | Computed for <span class="nowrap">_k_ ≤ 15</span> |
+| <span id="cyclic-edge-connectivity">Cyclic edge-connectivity</span> (fewest edges whose removal leaves two parts that each contain a cycle) | 5 | Computed for <span class="nowrap">_k_ ≤ 15</span> |
 | Circular flow number (defined below) | <span class="nowrap">4 + 2/(_k_ + 1)</span> | <Cite id="lukotka2024" /> |
 | <span id="symmetries">Symmetries</span> (rearrangements of the vertices that keep joined vertices joined) | 4*k* | [Symmetries](/g13#symmetries) |
 | <span id="crossing-number">Crossing number</span> (fewest crossings of edges in any drawing) | 2*k* | Known for <span class="nowrap">_k_ ≤ 11</span>, conjectured for larger _k_ <Cite id="weisstein" /> |

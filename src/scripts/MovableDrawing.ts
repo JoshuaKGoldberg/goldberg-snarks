@@ -373,7 +373,11 @@ export class MovableDrawing extends HTMLElement {
 				}
 
 				isDragging = true;
-				this.#jumpTo(start);
+				this.#jumpTo(
+					index === undefined
+						? { angles: this.#view.angles, points: start.points }
+						: start,
+				);
 				grip = this.#getGrip(event, index);
 				this.toggleAttribute("data-moving", true);
 			}

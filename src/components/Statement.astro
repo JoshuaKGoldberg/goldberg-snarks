@@ -50,6 +50,12 @@ const { kind, label } = getStatement(id);
 		--lit: 100%;
 	}
 
+	@media (forced-colors: active) {
+		.statement:not(:target) {
+			outline: none;
+		}
+	}
+
 	strong {
 		color: var(--colorRed);
 		font-weight: 700;

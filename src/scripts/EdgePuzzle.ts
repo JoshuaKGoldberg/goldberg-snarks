@@ -38,7 +38,6 @@ export class EdgePuzzle extends HTMLElement {
 
 	connectedCallback() {
 		const instructions = query(this, ".instructions", HTMLElement);
-		let pressed: number | undefined;
 
 		this.#board.setAttribute("aria-describedby", instructions.id);
 		this.#board.setAttribute("role", "toolbar");
@@ -50,20 +49,12 @@ export class EdgePuzzle extends HTMLElement {
 
 		this.#show();
 
-		this.#board.addEventListener("pointerdown", (event) => {
-			pressed = this.#findNearest(event);
-		});
 		this.#board.addEventListener("click", (event) => {
 			// Assistive technologies may click on edges without being anywhere near them
 			const index =
 				event.detail === 0
 					? this.#edges.findIndex((edge) => edge === event.target)
 					: this.#findNearest(event);
-
-			// Moving off of an edge before letting go cancels pressing it
-			if (event.detail !== 0 && index !== pressed) {
-				return;
-			}
 
 			if (index !== undefined && index !== -1) {
 				this.#press(index);

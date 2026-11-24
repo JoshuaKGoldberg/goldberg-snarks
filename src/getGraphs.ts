@@ -23,19 +23,18 @@ export async function getGraphs() {
 			const isSnark = blocks >= fewestBlocks;
 			const kind = isSnark ? "Goldberg snark" : "Goldberg graph";
 			const name = `G${entry.id}`;
-			const size = `${vertices.length.toString()} vertices and ${edges.length.toString()} edges`;
 			const slug = `g${entry.id}`;
 
 			return {
 				blocks,
-				description: `The ${kind} ${name} has ${size}. ${entry.data.fact}`,
+				description: `${kind} ${name}: ${blocks.toString()} blocks, ${vertices.length.toString()} vertices, and ${edges.length.toString()} edges. ${entry.data.fact}`,
 				entry,
 				href: `/${slug}`,
 				isSnark,
 				kind,
 				name,
 				slug,
-				summary: `A graph with ${size}, made of ${blocks.toString()} identical blocks. ${entry.data.fact}`,
+				summary: `A graph with ${vertices.length.toString()} vertices and ${edges.length.toString()} edges, made of ${blocks.toString()} identical blocks. ${entry.data.fact}`,
 			};
 		})
 		.sort((a, b) => a.blocks - b.blocks);
