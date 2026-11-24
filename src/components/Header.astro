@@ -60,20 +60,20 @@ const snarks = await getSnarks();
 	.home {
 		font-size: 1.1875rem;
 		font-style: italic;
-		margin-right: auto;
+		flex: 1;
 	}
 
 	ul {
 		display: flex;
+		flex-wrap: wrap;
 		list-style: none;
 		padding: 0;
 	}
 
 	.snark-link {
-		border-bottom: 2px solid transparent;
 		display: block;
 		min-width: 2.5rem;
-		padding: 0 0.45rem;
+		padding: 0 0.45rem 2px;
 		text-align: center;
 	}
 
@@ -84,7 +84,8 @@ const snarks = await getSnarks();
 	}
 
 	.snark-link[aria-current="page"] {
-		border-color: var(--colorRed);
+		border-bottom: 2px solid var(--colorRed);
+		padding-bottom: 0;
 	}
 
 	@media (max-width: 40rem) {

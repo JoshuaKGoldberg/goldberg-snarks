@@ -41,6 +41,7 @@ const graph = createGoldbergGraph(blocks);
 		border-top: 3px solid var(--colorRed);
 		display: grid;
 		gap: 0.5rem;
+		grid-template-columns: minmax(0, 1fr);
 		margin-block: 1.25rem;
 		padding: 0.9rem 1rem 0.5rem;
 	}
@@ -96,7 +97,9 @@ const graph = createGoldbergGraph(blocks);
 
 	@media print {
 		.fact-box {
-			break-inside: avoid;
+			float: right;
+			margin: 0 0 1rem 1.5rem;
+			width: 15rem;
 		}
 	}
 </style>

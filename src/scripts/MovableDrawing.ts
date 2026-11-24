@@ -42,7 +42,7 @@ export class MovableDrawing extends HTMLElement {
 		y,
 		z,
 	}));
-	readonly #isDeep = this.#home.some(({ z }) => z !== 0);
+	readonly #isDeep = this.hasAttribute("data-deep");
 	readonly #paths = [...this.querySelectorAll("path")];
 	#points = [...this.#home];
 	readonly #reset = query(this, "[data-action=reset]", HTMLButtonElement);
@@ -58,17 +58,26 @@ export class MovableDrawing extends HTMLElement {
 			this.#onReset();
 		});
 
+		// Chrome only heeds touch-action on whole SVGs, not on what's within them
+		this.#svg.addEventListener(
+			"touchstart",
+			(event) => {
+				if ((event.target as Element).classList.contains("handle")) {
+					event.preventDefault();
+				}
+			},
+			{ passive: false },
+		);
+
 		if (this.#isDeep) {
-			this.#svg.tabIndex = 0;
-			this.#svg.addEventListener("keydown", (event) => {
+			const turn = query(this, "[data-action=turn]", HTMLButtonElement);
+
+			turn.addEventListener("click", () => {
+				this.#turn(turnStep, this.#angles.pitch ? 0 : turnStep * 2);
+			});
+			turn.addEventListener("keydown", (event) => {
 				this.#onKeyDown(event);
 			});
-			this.querySelector("[data-action=turn]")?.addEventListener(
-				"click",
-				() => {
-					this.#turn(turnStep, this.#angles.pitch ? 0 : turnStep * 2);
-				},
-			);
 		}
 	}
 
@@ -139,9 +148,12 @@ export class MovableDrawing extends HTMLElement {
 		const matrix = this.#svg.getScreenCTM();
 
 		if (matrix) {
-			const { x, y } = new DOMPoint(clientX, clientY).matrixTransform(
+			const point = new DOMPoint(clientX, clientY).matrixTransform(
 				matrix.inverse(),
 			);
+			const { height, width, x: left, y: top } = this.#svg.viewBox.baseVal;
+			const x = Math.min(left + width, Math.max(left, point.x));
+			const y = Math.min(top + height, Math.max(top, point.y));
 			const { z } = rotate(this.#points[index], this.#angles);
 
 			this.#points[index] = unrotate({ x, y, z }, this.#angles);
@@ -175,8 +187,15 @@ export class MovableDrawing extends HTMLElement {
 			: undefined;
 		const drag = new AbortController();
 		const { signal } = drag;
+		const startAngles = this.#angles;
+		const startPoint = index === undefined ? undefined : this.#points[index];
 		let { clientX, clientY } = event;
 		let isDragging = false;
+
+		const finish = () => {
+			drag.abort();
+			this.removeAttribute("data-moving");
+		};
 
 		this.#stop();
 		this.#svg.setPointerCapture(event.pointerId);
@@ -184,12 +203,26 @@ export class MovableDrawing extends HTMLElement {
 		this.#svg.addEventListener(
 			"pointermove",
 			(moved) => {
-				isDragging ||=
-					Math.hypot(moved.clientX - clientX, moved.clientY - clientY) >
-					tapDistance;
+				const acrossBy = Math.abs(moved.clientX - clientX);
+				const downBy = Math.abs(moved.clientY - clientY);
 
 				if (!isDragging) {
-					return;
+					if (Math.hypot(acrossBy, downBy) <= tapDistance) {
+						return;
+					}
+
+					// Vertical swipes are to scroll the page
+					if (
+						index === undefined &&
+						moved.pointerType === "touch" &&
+						downBy > acrossBy
+					) {
+						finish();
+
+						return;
+					}
+
+					isDragging = true;
 				}
 
 				this.toggleAttribute("data-moving", true);
@@ -207,12 +240,20 @@ export class MovableDrawing extends HTMLElement {
 			{ signal },
 		);
 
-		const finish = () => {
-			drag.abort();
-			this.removeAttribute("data-moving");
-		};
+		this.#svg.addEventListener(
+			"pointercancel",
+			() => {
+				finish();
+				this.#angles = startAngles;
 
-		this.#svg.addEventListener("pointercancel", finish, { signal });
+				if (index !== undefined && startPoint) {
+					this.#points[index] = startPoint;
+				}
+
+				this.#draw();
+			},
+			{ signal },
+		);
 		this.#svg.addEventListener(
 			"pointerup",
 			(released) => {
@@ -270,8 +311,8 @@ export class MovableDrawing extends HTMLElement {
 		this.#select(undefined);
 
 		// It's about to be disabled, which would lose the focus it has
-		if (this.#reset.matches(":focus-visible") && this.#isDeep) {
-			this.#svg.focus();
+		if (this.#reset.matches(":focus-visible")) {
+			this.querySelector<HTMLElement>("[data-action=turn]")?.focus();
 		}
 
 		this.#frame = requestAnimationFrame(step);

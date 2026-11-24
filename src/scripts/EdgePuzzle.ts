@@ -131,6 +131,7 @@ export class EdgePuzzle extends HTMLElement {
 		}
 
 		edge.focus({ preventScroll: true });
+		edge.scrollIntoView({ block: "nearest", inline: "nearest" });
 	}
 
 	#onKeyDown(event: KeyboardEvent) {

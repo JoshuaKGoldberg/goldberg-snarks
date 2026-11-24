@@ -7,15 +7,20 @@ import Snark from "./Snark.astro";
 const snarks = await getSnarks();
 ---
 
-<div class="table wide">
+{/* Anything that scrolls needs to be focusable to be scrolled with a keyboard */}
+{/* eslint-disable astro/jsx-a11y/no-noninteractive-tabindex */}
+<div
+	aria-label="Comparison of Goldberg snarks"
+	class="table wide"
+	role="region"
+	tabindex="0"
+>
 	<table>
 		<thead>
 			<tr>
 				<th scope="col">Snark</th>
-				<th scope="col">Blocks</th>
 				<th scope="col">Vertices</th>
 				<th scope="col">Edges</th>
-				<th scope="col">Girth</th>
 				<th scope="col">Cycles of length 5</th>
 				<th scope="col">Diameter</th>
 				<th scope="col">Radius</th>
@@ -34,10 +39,8 @@ const snarks = await getSnarks();
 								<Snark n={blocks} />
 							</a>
 						</th>
-						<td>{blocks}</td>
 						<td>{facts.vertices}</td>
 						<td>{facts.edges}</td>
-						<td>{facts.girth}</td>
 						<td>{facts.pentagons}</td>
 						<td>{facts.diameter}</td>
 						<td>{facts.radius}</td>

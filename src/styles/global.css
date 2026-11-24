@@ -251,7 +251,7 @@
 		stroke: CanvasText !important;
 	}
 
-	.graph :is(text, circle) {
+	.graph :is(text, circle:not(.handle)) {
 		fill: CanvasText !important;
 	}
 }

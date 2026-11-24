@@ -154,13 +154,13 @@ const citation = `@misc{goldbergsnarks,
 		margin-top: 0.7rem;
 	}
 
-	@media (max-width: 59.99rem) {
+	@media screen and (max-width: 59.99rem) {
 		.lead {
 			display: flex;
 			flex-direction: column;
 		}
 
-		.lead > :global(:is(.fact-box, ul)) {
+		.lead > :global(.fact-box) {
 			order: 1;
 		}
 	}

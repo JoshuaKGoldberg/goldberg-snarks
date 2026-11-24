@@ -99,6 +99,7 @@ const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 	article :global(.pair) {
 		column-gap: 1.5rem;
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	article :global(.pair figure) {
@@ -107,7 +108,7 @@ const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 
 	@media (min-width: 40rem) {
 		article :global(.pair) {
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 
@@ -119,6 +120,10 @@ const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 
 	article > :global(ul:not([class])) :global(::marker) {
 		color: var(--colorRed);
+	}
+
+	article :global(.nowrap) {
+		white-space: nowrap;
 	}
 
 	article :global(.table) {
@@ -185,6 +190,11 @@ const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 			grid-template-columns: var(--widthContents) minmax(0, 1fr);
 		}
 
+		article {
+			grid-column: 2;
+			grid-row: 1;
+		}
+
 		.beside {
 			align-self: start;
 			display: block;
@@ -201,6 +211,10 @@ const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 	}
 
 	@media print {
+		article :global(:is(h2, h3)) {
+			break-after: avoid;
+		}
+
 		.above,
 		.beside {
 			display: none;
