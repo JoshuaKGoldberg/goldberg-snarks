@@ -98,7 +98,9 @@ const after = [
 					<th scope="row">
 						<a href="/#properties">Crossing number</a>
 					</th>
-					<td>{facts.crossings ?? `${(blocks * 2).toString()}?`}</td>
+					<td>
+						{facts.crossings ?? `${(blocks * 2).toString()} (conjectured)`}
+					</td>
 				</tr>
 				<tr>
 					<th scope="row">
