@@ -98,9 +98,7 @@ const after = [
 					<th scope="row">
 						<a href="/#properties">Crossing number</a>
 					</th>
-					<td>
-						{facts.crossings ?? `${(blocks * 2).toString()}, conjecturally`}
-					</td>
+					<td>{facts.crossings ?? `${(blocks * 2).toString()}?`}</td>
 				</tr>
 				<tr>
 					<th scope="row">
@@ -129,6 +127,7 @@ const after = [
 		<ColoredFigure
 			graph={graph}
 			inMargin
+			name={`colored ${name}`}
 			size="small"
 			label={`${name} with all but two of its ${facts.edges.toString()} edges colored. The uncolored edges are from a1 to b1 and from c1 to e1.`}
 		>

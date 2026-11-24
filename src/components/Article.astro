@@ -10,7 +10,7 @@ interface Props {
 const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 ---
 
-<div class="page">
+<div class:list={["page", headings.length > 0 && "with-contents"]}>
 	<nav
 		aria-label="On this page"
 		class="beside"
@@ -184,7 +184,7 @@ const headings = Astro.props.headings.filter(({ depth }) => depth === 2);
 	}
 
 	@media (min-width: 75rem) {
-		.page {
+		.with-contents {
 			column-gap: var(--gap);
 			display: grid;
 			grid-template-columns: var(--widthContents) minmax(0, 1fr);

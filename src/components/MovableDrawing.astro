@@ -5,7 +5,10 @@ import { locate } from "~/graphs/draw.ts";
 
 import Drawing from "./Drawing.astro";
 
-type Props = ComponentProps<typeof Drawing>;
+type Props = ComponentProps<typeof Drawing> & {
+	/** Tells apart the buttons of drawings on the same page. */
+	name: string;
+};
 
 /** Depth that's neither toward nor away from the viewer. */
 const middleDepth = 0.58;
@@ -13,7 +16,8 @@ const middleDepth = 0.58;
 /** How many times deeper the graph is than its depths, so that turning it shows more. */
 const deepening = 170;
 
-const { edgeClass = () => "plain", graph, label, vertexClass } = Astro.props;
+const { name, ...drawing } = Astro.props;
+const { edgeClass = () => "plain", graph, vertexClass } = drawing;
 
 // Grouped in the same order as they're drawn in
 const group = (names: string[]) => {
@@ -46,16 +50,13 @@ const data = {
 };
 
 const isDeep = data.points.some(([, , z]) => z !== 0);
-
-// Only as much as is needed to tell drawings apart
-const name = label?.split(/[.:,]/)[0] ?? "drawing";
 ---
 
 <movable-drawing
 	data-deep={isDeep || undefined}
 	data-graph={JSON.stringify(data)}
 >
-	<Drawing {...Astro.props} />
+	<Drawing {...drawing} />
 	<div class="buttons">
 		{isDeep && (
 			<button aria-label={`Turn: ${name}`} data-action="turn" type="button">
@@ -147,8 +148,9 @@ const name = label?.split(/[.:,]/)[0] ?? "drawing";
 		color: var(--colorRed);
 	}
 
+	/* Its space is kept, so that other buttons stay put */
 	button:disabled {
-		display: none;
+		visibility: hidden;
 	}
 
 	@media print, (scripting: none) {

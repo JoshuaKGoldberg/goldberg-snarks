@@ -12,12 +12,25 @@ interface Props {
 }
 
 const { blocks, kind, label } = Astro.props;
+
+/** What's emphasized in each kind of drawing. */
+const names: Record<HighlightKind, string> = {
+	"block-cycles": "cycles of lengths 5 and 6 in",
+	"every-fifth": "every fifth block of",
+	"every-third": "every third block of",
+	farthest: "shortest path in",
+	inner: "inner ring of",
+	longest: "longest cycle of",
+	swapped: "outer and middle rings of",
+};
+
 const graph = createGoldbergGraph(blocks);
 const { edgeClass, vertexClass } = getHighlight(graph, kind);
 ---
 
 <Figure size="medium">
 	<MovableDrawing
+		name={`${names[kind]} G${blocks.toString()}`}
 		slot="drawing"
 		edgeClass={edgeClass}
 		graph={graph}

@@ -17,6 +17,7 @@ const graph = createGoldbergGraph(blocks);
 
 <div class="fact-box">
 	<MovableDrawing
+		name={`${kind} G${blocks.toString()}`}
 		edgeClass={(index) => getPartClass(graph, index)}
 		graph={graph}
 		label={`The ${kind} G${blocks.toString()}: ${blocks.toString()} identical blocks of vertices and edges in a ring around a central ${blocks.toString()}-sided loop.`}

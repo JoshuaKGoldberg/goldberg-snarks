@@ -62,12 +62,6 @@ const coloring = colorEdges(graph);
 		visibility: hidden;
 	}
 
-	@media print, (scripting: none) {
-		.slider {
-			display: none;
-		}
-	}
-
 	.slider {
 		display: grid;
 		gap: 0.6rem;
@@ -105,6 +99,12 @@ const coloring = colorEdges(graph);
 	@media print {
 		block-explorer {
 			break-inside: avoid;
+		}
+	}
+
+	@media print, (scripting: none) {
+		.slider {
+			display: none;
 		}
 	}
 </style>
