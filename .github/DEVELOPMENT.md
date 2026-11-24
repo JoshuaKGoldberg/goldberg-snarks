@@ -33,6 +33,18 @@ pnpm preview
 To add a page for another Goldberg graph, add an `.mdx` file named for its number of blocks, such as `17.mdx`, to `src/content/graphs`.
 Prettier doesn't format those, as it'd split sentences that start with components.
 
+## Deployment
+
+The site is a [Cloudflare Worker](https://developers.cloudflare.com/workers/static-assets) that only serves static assets, configured in `wrangler.jsonc`.
+Cloudflare builds it with `pnpm build` and deploys it to [goldbergsnarks.com](https://goldbergsnarks.com) on every push to `main`.
+
+To preview the site the way Cloudflare serves it, build it and then run the Worker locally:
+
+```shell
+pnpm build
+pnpm preview:worker
+```
+
 ## Formatting
 
 [Prettier](https://prettier.io) is used to format code.

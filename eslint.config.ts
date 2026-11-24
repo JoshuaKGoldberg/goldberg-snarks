@@ -19,6 +19,7 @@ export default defineConfig(
 		[
 			"**/*.snap",
 			".astro",
+			".wrangler",
 			"coverage",
 			"dist",
 			"node_modules",

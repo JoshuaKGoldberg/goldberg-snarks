@@ -3,6 +3,7 @@
 	"ignorePaths": [
 		".all-contributorsrc",
 		".astro",
+		".wrangler",
 		"/_tmp_*",
 		"CHANGELOG.md",
 		"coverage",
@@ -58,6 +59,7 @@
 		"théorème",
 		"unrotate",
 		"untilted",
+		"workerd",
 		"zizmor",
 		"zizmorcore",
 		"četiriju"
