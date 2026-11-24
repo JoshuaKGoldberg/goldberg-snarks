@@ -28,6 +28,7 @@ pnpm preview
 ```
 
 To add a page for another snark, add an `.mdx` file to `src/content/snarks`.
+Prettier doesn't format those, as it'd split sentences that start with components.
 
 ## Formatting
 

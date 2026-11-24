@@ -1,15 +1,16 @@
 ---
+import { getPath } from "~/getPath.ts";
 import { getSnarks } from "~/getSnarks.ts";
 
 import Snark from "./Snark.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 
-const path = Astro.url.pathname.replace(/\/$/, "");
+const path = getPath(Astro.url);
 const snarks = await getSnarks();
 ---
 
 <header>
-	<a class="home" href="/" aria-current={path === "" ? "page" : undefined}>
+	<a class="home" href="/" aria-current={path === "/" ? "page" : undefined}>
 		Goldberg snarks
 	</a>
 	<nav aria-label="Snarks">
@@ -32,12 +33,14 @@ const snarks = await getSnarks();
 
 <style>
 	header {
+		--widthHeader: var(--widthText);
+
 		align-items: center;
 		column-gap: 2rem;
 		display: grid;
 		grid-template: "home nav toggle" auto / 1fr auto auto;
 		margin-inline: auto;
-		max-width: calc(var(--widthFull) + 2 * var(--space));
+		max-width: calc(var(--widthHeader) + 2 * var(--space));
 		padding: 1.5rem var(--space);
 	}
 
@@ -74,6 +77,18 @@ const snarks = await getSnarks();
 		color: var(--colorEmphasized);
 		text-decoration: underline wavy currentcolor 1px;
 		text-underline-offset: 0.35em;
+	}
+
+	@media (min-width: 60rem) {
+		header {
+			--widthHeader: var(--widthFull);
+		}
+	}
+
+	@media print {
+		nav {
+			display: none;
+		}
 	}
 
 	@media (max-width: 47rem) {

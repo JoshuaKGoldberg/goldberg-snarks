@@ -1,52 +1,18 @@
 ---
 interface Props {
-	sections: { id: string; name: string }[];
+	headings: { slug: string; text: string }[];
 }
 ---
 
-<nav aria-label="On this page">
-	<ul>
-		{Astro.props.sections.map(({ id, name }) => (
-			<li>
-				<a class="link" href={`#${id}`}>
-					{name}
-				</a>
-			</li>
-		))}
-	</ul>
-</nav>
-
-<script>
-	// Marks whichever section was most recently scrolled to
-	const links = new Map(
-		[...document.querySelectorAll<HTMLAnchorElement>("[data-contents] a")].map(
-			(link) => [link.hash.slice(1), link],
-		),
-	);
-
-	if (links.size) {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				for (const { isIntersecting, target } of entries) {
-					if (isIntersecting) {
-						for (const [id, link] of links) {
-							if (id === target.id) {
-								link.setAttribute("aria-current", "location");
-							} else {
-								link.removeAttribute("aria-current");
-							}
-						}
-					}
-				}
-			},
-			{ rootMargin: "-10% 0% -80% 0%" },
-		);
-
-		for (const section of document.querySelectorAll("section[id]")) {
-			observer.observe(section);
-		}
-	}
-</script>
+<ul>
+	{Astro.props.headings.map(({ slug, text }) => (
+		<li>
+			<a class="link" href={`#${slug}`}>
+				{text}
+			</a>
+		</li>
+	))}
+</ul>
 
 <style>
 	ul {

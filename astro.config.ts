@@ -6,10 +6,8 @@ import { site } from "./src/constants.ts";
 
 // https://astro.build/config
 export default defineConfig({
-	build: { inlineStylesheets: "always" },
+	build: { format: "file", inlineStylesheets: "always" },
 
-	// The default also removes spaces that separate text from elements after it
-	compressHTML: true,
 	fonts: [
 		{
 			cssVariable: "--fontDisplay",
@@ -42,5 +40,5 @@ export default defineConfig({
 	integrations: [mdx(), sitemap()],
 	prefetch: true,
 	site,
-	trailingSlash: "ignore",
+	trailingSlash: "never",
 });

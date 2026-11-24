@@ -92,26 +92,23 @@ export function colorEdges(
 	return colorFrom(0) ? result : undefined;
 }
 
-/** Colors as many edges as three colors can, leaving as few others as possible. */
-export function colorMostEdges(graph: Graph) {
+/** Indices of two edges, a1 to b1 and c1 to e1, that any snark's can do without. */
+export const spareEdges: ReadonlySet<number> = new Set([0, 3]);
+
+/** Colors as many of a graph's edges as three colors can, leaving at most two. */
+export function colorMostEdges(graph: Graph, spares = spareEdges) {
 	const complete = colorEdges(graph);
 
 	if (complete) {
 		return complete;
 	}
 
-	const all = [...graph.edges.keys()];
+	// Never just one, as edges' colors have to balance out
+	const almost = colorEdges(graph, { skipped: spares });
 
-	// Never just one, as edges' colors have to balance out: hence starting from pairs
-	for (const first of all) {
-		for (const second of all.slice(first + 1)) {
-			const coloring = colorEdges(graph, { skipped: new Set([first, second]) });
-
-			if (coloring) {
-				return coloring;
-			}
-		}
+	if (!almost) {
+		throw new Error("Those two edges aren't enough to leave uncolored.");
 	}
 
-	throw new Error("More than two edges would have to be left uncolored.");
+	return almost;
 }

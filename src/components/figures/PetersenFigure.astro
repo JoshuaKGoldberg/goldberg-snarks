@@ -1,0 +1,16 @@
+---
+import { createPetersenGraph } from "~/graphs/createPetersenGraph.ts";
+
+import ColoredFigure from "../ColoredFigure.astro";
+
+const graph = createPetersenGraph();
+---
+
+<ColoredFigure
+	graph={graph}
+	label="The Petersen graph, a pentagon joined to a five-pointed star inside of it, with thirteen of its fifteen edges colored."
+	size="small"
+	spares={new Set([0, 2])}
+>
+	<slot />
+</ColoredFigure>

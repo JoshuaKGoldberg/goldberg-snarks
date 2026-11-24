@@ -5,11 +5,13 @@ import { render } from "astro:content";
 
 import Article from "~/components/Article.astro";
 import Cite from "~/components/Cite.astro";
+import Code from "~/components/Code.astro";
 import ColoredFigure from "~/components/ColoredFigure.astro";
 import EdgePuzzle from "~/components/EdgePuzzle.astro";
 import Hero from "~/components/Hero.astro";
 import Snark from "~/components/Snark.astro";
 import Term from "~/components/Term.astro";
+import WithSnarks from "~/components/WithSnarks.astro";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import { describeSnark } from "~/graphs/describeSnark.ts";
 import { toGraph6 } from "~/graphs/serialize.ts";
@@ -37,31 +39,28 @@ const rows = [
 	["Blocks", blocks],
 	["Vertices", facts.vertices],
 	["Edges", facts.edges],
-	["Colors needed for edges", 4],
+	["Colors for edges (chromatic index)", 4],
 	["Edges that three colors can cover", facts.edges - 2],
 	["Shortest cycle (girth)", facts.girth],
 	["Pentagons", facts.pentagons],
-	["Steps between the farthest vertices (diameter)", facts.diameter],
-	["Steps from a center to everywhere (radius)", facts.radius],
+	["Most steps between vertices (diameter)", facts.diameter],
+	["Most steps from a center (radius)", facts.radius],
 	["Symmetries", facts.symmetries],
 	["Longest cycle", facts.vertices - 1],
 ] as const;
 
-const sections = [
-	...headings
-		.filter(({ depth }) => depth === 2)
-		.map(({ slug, text }) => ({ id: slug, name: text })),
-	{ id: "coloring", name: "How far three colors get" },
-	{ id: "try", name: "Try to color it" },
-	{ id: "facts", name: "Facts and figures" },
-	{ id: "downloads", name: "Downloads" },
+const after = [
+	{ depth: 2, slug: "coloring", text: "How far three colors get" },
+	{ depth: 2, slug: "try", text: "Try to color it" },
+	{ depth: 2, slug: "facts", text: "Facts and figures" },
+	{ depth: 2, slug: "downloads", text: "Downloads" },
 ];
 ---
 
 <BaseLayout
 	description={summary}
 	image={{
-		alt: `The ${title} ${name}, drawn as ${blocks.toString()} blocks in a ring.`,
+		alt: `${title} ${name}, beside a drawing of its ${blocks.toString()} blocks in a ring.`,
 		path: `/images${href}.png`,
 	}}
 	schema={{
@@ -69,13 +68,15 @@ const sections = [
 		about: { "@type": "Thing", name: `${title} ${name}` },
 		headline: `${title} ${name}: ${nickname}`,
 	}}
-	title={`${title} ${name}: ${nickname.toLowerCase()}`}
+	title={`${title} ${name}: ${nickname}`}
 >
 	<Hero blocks={blocks}>
 		<h1>
 			<span class="kind">{title}</span> <Snark n={blocks} />
 		</h1>
-		<p>{summary}</p>
+		<p>
+			<WithSnarks text={summary} />
+		</p>
 		<dl class="glance">
 			{(
 				[
@@ -92,40 +93,34 @@ const sections = [
 		</dl>
 	</Hero>
 
-	<Article sections={sections}>
-		<div class="content">
-			<Content />
-		</div>
+	<Article headings={[...headings, ...after]}>
+		<Content />
 
-		<section id="coloring">
-			<h2>How far three colors get</h2>
-			<p>
-				There are {blocks} blocks, which is an odd number, so
-				<a href="/#why-odd">three colors can’t be enough</a>. One edge is never
-				all that’s missing, either. Two can be: here are
-				{facts.edges - 2} of the {facts.edges} edges of <Snark n={blocks} />,
-				colored, and all of the <Term is="spare">trouble</Term> is in one block.
-			</p>
-			<ColoredFigure
-				graph={graph}
-				label={`${name} with ${(facts.edges - 2).toString()} of its ${facts.edges.toString()} edges colored green, blue, or purple. The two left over are from a1 to b1 and c1 to e1.`}
-				size="large"
-			>
-				No coloring of <Snark n={blocks} /> covers more edges than this one.
-			</ColoredFigure>
-		</section>
+		<h2 id="coloring">How far three colors get</h2>
+		<p>
+			There are {blocks} blocks, which is an odd number, so{" "}
+			<a href="/#why-three-colors-fail">three colors can’t be enough</a>. One
+			edge is never all that’s missing, either. Two can be: here are{" "}
+			{facts.edges - 2} of the {facts.edges} edges of <Snark n={blocks} />,
+			colored, with all of the <Term is="spare">trouble</Term> in one block.
+		</p>
+		<ColoredFigure
+			graph={graph}
+			label={`${name} with ${(facts.edges - 2).toString()} of its ${facts.edges.toString()} edges colored green, blue, or purple. The two left over are from a1 to b1 and c1 to e1.`}
+			size="large"
+		>
+			No coloring of <Snark n={blocks} /> with three colors covers more edges.
+		</ColoredFigure>
 
-		<section id="try">
-			<h2>Try to color it</h2>
-			<p>
-				There’s more than one way to reach {facts.edges - 2} edges. Can you find
-				another?
-			</p>
-			<EdgePuzzle blocks={blocks} />
-		</section>
+		<h2 id="try">Try to color it</h2>
+		<p>
+			There’s more than one way to reach {facts.edges - 2} edges. Can you find
+			another?
+		</p>
+		<EdgePuzzle blocks={blocks} />
 
-		<section id="facts">
-			<h2>Facts and figures</h2>
+		<h2 id="facts">Facts and figures</h2>
+		<div class="table facts">
 			<table>
 				<tbody>
 					{rows.map(([label, value]) => (
@@ -135,12 +130,11 @@ const sections = [
 						</tr>
 					))}
 					<tr>
-						<th scope="row">Fewest crossings in a drawing</th>
+						<th scope="row">
+							Fewest crossings in a drawing <Cite id="weisstein" />
+						</th>
 						<td>
-							{facts.crossings ?? (
-								<Fragment>{blocks * 2}, if a conjecture holds</Fragment>
-							)}
-							<Cite id="weisstein" />
+							{facts.crossings ?? `${(blocks * 2).toString()}, conjecturally`}
 						</td>
 					</tr>
 					<tr>
@@ -157,44 +151,45 @@ const sections = [
 					</tr>
 				</tbody>
 			</table>
-		</section>
+		</div>
 
-		<section id="downloads">
-			<h2>Downloads</h2>
-			<ul class="downloads">
-				<li>
-					<a download href={`/downloads${href}.svg`}>
-						Drawing (SVG)
-					</a>
-				</li>
-				<li>
-					<a download href={`/images${href}.png`}>
-						Drawing (PNG)
-					</a>
-				</li>
-				<li>
-					<a download href={`/downloads${href}.txt`}>
-						Edge list (text)
-					</a>
-				</li>
-				<li>
-					<a download href={`/downloads${href}.g6`}>
-						Compact encoding (graph6)
-					</a>
-				</li>
-			</ul>
-			<p>
-				Programs such as NetworkX, SageMath, and nauty can read this graph6
-				encoding of <Snark n={blocks} />:
-			</p>
-			<pre tabindex="0"><code>{toGraph6(graph)}</code></pre>
-		</section>
+		<h2 id="downloads">Downloads</h2>
+		<ul class="downloads">
+			<li>
+				<a download href={`/downloads${href}.svg`}>
+					Drawing (SVG)
+				</a>
+			</li>
+			<li>
+				<a download href={`/downloads${href}.png`}>
+					Drawing (PNG)
+				</a>
+			</li>
+			<li>
+				<a download href={`/downloads${href}.txt`}>
+					Edge list (text)
+				</a>
+			</li>
+			<li>
+				<a download href={`/downloads${href}.g6`}>
+					Compact encoding (graph6)
+				</a>
+			</li>
+		</ul>
+		<details>
+			<summary>
+				Show its graph6 encoding, for programs such as NetworkX, SageMath, and
+				nauty
+			</summary>
+			<Code breaks code={toGraph6(graph)} />
+		</details>
 
 		<nav aria-label="Other snarks" class="siblings">
 			{previous ? (
 				<a class="sibling" href={previous.href} rel="prev">
 					<span class="direction">Previous</span>
-					<Snark n={previous.blocks} />: {previous.nickname.toLowerCase()}
+					<Snark n={previous.blocks} />
+					{`: ${previous.nickname}`}
 				</a>
 			) : (
 				<a class="sibling" href="/">
@@ -205,10 +200,11 @@ const sections = [
 			{next ? (
 				<a class="sibling next" href={next.href} rel="next">
 					<span class="direction">Next</span>
-					<Snark n={next.blocks} />: {next.nickname.toLowerCase()}
+					<Snark n={next.blocks} />
+					{`: ${next.nickname}`}
 				</a>
 			) : (
-				<a class="sibling next" href="/#gallery">
+				<a class="sibling next" href="/#each-snark">
 					<span class="direction">See them all</span>
 					Goldberg snarks
 				</a>
@@ -257,45 +253,10 @@ const sections = [
 		margin: 0;
 	}
 
-	.content {
-		margin-bottom: clamp(4rem, 10vw, 6.5rem);
-	}
-
-	.content :global(h2:not(:first-child)) {
-		margin-top: clamp(4rem, 10vw, 6.5rem);
-	}
-
-	.content :global(:is(p, ul) + :is(p, ul)) {
-		margin-top: 1.1rem;
-	}
-
-	.content :global(ul) {
-		display: grid;
-		gap: 0.6rem;
-		padding-left: 1.25rem;
-	}
-
-	table {
-		border-collapse: collapse;
-		line-height: 1.4;
-		width: 100%;
-	}
-
-	:is(td, th) {
-		border-bottom: 1px solid var(--colorRule);
-		padding: 0.6rem 0;
-		vertical-align: baseline;
-	}
-
-	th {
-		font-weight: inherit;
-		padding-right: 1.5rem;
-		text-align: left;
-	}
-
-	td {
+	.facts td {
 		color: var(--colorForegroundExtra);
 		font-weight: 500;
+		padding-right: 0;
 		text-align: right;
 	}
 
@@ -304,20 +265,18 @@ const sections = [
 		flex-wrap: wrap;
 		gap: 0.75rem 2rem;
 		list-style: none;
-		margin-bottom: 1.5rem;
+		margin-bottom: 1.25rem;
 		padding: 0;
 	}
 
-	pre {
-		background: var(--colorRaised);
-		border-radius: 0.5rem;
-		box-shadow: inset 0 0 0 1px var(--colorRule);
-		font-size: 0.875rem;
-		line-height: 1.5;
-		margin-top: 1rem;
-		overflow-wrap: anywhere;
-		padding: 1rem 1.25rem;
-		white-space: pre-wrap;
+	summary {
+		cursor: pointer;
+	}
+
+	@media print {
+		.siblings {
+			display: none;
+		}
 	}
 
 	.siblings {

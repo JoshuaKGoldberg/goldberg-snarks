@@ -1,0 +1,47 @@
+---
+import { createPetersenAroundBlock } from "~/graphs/createPetersenAroundBlock.ts";
+import { getColorClass } from "~/graphs/edgeClasses.ts";
+
+import ColoringKey from "../ColoringKey.astro";
+import Drawing from "../Drawing.astro";
+import Figure from "../Figure.astro";
+import { nameFlatVertices } from "./names.ts";
+
+const graph = createPetersenAroundBlock();
+
+/** Colors of the edges that were cut, by the names of their vertices. */
+const colors: Record<string, number> = {
+	bv: 0,
+	eu: 0,
+	fw: 0,
+	gw: 1,
+	hu: 2,
+	uv: 1,
+	vw: 2,
+};
+
+const getName = (index: number) => {
+	const { from, to } = graph.edges[index];
+
+	return [graph.vertices[from].role, graph.vertices[to].role].sort().join("");
+};
+---
+
+<Figure>
+	<Drawing
+		slot="drawing"
+		cropped
+		edgeClass={(index) =>
+			graph.edges[index].isLink
+				? getColorClass(colors[getName(index)])
+				: "faint"
+		}
+		graph={graph}
+		label="The same drawing of the Petersen graph, with its seven cut edges colored. At u, v, and w, all three colors meet."
+		names={nameFlatVertices(graph)}
+		nameSize={11}
+		padding={17}
+	/>
+	<ColoringKey slot="key" />
+	<slot />
+</Figure>

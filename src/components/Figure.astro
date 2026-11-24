@@ -1,8 +1,6 @@
 ---
 interface Props {
 	id?: string;
-
-	/** Whether the figure's drawing should be at most as tall as it's wide. */
 	size?: "large" | "medium" | "small";
 }
 
@@ -13,6 +11,7 @@ const { id, size = "medium" } = Astro.props;
 	<div class:list={["drawing", size]}>
 		<slot name="drawing" />
 	</div>
+	<slot name="key" />
 	<figcaption>
 		<slot />
 	</figcaption>
@@ -20,21 +19,14 @@ const { id, size = "medium" } = Astro.props;
 
 <style>
 	figure {
+		counter-increment: figure;
 		display: grid;
-		gap: 1.25rem;
+		gap: 1rem;
 		margin-block: 2.75rem;
 	}
 
-	figcaption :global(p) {
-		text-wrap: inherit;
-	}
-
 	.drawing {
-		align-items: center;
-		display: flex;
-		gap: 2rem;
-		justify-content: center;
-		margin-inline: auto;
+		margin: 0 auto 0.25rem;
 		width: 100%;
 	}
 
@@ -58,5 +50,22 @@ const { id, size = "medium" } = Astro.props;
 		max-width: 34rem;
 		text-align: center;
 		text-wrap: balance;
+	}
+
+	figcaption::before {
+		color: var(--colorForegroundExtra);
+		content: "Figure " counter(figure) ". ";
+		font-weight: 500;
+	}
+
+	figcaption > :global(p) {
+		display: inline;
+		text-wrap: inherit;
+	}
+
+	@media print {
+		figure {
+			break-inside: avoid;
+		}
 	}
 </style>

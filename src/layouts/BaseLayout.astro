@@ -3,6 +3,7 @@ import { Font } from "astro:assets";
 
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
+import { getPath } from "~/getPath.ts";
 
 import "~/styles/global.css";
 
@@ -20,7 +21,7 @@ interface Props {
 
 const { description, image, schema, title } = Astro.props;
 const imageUrl = new URL(image.path, Astro.site);
-const pageUrl = new URL(Astro.url.pathname.replace(/(.)\/$/, "$1"), Astro.site);
+const pageUrl = new URL(getPath(Astro.url), Astro.site);
 ---
 
 <!doctype html>
@@ -43,7 +44,7 @@ const pageUrl = new URL(Astro.url.pathname.replace(/(.)\/$/, "$1"), Astro.site);
 			media="(prefers-color-scheme: dark)"
 			name="theme-color"
 		/>
-		<meta content="article" property="og:type" />
+		<meta content={schema ? "article" : "website"} property="og:type" />
 		<meta content="Goldberg snarks" property="og:site_name" />
 		<meta content={title} property="og:title" />
 		<meta content={description} property="og:description" />

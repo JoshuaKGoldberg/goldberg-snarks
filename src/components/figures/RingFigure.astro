@@ -1,0 +1,23 @@
+---
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { getPartClass } from "~/graphs/edgeClasses.ts";
+
+import Drawing from "../Drawing.astro";
+import Figure from "../Figure.astro";
+import { nameRingVertices } from "./names.ts";
+
+const graph = createGoldbergGraph(5);
+---
+
+<Figure size="large">
+	<Drawing
+		slot="drawing"
+		edgeClass={(index) => getPartClass(graph, index)}
+		graph={graph}
+		label="Five blocks in a ring. The outer and middle rings each pass through ten vertices, and the hub passes through five in the center."
+		names={nameRingVertices(graph)}
+		nameSize={7.5}
+		padding={8}
+	/>
+	<slot />
+</Figure>

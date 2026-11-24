@@ -1,23 +1,30 @@
 ---
+import { colorMostEdges } from "~/graphs/colorEdges.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
-import { getPartClass } from "~/graphs/edgeClasses.ts";
+import { getColorClass, getPartClass } from "~/graphs/edgeClasses.ts";
 
 import Drawing from "./Drawing.astro";
 
 interface Props {
 	blocks: number;
+	colored?: boolean | undefined;
 }
 
-const { blocks } = Astro.props;
+const { blocks, colored } = Astro.props;
 const graph = createGoldbergGraph(blocks);
+const coloring = colored ? colorMostEdges(graph) : undefined;
+const kind = blocks < 5 ? "graph" : "snark";
+const label = `The Goldberg ${kind} G${blocks.toString()}: ${blocks.toString()} identical blocks of vertices and edges in a ring around a central ${blocks.toString()}-sided loop.${colored ? " Its edges are colored with three colors, except for two that are left over." : ""}`;
 ---
 
 <div class="hero-drawing">
 	<Drawing
-		edgeClass={(index) => getPartClass(graph, index)}
+		edgeClass={(index) =>
+			coloring ? getColorClass(coloring[index]) : getPartClass(graph, index)
+		}
 		graph={graph}
 		grows
-		label={`The Goldberg snark G${blocks.toString()}: ${blocks.toString()} identical blocks of dots and lines in a ring around a central ${blocks.toString()}-sided loop.`}
+		label={label}
 		padding={3}
 	/>
 </div>
@@ -74,5 +81,12 @@ const graph = createGoldbergGraph(blocks);
 		opacity: 0.75;
 		pointer-events: none;
 		position: absolute;
+	}
+
+	@media print {
+		.hero-drawing::after,
+		.hero-drawing::before {
+			display: none;
+		}
 	}
 </style>

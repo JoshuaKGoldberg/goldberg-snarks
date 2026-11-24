@@ -1,0 +1,32 @@
+---
+import { colorEdges } from "~/graphs/colorEdges.ts";
+import { createBlockChain } from "~/graphs/createBlockChain.ts";
+import { getColorClass } from "~/graphs/edgeClasses.ts";
+
+import ColoringKey from "../ColoringKey.astro";
+import Drawing from "../Drawing.astro";
+import Figure from "../Figure.astro";
+
+const graph = createBlockChain(2);
+const links = [...graph.edges.keys()].filter(
+	(index) => graph.edges[index].isLink,
+);
+
+// Loose links are the same on both sides, so that the blocks could be repeated
+const sides = [...links.slice(0, 3), ...links.slice(-3)];
+const coloring = colorEdges(graph, {
+	fixed: new Map(sides.map((link, i) => [link, i % 3 ? 0 : 1])),
+});
+---
+
+<Figure id="chain">
+	<Drawing
+		slot="drawing"
+		cropped
+		edgeClass={(index) => getColorClass(coloring?.[index])}
+		graph={graph}
+		label="Two blocks in a row, colored. On the left, the outer and middle links are both green. Between the blocks, they’re two different colors. On the right, they’re both green again."
+	/>
+	<ColoringKey slot="key" />
+	<slot />
+</Figure>

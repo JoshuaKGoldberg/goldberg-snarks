@@ -1,0 +1,30 @@
+---
+import Vertex from "./Vertex.astro";
+
+interface Props {
+	/** Pairs of vertices' letters. */
+	edges: readonly (readonly [string, string])[];
+
+	/** Which block each second vertex is in. */
+	to: string;
+}
+
+const { edges, to } = Astro.props;
+---
+
+<span class="formulas">
+	{edges.map(([first, second]) => (
+		<span class="edge">
+			<Vertex i="i" role={first} />
+			<Vertex i={to} role={second} />
+		</span>
+	))}
+</span>
+
+<style>
+	.formulas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.1rem 1.4rem;
+	}
+</style>

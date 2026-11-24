@@ -6,33 +6,10 @@
 </button>
 
 <script>
-	const button = document.querySelector<HTMLButtonElement>(".theme-toggle");
-	const prefersDark = matchMedia("(prefers-color-scheme: dark)");
-	const root = document.documentElement;
+	import { query } from "~/scripts/query.ts";
+	import { startThemeToggle } from "~/scripts/startThemeToggle.ts";
 
-	const isDark = () =>
-		root.dataset.theme ? root.dataset.theme === "dark" : prefersDark.matches;
-
-	function update() {
-		button?.setAttribute("aria-pressed", isDark().toString());
-	}
-
-	button?.addEventListener("click", () => {
-		const theme = isDark() ? "light" : "dark";
-
-		root.dataset.theme = theme;
-
-		try {
-			localStorage.setItem("theme", theme);
-		} catch {
-			// The choice still applies to this page
-		}
-
-		update();
-	});
-
-	prefersDark.addEventListener("change", update);
-	update();
+	startThemeToggle(query(document, ".theme-toggle", HTMLElement));
 </script>
 
 <style>
@@ -62,5 +39,11 @@
 
 	path {
 		fill: currentcolor;
+	}
+
+	@media print {
+		button {
+			display: none;
+		}
 	}
 </style>

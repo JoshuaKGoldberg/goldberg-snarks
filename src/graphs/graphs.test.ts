@@ -3,13 +3,14 @@ import { describe, expect, it } from "vitest";
 import type { Graph } from "./types.ts";
 
 import { edgesToNextBlock, edgesWithinBlock, roles } from "./block.ts";
-import { colorEdges, colorMostEdges } from "./colorEdges.ts";
+import { colorEdges, colorMostEdges, spareEdges } from "./colorEdges.ts";
 import { createBlockChain, stub } from "./createBlockChain.ts";
 import { createGoldbergGraph, getVertexIndex } from "./createGoldbergGraph.ts";
 import { createPetersenAroundBlock } from "./createPetersenAroundBlock.ts";
 import { createPetersenGraph } from "./createPetersenGraph.ts";
 import { describeSnark } from "./describeSnark.ts";
-import { longestCycle } from "./longestCycle.ts";
+import { getVertexName } from "./getVertexName.ts";
+import { longestCycles } from "./longestCycles.ts";
 import {
 	countCycles,
 	countSymmetries,
@@ -191,9 +192,45 @@ describe(colorMostEdges, () => {
 
 	it("leaves out two edges of the Petersen graph", () => {
 		const graph = createPetersenGraph();
-		const coloring = colorMostEdges(graph);
+		const coloring = colorMostEdges(graph, new Set([0, 2]));
 
 		expect(coloring.filter((color) => color === undefined)).toHaveLength(2);
+		expect(isWellColored(graph, coloring)).toBe(true);
+	});
+
+	it("throws an error when the edges it's told to leave out aren't enough", () => {
+		expect(() => colorMostEdges(createPetersenGraph(), new Set([0]))).toThrow(
+			"enough",
+		);
+	});
+
+	it("leaves out the same two edges however many pairs of blocks there are", () => {
+		const block = createBlockChain(1);
+		const pair = createBlockChain(2);
+		const getSides = (graph: Graph) => {
+			const links = [...graph.edges.keys()].filter(
+				(index) => graph.edges[index].isLink,
+			);
+
+			return [...links.slice(0, 3), ...links.slice(-3)];
+		};
+
+		const fix = (graph: Graph, ...colors: number[]) =>
+			new Map(getSides(graph).map((link, i) => [link, colors[i]]));
+
+		// One block from 1, 2, 1 to 0, 2, 0, then a pair back again, then any number of pairs
+		expect(
+			colorEdges(block, {
+				fixed: fix(block, 1, 2, 1, 0, 2, 0),
+				skipped: spareEdges,
+			}),
+		).toBeDefined();
+		expect(
+			colorEdges(pair, { fixed: fix(pair, 0, 2, 0, 1, 2, 1) }),
+		).toBeDefined();
+		expect(
+			colorEdges(pair, { fixed: fix(pair, 1, 2, 1, 1, 2, 1) }),
+		).toBeDefined();
 	});
 
 	it("colors every edge of graphs that can be", () => {
@@ -355,31 +392,29 @@ describe(getGirth, () => {
 	});
 });
 
-describe("longestCycle", () => {
-	it("visits every vertex of the five-block snark but c1, once each", () => {
-		const { vertices } = createGoldbergGraph(5);
-		const all = vertices.map(
-			({ block, role }) => `${role}${(block + 1).toString()}`,
-		);
+describe("longestCycles", () => {
+	it.each(odds)(
+		"visits all %i blocks' vertices but c1, along edges",
+		(blocks) => {
+			const graph = createGoldbergGraph(blocks);
+			const cycle = longestCycles[blocks].split(" ");
+			const edges = new Set(toEdgeList(graph).split("\n"));
 
-		expect([...longestCycle].sort()).toEqual(
-			all.filter((name) => name !== "c1").sort(),
-		);
-	});
-
-	it("follows edges all the way around", () => {
-		const { edges } = {
-			edges: new Set(toEdgeList(createGoldbergGraph(5)).split("\n")),
-		};
-
-		for (const [i, name] of longestCycle.entries()) {
-			const next = longestCycle[(i + 1) % longestCycle.length];
-
-			expect(edges.has(`${name} ${next}`) || edges.has(`${next} ${name}`)).toBe(
-				true,
+			expect([...cycle].sort()).toEqual(
+				graph.vertices
+					.map(getVertexName)
+					.filter((name) => name !== "c1")
+					.sort(),
 			);
-		}
-	});
+			expect(
+				cycle.filter((name, i) => {
+					const next = cycle[(i + 1) % cycle.length];
+
+					return !edges.has(`${name} ${next}`) && !edges.has(`${next} ${name}`);
+				}),
+			).toEqual([]);
+		},
+	);
 });
 
 describe(toGraph6, () => {

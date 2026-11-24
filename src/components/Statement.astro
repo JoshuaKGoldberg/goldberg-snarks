@@ -3,15 +3,18 @@ interface Props {
 	id?: string;
 	kind: "Corollary" | "Definition" | "Lemma" | "Theorem";
 	name?: string;
+	number: number;
 }
 
-const { id, kind, name } = Astro.props;
+const { id, kind, name, number } = Astro.props;
 ---
 
 <div class="statement" id={id}>
 	<p class="head">
-		<strong>{kind}</strong>
-		{name && <span class="name"> ({name})</span>}
+		<strong>
+			{kind} {number}
+		</strong>
+		{name && ` (${name})`}
 	</p>
 	<slot />
 </div>
@@ -30,12 +33,8 @@ const { id, kind, name } = Astro.props;
 		margin-bottom: 0.4rem;
 	}
 
-	.statement > :global(p + p) {
+	.statement > :global(* + :not(.formulas + .formulas, .head + p)) {
 		margin-top: 0.75rem;
-	}
-
-	.statement > :global(.head + p) {
-		margin-top: 0;
 	}
 
 	strong {

@@ -1,0 +1,13 @@
+---
+import Snark from "./Snark.astro";
+
+/** Text in which names of snarks, such as G5, should be shown as they are elsewhere. */
+interface Props {
+	text: string;
+}
+
+// Every other part is a number, as it's within a capturing group
+const parts = Astro.props.text.split(/\bG(\d+)\b/);
+---
+
+{parts.map((part, i) => (i % 2 ? <Snark n={Number(part)} /> : part))}

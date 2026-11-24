@@ -5,11 +5,12 @@ import { getSnarks } from "~/getSnarks.ts";
 
 import Drawing from "./Drawing.astro";
 import Snark from "./Snark.astro";
+import WithSnarks from "./WithSnarks.astro";
 
 const snarks = await getSnarks();
 ---
 
-<ul>
+<ul class="gallery">
 	{snarks.map(({ blocks, href, teaser }) => {
 		const graph = createGoldbergGraph(blocks);
 
@@ -19,21 +20,13 @@ const snarks = await getSnarks();
 					<Drawing
 						edgeClass={(index) => getPartClass(graph, index)}
 						graph={graph}
-						padding={4}
+						padding={2}
 					/>
 					<span class="name">
 						<Snark n={blocks} />
 					</span>
 					<span class="teaser">
-						{teaser
-							.split(/G(\d+)/)
-							.map((part, i) =>
-								i % 2 ? (
-									<Snark n={Number(part)} />
-								) : (
-									<Fragment>{part}</Fragment>
-								),
-							)}
+						<WithSnarks text={teaser} />
 					</span>
 				</a>
 			</li>
@@ -42,7 +35,7 @@ const snarks = await getSnarks();
 </ul>
 
 <style>
-	ul {
+	.gallery {
 		--columns: 2;
 		--gap: 1.25rem;
 
@@ -57,11 +50,6 @@ const snarks = await getSnarks();
 
 	li {
 		width: calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns));
-	}
-
-	/* Drawings are cropped to what's in them, but names should still line up */
-	.plate :global(.graph) {
-		aspect-ratio: 1;
 	}
 
 	.plate {
@@ -95,14 +83,14 @@ const snarks = await getSnarks();
 	}
 
 	@media (min-width: 40rem) {
-		ul {
+		.gallery {
 			--columns: 4;
 		}
 	}
 
 	/* There's room beside the text for more than it's as wide as */
-	@media (min-width: 68rem) {
-		ul {
+	@media (min-width: 72rem) {
+		.gallery {
 			--gap: 2rem;
 
 			width: min(var(--widthFull) - 16rem, 100vw - 2 * var(--space) - 18rem);

@@ -3,20 +3,27 @@ import HeroDrawing from "./HeroDrawing.astro";
 
 interface Props {
 	blocks: number;
+
+	/** Whether to show how close three colors get to being enough. */
+	colored?: boolean;
 }
+
+const { blocks, colored } = Astro.props;
 ---
 
 <div class="hero">
 	<div class="words">
 		<slot />
 	</div>
-	<HeroDrawing blocks={Astro.props.blocks} />
+	<HeroDrawing blocks={blocks} colored={colored} />
 </div>
 
 <style>
 	.hero {
 		align-items: center;
 		display: grid;
+		margin-inline: auto;
+		max-width: var(--widthText);
 		gap: 2.5rem clamp(2rem, 6vw, 5rem);
 		padding-block: clamp(1rem, 4vw, 3rem) clamp(3rem, 8vw, 6rem);
 	}
@@ -29,8 +36,9 @@ interface Props {
 		text-wrap: pretty;
 	}
 
-	@media (min-width: 56rem) {
+	@media (min-width: 60rem) {
 		.hero {
+			max-width: none;
 			grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
 		}
 	}

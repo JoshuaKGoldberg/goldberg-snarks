@@ -1,0 +1,24 @@
+---
+import { createBlockChain } from "~/graphs/createBlockChain.ts";
+import { getPartClass } from "~/graphs/edgeClasses.ts";
+
+import Drawing from "../Drawing.astro";
+import Figure from "../Figure.astro";
+import { nameFlatVertices } from "./names.ts";
+
+const graph = createBlockChain(1);
+---
+
+<Figure size="small">
+	<Drawing
+		slot="drawing"
+		cropped
+		edgeClass={(index) => getPartClass(graph, index)}
+		graph={graph}
+		label="A block: eight vertices named a through h. Links cross it at three heights: through f and e at the top, g and h lower down, and a at the bottom. Between them, c joins b, e, and g; d joins b, f, and h; and b joins a."
+		names={nameFlatVertices(graph)}
+		nameSize={10}
+		padding={12}
+	/>
+	<slot />
+</Figure>

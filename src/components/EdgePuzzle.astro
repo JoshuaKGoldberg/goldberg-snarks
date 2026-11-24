@@ -3,11 +3,12 @@ import { colorMostEdges } from "~/graphs/colorEdges.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import {
 	drawEdge,
+	getRingViewBox,
 	getVertexRadius,
-	getViewBox,
 	locate,
 } from "~/graphs/draw.ts";
 import { colorNames } from "~/graphs/edgeClasses.ts";
+import { getVertexName } from "~/graphs/getVertexName.ts";
 
 interface Props {
 	blocks: number;
@@ -16,18 +17,12 @@ interface Props {
 const { blocks } = Astro.props;
 const graph = createGoldbergGraph(blocks);
 const solution = colorMostEdges(graph);
-
-const getName = (index: number) => {
-	const { block, role } = graph.vertices[index];
-
-	return `${role}${(block + 1).toString()}`;
-};
-
+const names = graph.vertices.map(getVertexName);
 const id = `puzzle-${blocks.toString()}`;
 ---
 
 <edge-puzzle>
-	<fieldset>
+	<fieldset class="scripted">
 		<legend>Color to use</legend>
 		{[...colorNames, "erase"].map((name, i) => (
 			<label>
@@ -37,61 +32,78 @@ const id = `puzzle-${blocks.toString()}`;
 					type="radio"
 					value={name === "erase" ? "" : i}
 				/>
-				<svg aria-hidden="true" class="graph" viewBox="0 0 36 8">
-					<path class={name} d="M3 4H33" />
+				<svg aria-hidden="true" class="graph" viewBox="0 0 42 8">
+					<path class={name} d="M2.5 4h37" />
 				</svg>
 				{name[0].toUpperCase() + name.slice(1)}
 			</label>
 		))}
 	</fieldset>
 
-	<p class="instructions" id={`${id}-instructions`}>
-		Pick a color, then click edges to color them.
+	<p class="instructions scripted" id={`${id}-instructions`}>
+		Pick a color, then <span class="click">click</span>
+		<span class="tap">tap</span> edges to color them.{" "}
 		<span class="keyboard">
-			With a keyboard: arrow keys move between edges, and 1, 2, 3, or 0 colors
-			or erases one.
+			With a keyboard, the left and right arrow keys move to the next edge, and
+			up and down to the same edge of the next block. Then 1, 2, 3, and 0 color
+			or erase it.
 		</span>
 	</p>
+	<noscript>
+		<p class="instructions">Coloring edges here needs JavaScript.</p>
+	</noscript>
 
-	<svg
-		aria-describedby={`${id}-instructions`}
-		aria-label={`Edges of G${blocks.toString()}`}
-		class="graph board"
-		role="group"
-		viewBox={getViewBox(graph, 5)}
-	>
-		{graph.edges.map(({ from, to }, index) => (
-			<path
-				aria-label={`Edge ${getName(from)} to ${getName(to)}: no color`}
-				class="edge"
-				d={drawEdge(graph, index)}
-				data-from={from}
-				data-name={`${getName(from)} to ${getName(to)}`}
-				data-solution={solution[index]}
-				data-to={to}
-				role="button"
-				tabindex={index ? -1 : 0}
-			/>
-		))}
-		<g aria-hidden="true" class="vertices">
-			{graph.vertices.map((vertex) => {
-				const { x, y } = locate(vertex);
+	<div class="scroller">
+		<svg
+			aria-describedby={`${id}-instructions`}
+			aria-label={`Edges of G${blocks.toString()}`}
+			class="graph board"
+			role="group"
+			style={`--boardWidth: ${(blocks * 2.5).toString()}rem`}
+			viewBox={getRingViewBox(5)}
+		>
+			{graph.edges.map(({ from, to }, index) => (
+				<path
+					aria-label={`Edge ${names[from]} to ${names[to]}: no color`}
+					class="edge"
+					d={drawEdge(graph, index)}
+					data-from={names[from]}
+					data-solution={solution[index]}
+					data-to={names[to]}
+					role="button"
+					tabindex={index ? -1 : 0}
+				/>
+			))}
+			<g aria-hidden="true" class="vertices">
+				{graph.vertices.map((vertex, index) => {
+					const { x, y } = locate(vertex);
 
-				return <circle cx={x} cy={y} r={getVertexRadius(graph)} />;
-			})}
-		</g>
-	</svg>
+					return (
+						<circle
+							cx={x}
+							cy={y}
+							data-name={names[index]}
+							r={getVertexRadius(graph)}
+						/>
+					);
+				})}
+			</g>
+		</svg>
+	</div>
 
-	<div class="controls">
+	<div class="controls scripted">
 		<p aria-live="polite" class="status">
 			{`0 of ${graph.edges.length.toString()} edges colored.`}
 		</p>
 		<div class="buttons">
-			<button data-action="best" type="button">
-				Show the best possible
+			<button data-action="undo" disabled type="button">
+				Undo
 			</button>
 			<button data-action="reset" type="button">
 				Start over
+			</button>
+			<button data-action="best" type="button">
+				Show a best coloring
 			</button>
 		</div>
 	</div>
@@ -114,9 +126,22 @@ const id = `puzzle-${blocks.toString()}`;
 		padding: clamp(1rem, 4vw, 2rem);
 	}
 
-	/* Needs JavaScript to do anything */
-	edge-puzzle:not(:defined) {
+	edge-puzzle:not(:defined) .scripted {
 		visibility: hidden;
+	}
+
+	@media print, (scripting: none) {
+		.scripted {
+			display: none;
+		}
+	}
+
+	/* Edges of larger snarks would otherwise be too small to tap on smaller screens */
+	.scroller {
+		margin-inline: calc(-1 * clamp(1rem, 4vw, 2rem));
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		padding: 0.25rem clamp(1rem, 4vw, 2rem);
 	}
 
 	fieldset {
@@ -164,7 +189,7 @@ const id = `puzzle-${blocks.toString()}`;
 	}
 
 	label .graph {
-		width: 2.25rem;
+		width: 2.625rem;
 	}
 
 	label .erase {
@@ -187,16 +212,26 @@ const id = `puzzle-${blocks.toString()}`;
 		text-wrap: balance;
 	}
 
+	.tap {
+		display: none;
+	}
+
 	@media (hover: none) {
+		.click,
 		.keyboard {
 			display: none;
+		}
+
+		.tap {
+			display: inline;
 		}
 	}
 
 	.board {
 		cursor: crosshair;
 		margin: auto;
-		max-width: 34rem;
+		max-width: max(34rem, var(--boardWidth));
+		min-width: min(var(--boardWidth), 36rem);
 		touch-action: manipulation;
 	}
 
@@ -247,28 +282,31 @@ const id = `puzzle-${blocks.toString()}`;
 
 	.controls {
 		align-items: center;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		justify-content: space-between;
+		display: grid;
+		gap: 0.75rem;
+		justify-items: center;
 	}
 
 	.status {
 		font-weight: 500;
 		line-height: 1.35;
+		min-height: 2.7em;
+		text-align: center;
+		text-wrap: balance;
 	}
 
 	.buttons {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
+		justify-content: center;
 	}
 
 	button {
-		background: var(--colorForegroundExtra);
-		border: 1.5px solid var(--colorForegroundExtra);
+		background: none;
+		border: 1.5px solid var(--colorMuted);
 		border-radius: 2rem;
-		color: var(--colorBackground);
+		color: var(--colorForegroundExtra);
 		cursor: pointer;
 		font-family: var(--fontLabel);
 		font-size: var(--fontSizeSmall);
@@ -277,12 +315,14 @@ const id = `puzzle-${blocks.toString()}`;
 		padding: 0 1.1rem;
 	}
 
-	button[data-action="reset"] {
-		background: none;
-		color: var(--colorForegroundExtra);
+	button:disabled {
+		border-color: var(--colorRule);
+		color: var(--colorMuted);
+		cursor: default;
 	}
 
-	button:hover {
+	button:enabled:hover {
 		border-color: var(--colorEmphasized);
+		color: var(--colorEmphasized);
 	}
 </style>

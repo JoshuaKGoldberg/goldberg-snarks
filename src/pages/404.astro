@@ -5,14 +5,17 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 
 <BaseLayout
 	description="There’s no page at this address."
-	image={{ alt: "The Goldberg snark G5.", path: "/images/g5.png" }}
+	image={{
+		alt: "Goldberg snarks, beside a drawing of the Goldberg snark G5.",
+		path: "/images/home.png",
+	}}
 	title="Page not found: Goldberg snarks"
 >
 	<Hero blocks={3}>
 		<h1>No such snark</h1>
 		<p>
-			There’s no page at this address.
-			<a href="/#gallery">See the snarks that do have pages</a>, or
+			There’s no page at this address.{" "}
+			<a href="/#each-snark">See the snarks that do have pages</a>, or{" "}
 			<a href="/">start from the beginning</a>.
 		</p>
 	</Hero>

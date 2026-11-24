@@ -23,6 +23,7 @@
 
 		--colorBackground: light-dark(#ecf4f9, #0b1220);
 		--colorEmphasized: light-dark(#0a58aa, #77bbff);
+		--colorFaint: light-dark(#7d8aa6, #5f7190);
 		--colorForeground: light-dark(#283556, #dae7f3);
 		--colorForegroundExtra: light-dark(#142842, #f1f6fb);
 		--colorMuted: light-dark(#4d5b7b, #93a5bf);
@@ -57,6 +58,7 @@
 		--lineHeightText: 1.55;
 
 		--space: clamp(1rem, 4vw, 2rem);
+		--spaceSection: clamp(4rem, 10vw, 6.5rem);
 		--widthFull: 68rem;
 		--widthText: 42rem;
 	}
@@ -180,24 +182,6 @@
 		fill: currentcolor;
 	}
 
-	.graph text {
-		fill: currentcolor;
-		font-family: var(--fontText);
-		font-size: 9px;
-		font-style: italic;
-		font-weight: 450;
-		paint-order: stroke;
-		stroke: var(--colorBackground);
-		stroke-linejoin: round;
-		stroke-width: 2px;
-		text-anchor: middle;
-	}
-
-	.graph .text-subscript {
-		font-size: 6px;
-		font-style: normal;
-	}
-
 	/* Places in a graph's structure */
 	.graph .hub {
 		color: var(--rose);
@@ -243,7 +227,7 @@
 
 	/* Emphasis, and its lack */
 	.graph .faint {
-		opacity: 0.38;
+		color: var(--colorFaint);
 	}
 
 	.graph .strong {
@@ -259,15 +243,29 @@
 	.graph .heavy {
 		stroke-width: 3.5px;
 	}
+}
 
-	@media (forced-colors: active) {
-		.graph * {
-			color: CanvasText;
-		}
+/* Beats every other style for graphs, as each of them only matters for its colors */
+@media (forced-colors: active) {
+	:root[data-theme] {
+		color-scheme: light dark;
+	}
+
+	.graph :is(path, text, circle) {
+		color: CanvasText !important;
+	}
+
+	.graph path {
+		stroke: CanvasText !important;
+	}
+
+	.graph :is(text, circle) {
+		fill: CanvasText !important;
 	}
 }
 
 @media print {
+	:root[data-theme],
 	:root {
 		color-scheme: light;
 	}

@@ -1,18 +1,19 @@
 ---
 blocks: 5
-nickname: The first Goldberg snark
+nickname: the first of the family
 summary: Five blocks around a pentagon. This is the smallest Goldberg snark, and the one that’s drawn the most often.
 teaser: The first, and most often drawn
 ---
 
-import Highlight from "~/components/Highlight.astro";
 import Cite from "~/components/Cite.astro";
+import Highlight from "~/components/Highlight.astro";
 import Snark from "~/components/Snark.astro";
+import Vertex from "~/components/Vertex.astro";
 
-## The first of the family
+## Where the family begins
 
 When someone draws "the" Goldberg snark, it's nearly always this one.
-Five is the smallest odd number of blocks whose hub isn't a triangle, so <Snark n={5} /> is where the family begins.
+Five is the smallest odd number of blocks whose hub isn't a triangle, so <Snark n={5} /> is the first that everybody agrees is a snark.
 
 It's also the only Goldberg snark whose hub is a pentagon.
 Every block brings two pentagons of its own, which makes ten, and the hub is the eleventh.
@@ -38,12 +39,12 @@ This one visits 39 of the 40.
 	kind="longest"
 	label="A loop along the edges of the Goldberg snark G5 that passes through every vertex but one, c1, near the top."
 >
-	A loop that misses only one vertex, <i>c</i>
-	<sub>1</sub>.
+	A loop that misses only one vertex, <Vertex i="1" role="c" />, near the top.
 </Highlight>
 
 ## Just out of reach
 
-Computers have listed every snark of up to 38 vertices.
-There are 1,051,945,967 of exactly 38, and finding them took decades' worth of computing time <Cite id="brinkmann2026" />.
-With 40 vertices, <Snark n={5} /> is one size larger than that, so nobody knows just how many other snarks there are of its size.
+As of 2026, computers have listed every snark of up to 38 vertices, by [the definition used here](/#snark).
+There are 1,051,945,967 of exactly 38, and listing those took decades' worth of computing time <Cite id="brinkmann2026" />.
+Cubic graphs always have an even number of vertices, so the next size up is 40, which is the size of <Snark n={5} />.
+Nobody knows just how many other snarks are as large as it is.

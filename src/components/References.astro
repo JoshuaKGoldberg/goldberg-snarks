@@ -1,7 +1,8 @@
 ---
-import { references } from "~/references.ts";
+import { type Reference, references } from "~/references.ts";
 
-const sorted = Object.entries(references).sort(([, a], [, b]) =>
+const entries: [string, Reference][] = Object.entries(references);
+const sorted = entries.sort(([, a], [, b]) =>
 	a.authors
 		.replace(/^(?:[A-Z]\. ?)+/, "")
 		.localeCompare(b.authors.replace(/^(?:[A-Z]\. ?)+/, "")),
@@ -11,7 +12,9 @@ const sorted = Object.entries(references).sort(([, a], [, b]) =>
 <ol>
 	{sorted.map(([id, { authors, details, href, title, year }]) => (
 		<li id={id}>
-			{authors} ({year}). <a href={href}>{title}</a>. {details}
+			{year ? `${authors} (${year.toString()}). ` : `${authors}. `}
+			<a href={href}>{title}</a>
+			{`. ${details}`}
 		</li>
 	))}
 </ol>

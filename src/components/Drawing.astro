@@ -1,18 +1,20 @@
 ---
 import type { Graph } from "~/graphs/types.ts";
 
+import { stub } from "~/graphs/createBlockChain.ts";
 import {
 	drawEdge,
 	drawEdgesByClass,
+	getCroppedViewBox,
+	getRingViewBox,
 	getVertexRadius,
-	getViewBox,
 	locate,
 } from "~/graphs/draw.ts";
 import { getDistances, getNeighbors } from "~/graphs/measure.ts";
-import { stub } from "~/graphs/createBlockChain.ts";
 
 interface Props {
-	class?: string;
+	/** Whether the graph is of a shape other than a ring around its center. */
+	cropped?: boolean;
 
 	/** Classes for each edge, by index. */
 	edgeClass?: (index: number) => string;
@@ -30,26 +32,28 @@ interface Props {
 		index: number,
 	) => readonly [name: string, x: number, y: number] | undefined;
 
+	/** How big names are, in units. */
+	nameSize?: number;
+
 	padding?: number;
 
 	/** Classes for each vertex, by index. */
-	vertexClass?: (index: number) => string | undefined;
+	vertexClass?: ((index: number) => string | undefined) | undefined;
 }
 
 const {
-	class: className,
+	cropped,
 	edgeClass = () => "plain",
 	graph,
 	grows,
 	label,
 	names,
-	padding,
+	nameSize = 9,
+	padding = 5,
 	vertexClass,
 } = Astro.props;
 
-const radius = getVertexRadius(graph);
 const distances = grows ? getDistances(getNeighbors(graph), 0) : [];
-
 const dots = new Map<string, string>();
 
 // Dots are zero-length lines with round ends, which makes for much less markup
@@ -62,14 +66,37 @@ for (const [index, vertex] of graph.vertices.entries()) {
 	}
 }
 
+const texts = names
+	? graph.vertices.flatMap((vertex, index) => {
+			const name = names(index);
+			const { x, y } = locate(vertex);
+
+			return name
+				? [
+						{
+							letter: name[0].slice(0, 1),
+							number: name[0].slice(1),
+							x: x + name[1],
+							y: y + name[2],
+						},
+					]
+				: [];
+		})
+	: [];
+
 const accessibility = label
 	? ({ "aria-label": label, role: "img" } as const)
 	: ({ "aria-hidden": true } as const);
+
+const dotSize = (getVertexRadius(graph) * 2).toFixed(1);
 ---
 
 <svg
-	class:list={["graph", className, grows && "grows"]}
-	viewBox={getViewBox(graph, padding)}
+	class:list={["graph", grows && "grows"]}
+	style={`--dot: ${dotSize}px; --name: ${nameSize.toString()}px`}
+	viewBox={
+		cropped ? getCroppedViewBox(graph, padding) : getRingViewBox(padding)
+	}
 	{...accessibility}
 >
 	{grows
@@ -85,37 +112,39 @@ const accessibility = label
 				<path class={name} d={path} />
 			))}
 	{[...dots].map(([name, path]) => (
-		<path
-			class:list={["dots", name]}
-			d={path}
-			stroke-width={radius * 2}
-			style={`stroke-width: ${(radius * 2).toFixed(1)}px`}
-		/>
+		<path class:list={["dots", name]} d={path} />
 	))}
-	{names &&
-		graph.vertices.map((vertex, index) => {
-			const [name, offsetX, offsetY] = names(index) ?? [];
-			const { x, y } = locate(vertex);
-
-			return (
-				name && (
-					<text x={x + (offsetX ?? 0)} y={y + (offsetY ?? 0)}>
-						{name.slice(0, 1)}
-						{name.length > 1 && (
-							<tspan class="text-subscript" dy="2">
-								{name.slice(1)}
-							</tspan>
-						)}
-					</text>
-				)
-			);
-		})}
+	{texts.map(({ letter, number, x, y }) => (
+		<text x={x.toFixed(1)} y={y.toFixed(1)}>
+			{letter}
+			{number && <tspan dy="0.2em">{number}</tspan>}
+		</text>
+	))}
 </svg>
 
 <style>
 	.graph .dots {
 		stroke: var(--colorForegroundExtra);
+		stroke-width: var(--dot);
 		vector-effect: none;
+	}
+
+	.graph .dots.faint {
+		stroke: var(--colorFaint);
+	}
+
+	text {
+		fill: currentcolor;
+		font-family: var(--fontText);
+		font-size: var(--name);
+		font-style: italic;
+		font-weight: 450;
+		text-anchor: middle;
+	}
+
+	tspan {
+		font-size: 0.7em;
+		font-style: normal;
 	}
 
 	/* Dashes are only measured correctly in strokes that scale */
@@ -126,6 +155,19 @@ const accessibility = label
 
 	.grows path.spoke {
 		stroke-width: 0.8px;
+	}
+
+	.grows path.spare {
+		stroke-width: 2.8px;
+	}
+
+	.grows path.blue {
+		stroke-dasharray: 0.16 0.09;
+	}
+
+	.grows path.purple {
+		stroke-dasharray: 0.001 0.08;
+		stroke-width: 1.4px;
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
@@ -150,9 +192,15 @@ const accessibility = label
 			stroke-dashoffset: 1;
 		}
 
-		to {
+		99% {
 			stroke-dasharray: 1 1;
 			stroke-dashoffset: 0;
+		}
+	}
+
+	@media print {
+		.grows path {
+			animation: none !important;
 		}
 	}
 </style>

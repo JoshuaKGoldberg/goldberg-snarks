@@ -1,8 +1,8 @@
 ---
 blocks: 13
-nickname: The deck of cards
-summary: Thirteen blocks around a tridecagon. It has 52 symmetries, half of which its drawing can’t show.
-teaser: 52 symmetries, half of them hidden
+nickname: the deck of cards
+summary: Thirteen blocks around a tridecagon. It has 52 symmetries, half of which its drawing doesn’t hint at.
+teaser: 52 symmetries, half of them well hidden
 ---
 
 import Highlight from "~/components/Highlight.astro";
@@ -11,16 +11,15 @@ import Snark from "~/components/Snark.astro";
 ## A symmetry for each card
 
 A _symmetry_ of a graph rearranges its vertices such that any two that shared an edge still do.
-
-<Snark n={13} /> has 52, as many as there are cards in a deck, and they're
-organized like one too: in thirteen ranks and four suits.
+With thirteen blocks there are 52 of them, as many as there are cards in a deck, and they're organized like one too: in thirteen ranks and four suits.
 
 - The thirteen ranks are turns: each of the thirteen blocks can be moved to where any other was.
 - The four suits are ways to do so: as it is, as if seen in a mirror, inside out, or both.
 
 ## Turning it inside out
 
-The drawing hints at the turns and the mirror, though not perfectly, as its blocks are drawn at a slant.
+The drawing shows the turns.
+It hints at the mirror, though not perfectly, as its blocks are drawn at a slant.
 Nothing about it suggests that it can be turned inside out.
 
 <Highlight

@@ -5,7 +5,6 @@ const unit = 100;
 
 const round = (value: number) => Math.round(value * unit * 10) / 10;
 
-/** Groups edges by the names of their classes, each as an SVG path. */
 export function drawEdge({ edges, vertices }: Graph, index: number) {
 	const from = locate(vertices[edges[index].from]);
 	const to = locate(vertices[edges[index].to]);
@@ -13,25 +12,24 @@ export function drawEdge({ edges, vertices }: Graph, index: number) {
 	return `M${from.x.toString()} ${from.y.toString()}L${to.x.toString()} ${to.y.toString()}`;
 }
 
+/** Groups edges by the names of their classes, each as an SVG path. */
 export function drawEdgesByClass(
-	{ edges, vertices }: Graph,
+	graph: Graph,
 	getClass: (index: number) => string,
 ) {
 	const paths = new Map<string, string>();
 
-	for (const index of edges.keys()) {
+	for (const index of graph.edges.keys()) {
 		const name = getClass(index);
 
-		paths.set(
-			name,
-			(paths.get(name) ?? "") + drawEdge({ edges, vertices }, index),
-		);
+		paths.set(name, (paths.get(name) ?? "") + drawEdge(graph, index));
 	}
 
 	return [...paths];
 }
 
-export function getViewBox({ vertices }: Graph, padding = 8) {
+/** Gets a view box that's cropped to what's in a graph. */
+export function getCroppedViewBox({ vertices }: Graph, padding: number) {
 	const points = vertices.map(locate);
 	const left = Math.min(...points.map(({ x }) => x)) - padding;
 	const right = Math.max(...points.map(({ x }) => x)) + padding;
@@ -41,6 +39,13 @@ export function getViewBox({ vertices }: Graph, padding = 8) {
 	return [left, top, right - left, bottom - top]
 		.map((value) => value.toFixed(1))
 		.join(" ");
+}
+
+/** Gets a view box that has the center of a ring at its own center. */
+export function getRingViewBox(padding: number) {
+	const size = unit + padding;
+
+	return [-size, -size, size * 2, size * 2].join(" ");
 }
 
 /** How big vertices should be for there to be space between them. */

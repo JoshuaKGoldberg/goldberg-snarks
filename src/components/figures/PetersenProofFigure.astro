@@ -1,0 +1,36 @@
+---
+import { createPetersenGraph } from "~/graphs/createPetersenGraph.ts";
+import { getColorClass } from "~/graphs/edgeClasses.ts";
+
+import ColoringKey from "../ColoringKey.astro";
+import Drawing from "../Drawing.astro";
+import Figure from "../Figure.astro";
+
+const graph = createPetersenGraph();
+
+/** Colors of the pentagon's edges, clockwise, and of those inward from where each starts. */
+const pentagon = [0, 1, 0, 1, 2];
+const inward = [1, 2, 2, 2, 0];
+---
+
+<Figure size="small">
+	<Drawing
+		slot="drawing"
+		edgeClass={(index) => {
+			const corner = Math.floor(index / 3);
+
+			switch (index % 3) {
+				case 0:
+					return getColorClass(pentagon[corner]);
+				case 1:
+					return getColorClass(inward[corner]);
+				default:
+					return "faint";
+			}
+		}}
+		graph={graph}
+		label="The Petersen graph. Its pentagon's edges are green, blue, green, blue, and purple. Three neighboring edges leading inward are purple, one is blue, and one is green. The star has no colors."
+	/>
+	<ColoringKey slot="key" />
+	<slot />
+</Figure>

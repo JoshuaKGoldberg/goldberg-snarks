@@ -64,6 +64,7 @@ export default defineConfig(
 		settings: { perfectionist: { partitionByComment: true, type: "natural" } },
 	},
 	astro.configs.recommended,
+	astro.configs["jsx-a11y-recommended"],
 	{
 		extends: [jsonc.configs["flat/recommended-with-json"]],
 		files: ["**/*.json"],

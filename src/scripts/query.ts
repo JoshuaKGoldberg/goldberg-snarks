@@ -1,6 +1,6 @@
 /** Finds an element that's always in another. */
 export function query<T extends Element>(
-	parent: Element,
+	parent: ParentNode,
 	selector: string,
 	type: abstract new () => T,
 ): T {

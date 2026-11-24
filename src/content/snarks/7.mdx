@@ -1,6 +1,6 @@
 ---
 blocks: 7
-nickname: The one with a heptagon
+nickname: the one with a heptagon
 summary: Seven blocks around a heptagon, which is the only cycle of seven edges in any Goldberg snark.
 teaser: Home of the only heptagon
 ---
@@ -18,19 +18,28 @@ There are never any of seven, with one exception.
 	kind="hub"
 	label="The Goldberg snark G7, with the heptagon in its center emphasized."
 >
-	The hub of <Snark n={7} /> is a cycle of seven edges, and no Goldberg snark
-	has another.
+	The hub of <Snark n={7} /> is a cycle of seven edges, and no Goldberg snark has another.
 </Highlight>
 
 It's because short cycles come in two kinds.
-Some stay within a few neighboring blocks, and those look the same in every large enough ring.
-They're the pentagons, two to a block, the hexagons, one between each pair of blocks, and cycles of at least eight.
-The rest go all the way around, and the shortest way around is the hub.
-So a Goldberg snark only has a cycle of seven edges if its hub is one.
+Some stay within a few neighboring blocks, so they look the same in every ring that's large enough.
+The rest go all the way around: the hub does so in as few edges as there are blocks, and every other way takes at least ten.
+None of the first kind have seven edges, so a Goldberg snark only has a cycle of seven if its hub is one.
 
-## Out of the center
+## The cycles that every block has
 
-From seven blocks on, a hub is too wide to be a Goldberg snark's shortest cycle, or even tied for it.
+Each block has two pentagons, which share the path from _c_ through _b_ to _d_.
+Leave out _b_ and go around both of them, and that's a hexagon.
+There are no other cycles within a block.
 
-<Snark n={7} /> is the first in the family whose only pentagons are its blocks'
-own: fourteen of them, two for each block.
+<Highlight
+	blocks={7}
+	kind="block-cycles"
+	label="The Goldberg snark G7, with a pentagon in its first block, from b through c, e, f, and d, and a hexagon in its third block, around c, e, f, d, h, and g, each emphasized."
+>
+	One of the fourteen pentagons, at the top, and one of the seven hexagons, at the right.
+</Highlight>
+
+Leaving a block by one link and returning by another costs at least eight edges, which is why the next cycles after those are so much longer.
+With seven blocks, that comes to fourteen pentagons, seven hexagons, one heptagon, and 42 cycles of eight.
+It's the first Goldberg snark whose only pentagons are its blocks' own.

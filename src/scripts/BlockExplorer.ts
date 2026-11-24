@@ -1,17 +1,9 @@
-import { colorEdges } from "~/graphs/colorEdges.ts";
+import { colorEdges, spareEdges } from "~/graphs/colorEdges.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
-import {
-	drawEdgesByClass,
-	getVertexRadius,
-	getViewBox,
-	locate,
-} from "~/graphs/draw.ts";
+import { drawEdgesByClass, getVertexRadius, locate } from "~/graphs/draw.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import { query } from "./query.ts";
-
-/** Edges that snarks' best colorings can always leave out: a1 to b1, and c1 to e1. */
-const spares = new Set([0, 3]);
 
 /** Shows the Goldberg graph of however many blocks, as colored as it can be. */
 export class BlockExplorer extends HTMLElement {
@@ -31,11 +23,10 @@ export class BlockExplorer extends HTMLElement {
 	#show(blocks: number) {
 		const graph = createGoldbergGraph(blocks);
 		const isSnark = blocks % 2 === 1;
-		const coloring = colorEdges(graph, isSnark ? { skipped: spares } : {});
+		const coloring = colorEdges(graph, isSnark ? { skipped: spareEdges } : {});
 		const svg = query(this, ".picture svg", SVGSVGElement);
 		const dots = query(svg, ".dots", SVGPathElement);
 
-		svg.setAttribute("viewBox", getViewBox(graph, 4));
 		svg.replaceChildren(
 			...drawEdgesByClass(graph, (index) =>
 				getColorClass(coloring?.[index]),
@@ -53,7 +44,10 @@ export class BlockExplorer extends HTMLElement {
 			dots,
 		);
 
-		dots.style.strokeWidth = `${(getVertexRadius(graph) * 2).toFixed(1)}px`;
+		svg.style.setProperty(
+			"--dot",
+			`${(getVertexRadius(graph) * 2).toFixed(1)}px`,
+		);
 		dots.setAttribute(
 			"d",
 			graph.vertices
@@ -63,14 +57,13 @@ export class BlockExplorer extends HTMLElement {
 		);
 
 		const heading = document.createElement("strong");
+		const result = document.createElement("span");
 		const total = graph.edges.length;
 
-		heading.textContent = `${blocks.toString()} blocks.`;
-		query(this, "output", HTMLElement).replaceChildren(
-			heading,
-			isSnark
-				? ` Three colors can manage only ${(total - 2).toString()} of the ${total.toString()} edges.`
-				: ` Three colors are enough for all ${total.toString()} edges.`,
-		);
+		heading.textContent = `${blocks.toString()} blocks`;
+		result.textContent = isSnark
+			? `Three colors can manage only ${(total - 2).toString()} of the ${total.toString()} edges.`
+			: `Three colors are enough for all ${total.toString()} edges.`;
+		query(this, "output", HTMLElement).replaceChildren(heading, result);
 	}
 }

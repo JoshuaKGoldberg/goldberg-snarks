@@ -1,7 +1,7 @@
 ---
 blocks: 15
-nickname: The one that’s two at once
-summary: Fifteen blocks around a pentadecagon. It wraps around both of the two smallest members of its family.
+nickname: the one that’s two at once
+summary: Fifteen blocks around a pentadecagon. It wraps around both G3 and G5, which makes it the smallest Goldberg snark to wrap around another.
 teaser: Wraps around both G3 and G5
 ---
 
@@ -10,16 +10,16 @@ import Snark from "~/components/Snark.astro";
 
 ## Five threes, three fives
 
-Like [<Snark n={9} />](/g9) before it, <Snark n={15} /> wraps around a smaller member of its family.
-Unlike <Snark n={9} />, it does so in two ways, as fifteen is both five times three and three times five.
+Like [<Snark n={9} />](/g9) before it, <Snark n={15} /> wraps around [<Snark n={3} />](/g3).
+Unlike <Snark n={9} />, it also wraps around [<Snark n={5} />](/g5), as fifteen is both five threes and three fives.
+That makes it the smallest Goldberg snark that wraps around another by [anybody's definition](/g3).
 
 <Highlight
 	blocks={15}
 	kind="every-third"
 	label="The Goldberg snark G15, with every third of its fifteen blocks emphasized: five of them."
 >
-	Every third block lands on the same block of <Snark n={3} />, which{" "}
-	<Snark n={15} /> goes around five times.
+	Every third block lands on the same block of <Snark n={3} />, which <Snark n={15} /> goes around five times.
 </Highlight>
 
 <Highlight
@@ -27,16 +27,15 @@ Unlike <Snark n={9} />, it does so in two ways, as fifteen is both five times th
 	kind="every-fifth"
 	label="The Goldberg snark G15, with every fifth of its fifteen blocks emphasized: three of them."
 >
-	Every fifth block lands on the same block of <Snark n={5} />, which{" "}
-	<Snark n={15} /> goes around three times.
+	Every fifth block lands on the same block of <Snark n={5} />, which <Snark n={15} /> goes around three times.
 </Highlight>
 
 Those two numbers are enough to say where you are.
-Tell a friend which block of [<Snark n={3} />](/g3) you're above and which block of [<Snark n={5} />](/g5) you're above, and they'll know which of the fifteen blocks you're on.
-That's the Chinese remainder theorem, seventeen centuries old, as a walk around a graph.
+Tell a friend which block of <Snark n={3} /> you're above and which block of <Snark n={5} /> you're above, and they'll know which of the fifteen blocks you're on.
+That's the Chinese remainder theorem, well over 1,500 years old, as a walk around a graph.
 
 ## And so on
 
 There's nothing special about stopping here.
-Every odd number from five up has a Goldberg snark, and any number that's a multiple of another wraps around it.
+Every odd number from five up has a Goldberg snark, and whenever one number is a multiple of another, its graph wraps around the other's.
 With 120 vertices and 180 edges, <Snark n={15} /> is only about where a drawing this size stops being readable.

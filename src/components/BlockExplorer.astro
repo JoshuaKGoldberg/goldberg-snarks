@@ -15,7 +15,6 @@ const coloring = colorEdges(graph);
 		<Drawing
 			edgeClass={(index) => getColorClass(coloring?.[index])}
 			graph={graph}
-			padding={4}
 		/>
 	</div>
 	<div class="slider">
@@ -29,7 +28,8 @@ const coloring = colorEdges(graph);
 			value={blocks}
 		/>
 		<output for="explorer-blocks">
-			<strong>6 blocks.</strong> Three colors are enough for all 72 edges.
+			<strong>{blocks} blocks</strong>
+			<span>Three colors are enough for all {graph.edges.length} edges.</span>
 		</output>
 	</div>
 </block-explorer>
@@ -61,6 +61,12 @@ const coloring = colorEdges(graph);
 		visibility: hidden;
 	}
 
+	@media print, (scripting: none) {
+		.slider {
+			display: none;
+		}
+	}
+
 	.slider {
 		display: grid;
 		gap: 0.75rem;
@@ -84,8 +90,8 @@ const coloring = colorEdges(graph);
 	}
 
 	output {
+		display: grid;
 		line-height: 1.4;
-		min-height: 2.8em;
 		text-wrap: balance;
 	}
 

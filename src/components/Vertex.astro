@@ -1,0 +1,27 @@
+---
+interface Props {
+	/** Which block it's in, such as "i". */
+	i: string;
+
+	/** Its letter within the block. */
+	role: string;
+}
+
+const { i, role } = Astro.props;
+---
+
+<span class="vertex">
+	<i>{role}</i>
+	<sub>{i}</sub>
+</span>
+
+<style>
+	.vertex {
+		white-space: nowrap;
+	}
+
+	sub {
+		font-style: italic;
+		margin-inline: 0.05em;
+	}
+</style>

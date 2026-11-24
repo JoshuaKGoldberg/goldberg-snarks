@@ -1,9 +1,14 @@
+import { edgesToNextBlock, edgesWithinBlock } from "~/graphs/block.ts";
 import { colorNames } from "~/graphs/edgeClasses.ts";
 
 import { query } from "./query.ts";
 
+const edgesPerBlock = edgesWithinBlock.length + edgesToNextBlock.length;
+
 /** How far from an edge, in pixels, a press can be and still count. */
 const reach = 22;
+
+type Color = string | undefined;
 
 /** An attempt at coloring edges so that no two of a color meet. */
 export class EdgePuzzle extends HTMLElement {
@@ -12,10 +17,15 @@ export class EdgePuzzle extends HTMLElement {
 		...this.querySelectorAll<SVGCircleElement>(".vertices circle"),
 	];
 	readonly #edges = [...this.querySelectorAll<SVGPathElement>(".edge")];
+
+	/** Every edge's color from before each change. */
+	readonly #history: Color[][] = [];
+
 	#near: SVGPathElement | undefined;
 	readonly #status = query(this, ".status", HTMLElement);
+	readonly #undo = query(this, "[data-action=undo]", HTMLButtonElement);
 
-	get #selected() {
+	get #selected(): Color {
 		const { value } = query(this, "input:checked", HTMLInputElement);
 
 		return value === "" ? undefined : value;
@@ -24,13 +34,14 @@ export class EdgePuzzle extends HTMLElement {
 	connectedCallback() {
 		// Edges are thin, so presses count for whichever of them is nearest
 		this.#board.addEventListener("click", (event) => {
+			// Assistive technologies may click on edges without being anywhere near them
 			const edge =
 				event.detail === 0
 					? this.#edges.find((other) => other === event.target)
 					: this.#findNearest(event);
 
 			if (edge) {
-				this.#color(edge, this.#selected);
+				this.#press(edge);
 				this.#focus(edge);
 			}
 		});
@@ -46,25 +57,47 @@ export class EdgePuzzle extends HTMLElement {
 			this.#setNear(undefined);
 		});
 
-		for (const button of this.querySelectorAll<HTMLElement>("[data-action]")) {
-			button.addEventListener("click", () => {
-				for (const edge of this.#edges) {
-					setColor(
-						edge,
-						button.dataset.action === "best"
-							? edge.dataset.solution
-							: undefined,
-					);
-				}
+		query(this, "[data-action=best]", HTMLElement).addEventListener(
+			"click",
+			() => {
+				this.#change(this.#edges.map(({ dataset }) => dataset.solution));
+			},
+		);
+		query(this, "[data-action=reset]", HTMLElement).addEventListener(
+			"click",
+			() => {
+				this.#change(this.#edges.map(() => undefined));
+			},
+		);
+		this.#undo.addEventListener("click", () => {
+			const previous = this.#history.pop();
 
-				this.#update();
-			});
+			if (previous) {
+				this.#show(previous);
+			}
+
+			// Disabled buttons can't be focused, so it'd be lost
+			if (this.#undo.disabled) {
+				this.#edges.find(({ tabIndex }) => tabIndex === 0)?.focus();
+			}
+		});
+	}
+
+	#change(colors: Color[]) {
+		const previous = this.#edges.map(({ dataset }) => dataset.color);
+
+		if (colors.some((color, index) => color !== previous[index])) {
+			this.#history.push(previous);
+			this.#show(colors);
 		}
 	}
 
-	#color(edge: SVGPathElement, color: string | undefined) {
-		setColor(edge, color);
-		this.#update();
+	#color(edge: SVGPathElement, color: Color) {
+		this.#change(
+			this.#edges.map((other) =>
+				other === edge ? color : other.dataset.color,
+			),
+		);
 	}
 
 	#findNearest({ clientX, clientY }: MouseEvent) {
@@ -117,7 +150,7 @@ export class EdgePuzzle extends HTMLElement {
 		switch (event.key) {
 			case " ":
 			case "Enter":
-				this.#color(edge, this.#selected);
+				this.#press(edge);
 				break;
 
 			case "0":
@@ -133,13 +166,19 @@ export class EdgePuzzle extends HTMLElement {
 				break;
 
 			case "ArrowDown":
+				move(current + edgesPerBlock);
+				break;
+
+			case "ArrowLeft":
+				move(current - 1);
+				break;
+
 			case "ArrowRight":
 				move(current + 1);
 				break;
 
-			case "ArrowLeft":
 			case "ArrowUp":
-				move(current - 1);
+				move(current - edgesPerBlock);
 				break;
 
 			case "End":
@@ -157,51 +196,82 @@ export class EdgePuzzle extends HTMLElement {
 		event.preventDefault();
 	}
 
+	/** Colors an edge, or erases it if it's already the selected color. */
+	#press(edge: SVGPathElement) {
+		const color = this.#selected;
+
+		this.#color(edge, edge.dataset.color === color ? undefined : color);
+	}
+
 	#setNear(edge: SVGPathElement | undefined) {
 		this.#near?.removeAttribute("data-near");
 		this.#near = edge;
 		edge?.setAttribute("data-near", "");
 	}
 
-	#update() {
-		const colored = this.#edges.filter((edge) => edge.dataset.color);
-		const clashing = new Set<number>();
-		const seen = new Set<string>();
+	#show(colors: Color[]) {
+		for (const [index, edge] of this.#edges.entries()) {
+			setColor(edge, colors[index]);
+		}
 
-		for (const { dataset } of colored) {
-			for (const vertex of [dataset.from, dataset.to]) {
-				const key = `${vertex ?? ""}:${dataset.color ?? ""}`;
+		const clashes = findClashes(this.#edges);
+
+		for (const circle of this.#circles) {
+			circle.toggleAttribute(
+				"data-clashing",
+				clashes.has(circle.dataset.name ?? ""),
+			);
+		}
+
+		this.#undo.disabled = !this.#history.length;
+		this.#status.textContent = describe(
+			colors.filter((color) => color !== undefined).length,
+			colors.length,
+			[...clashes],
+		);
+	}
+}
+
+const formatter = new Intl.ListFormat("en");
+
+/** How many clashes are few enough to list. */
+const listedClashes = 4;
+
+function describe(colored: number, total: number, clashes: string[]) {
+	const count = `${colored.toString()} of ${total.toString()} edges colored`;
+
+	if (clashes.length > listedClashes) {
+		return `${count}, with clashes at ${clashes.length.toString()} vertices.`;
+	}
+
+	if (clashes.length) {
+		return `${count}, with ${clashes.length === 1 ? "a clash" : "clashes"} at ${formatter.format(clashes)}.`;
+	}
+
+	return colored === total - 2
+		? `${count}. Nobody can do better!`
+		: `${count}${colored ? ", and no clashes" : ""}.`;
+}
+
+function findClashes(edges: SVGPathElement[]) {
+	const clashes = new Set<string>();
+	const seen = new Set<string>();
+
+	for (const { dataset } of edges) {
+		if (dataset.color) {
+			for (const vertex of [dataset.from ?? "", dataset.to ?? ""]) {
+				const key = `${vertex}:${dataset.color}`;
 
 				if (seen.has(key)) {
-					clashing.add(Number(vertex));
+					clashes.add(vertex);
 				}
 
 				seen.add(key);
 			}
 		}
-
-		for (const [index, circle] of this.#circles.entries()) {
-			circle.toggleAttribute("data-clashing", clashing.has(index));
-		}
-
-		this.#status.textContent = describe(
-			colored.length,
-			this.#edges.length,
-			clashing.size,
-		);
-	}
-}
-
-function describe(colored: number, total: number, clashes: number) {
-	const count = `${colored.toString()} of ${total.toString()} edges colored`;
-
-	if (clashes) {
-		return `${count}, with clashes at ${clashes.toString()} ${clashes === 1 ? "vertex" : "vertices"}.`;
 	}
 
-	return colored === total - 2
-		? `${count}. Nobody can do better!`
-		: `${count}${colored ? ", and no clashes." : "."}`;
+	return clashes;
 }
 
 function getDistance({ x, y }: DOMPoint, edge: SVGPathElement) {
@@ -223,7 +293,9 @@ function getDistance({ x, y }: DOMPoint, edge: SVGPathElement) {
 	return Math.hypot(x - fromX - along * deltaX, y - fromY - along * deltaY);
 }
 
-function setColor(edge: SVGPathElement, color: string | undefined) {
+function setColor(edge: SVGPathElement, color: Color) {
+	const { from = "", to = "" } = edge.dataset;
+
 	if (color === undefined) {
 		delete edge.dataset.color;
 	} else {
@@ -232,6 +304,6 @@ function setColor(edge: SVGPathElement, color: string | undefined) {
 
 	edge.setAttribute(
 		"aria-label",
-		`Edge ${edge.dataset.name ?? ""}: ${color === undefined ? "no color" : colorNames[Number(color)]}`,
+		`Edge ${from} to ${to}: ${color === undefined ? "no color" : colorNames[Number(color)]}`,
 	);
 }

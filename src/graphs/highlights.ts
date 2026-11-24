@@ -1,7 +1,9 @@
 import type { Graph } from "./types.ts";
 
+import { roles } from "./block.ts";
 import { findEdgesAlong, getPartClass } from "./edgeClasses.ts";
-import { longestCycle } from "./longestCycle.ts";
+import { getVertexName } from "./getVertexName.ts";
+import { longestCycles } from "./longestCycles.ts";
 import { findShortestPath, getDistances, getNeighbors } from "./measure.ts";
 
 export interface Highlight {
@@ -10,13 +12,40 @@ export interface Highlight {
 }
 
 export type HighlightKind =
-	"every-fifth" | "every-third" | "farthest" | "hub" | "longest" | "swapped";
+	| "block-cycles"
+	| "every-fifth"
+	| "every-third"
+	| "farthest"
+	| "hub"
+	| "longest"
+	| "swapped";
 
 /** Gets how to draw a Goldberg graph such that something about it stands out. */
 export function getHighlight(graph: Graph, kind: HighlightKind): Highlight {
 	const { vertices } = graph;
 
 	switch (kind) {
+		case "block-cycles": {
+			const getIndices = (names: string) =>
+				names
+					.split(" ")
+					.map((name) =>
+						vertices.findIndex((vertex) => getVertexName(vertex) === name),
+					);
+			const pentagon = findEdgesAlong(graph, getIndices("b1 c1 e1 f1 d1 b1"));
+			const hexagon = findEdgesAlong(graph, getIndices("c3 e3 f3 d3 h3 g3 c3"));
+
+			return {
+				edgeClass: (index) =>
+					pentagon.has(index)
+						? "outer heavy"
+						: hexagon.has(index)
+							? "middle heavy"
+							: "faint",
+				vertexClass: () => undefined,
+			};
+		}
+
 		case "every-fifth":
 			return highlightBlocks(graph, 5);
 
@@ -33,11 +62,11 @@ export function getHighlight(graph: Graph, kind: HighlightKind): Highlight {
 			]);
 
 		case "longest": {
-			const path = longestCycle.map((name) =>
-				vertices.findIndex(
-					({ block, role }) => `${role}${(block + 1).toString()}` === name,
-				),
-			);
+			const path = longestCycles[vertices.length / roles.length]
+				.split(" ")
+				.map((name) =>
+					vertices.findIndex((vertex) => getVertexName(vertex) === name),
+				);
 
 			return highlightPath(graph, [...path, path[0]]);
 		}

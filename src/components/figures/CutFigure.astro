@@ -1,0 +1,23 @@
+---
+import { createPetersenAroundBlock } from "~/graphs/createPetersenAroundBlock.ts";
+
+import Drawing from "../Drawing.astro";
+import Figure from "../Figure.astro";
+import { nameFlatVertices } from "./names.ts";
+
+const graph = createPetersenAroundBlock();
+---
+
+<Figure id="cut" size="medium">
+	<Drawing
+		slot="drawing"
+		cropped
+		edgeClass={(index) => (graph.edges[index].isLink ? "cut" : "plain")}
+		graph={graph}
+		label="The Petersen graph, drawn as a block’s vertices b through h, with three more vertices: u, which joins e, h, and v; v, which joins b, u, and w; and w, which joins f, g, and v."
+		names={nameFlatVertices(graph)}
+		nameSize={11}
+		padding={17}
+	/>
+	<slot />
+</Figure>

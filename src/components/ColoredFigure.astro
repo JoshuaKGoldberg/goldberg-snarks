@@ -12,10 +12,13 @@ interface Props {
 	graph: Graph;
 	label: string;
 	size?: "large" | "medium" | "small";
+
+	/** Indices of two edges to leave uncolored if needed, other than the usual. */
+	spares?: Set<number>;
 }
 
-const { graph, label, size } = Astro.props;
-const coloring = colorMostEdges(graph);
+const { graph, label, size, spares } = Astro.props;
+const coloring = colorMostEdges(graph, spares);
 ---
 
 <Figure size={size}>
@@ -24,8 +27,7 @@ const coloring = colorMostEdges(graph);
 		edgeClass={(index) => getColorClass(coloring[index])}
 		graph={graph}
 		label={label}
-		padding={5}
 	/>
-	<ColoringKey spare={coloring.includes(undefined)} />
+	<ColoringKey slot="key" spare={coloring.includes(undefined)} />
 	<slot />
 </Figure>

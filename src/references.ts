@@ -6,7 +6,7 @@ export interface Reference {
 	/** How it's mentioned within text. */
 	short: string;
 	title: string;
-	year: number;
+	year?: number;
 }
 
 export const references = {
@@ -33,6 +33,23 @@ export const references = {
 		short: "Campos et al. 2011",
 		title: "The total-chromatic number of some families of snarks",
 		year: 2011,
+	},
+	chen2025: {
+		authors: "G. Chen, G. Jing, and W. Zang",
+		details: "Journal of Combinatorial Optimization 50(3).",
+		href: "https://doi.org/10.1007/s10878-025-01348-6",
+		short: "Chen et al. 2025",
+		title:
+			"Proof of the Goldberg–Seymour conjecture on edge-colorings of multigraphs",
+		year: 2025,
+	},
+	chladny2010: {
+		authors: "M. Chladný and M. Škoviera",
+		details: "The Electronic Journal of Combinatorics 17(1).",
+		href: "https://doi.org/10.37236/304",
+		short: "Chladný & Škoviera 2010",
+		title: "Factorisation of snarks",
+		year: 2010,
 	},
 	gardner1976: {
 		authors: "M. Gardner",
@@ -86,11 +103,10 @@ export const references = {
 	},
 	weisstein: {
 		authors: "E. W. Weisstein",
-		details: "MathWorld, a Wolfram resource.",
+		details: "MathWorld, a Wolfram resource. Accessed November 2026.",
 		href: "https://mathworld.wolfram.com/GoldbergGraph.html",
 		short: "MathWorld",
 		title: "Goldberg graph",
-		year: 2026,
 	},
 } satisfies Record<string, Reference>;
 
