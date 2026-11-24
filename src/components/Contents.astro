@@ -7,7 +7,7 @@ interface Props {
 <ol>
 	{Astro.props.headings.map(({ slug, text }) => (
 		<li>
-			<a class="link" href={`#${slug}`}>
+			<a class="lights link" href={`#${slug}`}>
 				{text}
 			</a>
 		</li>
@@ -17,7 +17,7 @@ interface Props {
 <style>
 	ol {
 		counter-reset: link;
-		list-style: none;
+		list-style: "";
 		padding: 0;
 	}
 
@@ -26,9 +26,10 @@ interface Props {
 	}
 
 	.link {
-		color: var(--colorInkMuted);
+		--resting: var(--colorInkMuted);
+
 		display: grid;
-		font-size: 0.9375rem;
+		font-size: var(--fontSizeNote);
 		gap: 0.6em;
 		grid-template-columns: 1em 1fr;
 		line-height: 1.25;
@@ -39,11 +40,6 @@ interface Props {
 	.link::before {
 		color: var(--colorRed);
 		content: counter(link);
-	}
-
-	.link:hover,
-	.link:global([aria-current]) {
-		color: var(--colorRed);
 	}
 
 	.link:global([aria-current]) {

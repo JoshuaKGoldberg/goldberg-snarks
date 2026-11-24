@@ -1,40 +1,62 @@
 /** Marks the links to whichever heading was most recently scrolled past. */
 export function markContents() {
-	const links = [
-		...document.querySelectorAll<HTMLAnchorElement>("[data-contents] a"),
-	];
-	const headings = [...new Set(links.map(({ hash }) => hash.slice(1)))]
-		.map((id) => document.getElementById(id))
-		.filter((heading) => heading !== null);
+	const contents = document.querySelector("[data-contents]");
+
+	if (!contents) {
+		return;
+	}
+
+	const sections = [...contents.querySelectorAll("a")].flatMap((link) => {
+		const heading = document.getElementById(link.hash.slice(1));
+
+		return heading ? [{ heading, link }] : [];
+	});
 	let isQueued = false;
 
-	function update() {
+	function findCurrent() {
 		const { clientHeight, scrollHeight } = document.documentElement;
-		const isAtEnd = scrollY + clientHeight >= scrollHeight - 2;
-		const threshold = isAtEnd ? clientHeight : clientHeight * 0.3;
-		const current = headings.findLast(
-			(heading) => heading.getBoundingClientRect().top <= threshold,
+
+		// Headings near the end can't be scrolled to the top
+		if (scrollY + clientHeight >= scrollHeight - 2) {
+			const target = sections.find(
+				({ heading }) =>
+					location.hash === `#${heading.id}` &&
+					heading.getBoundingClientRect().top >= 0,
+			);
+
+			return target ?? sections.at(-1);
+		}
+
+		return sections.findLast(
+			({ heading }) =>
+				heading.getBoundingClientRect().top <=
+				parseFloat(getComputedStyle(heading).scrollMarginTop) + 1,
 		);
+	}
+
+	function update() {
+		const current = findCurrent();
 
 		isQueued = false;
 
-		for (const link of links) {
-			if (current && link.hash === `#${current.id}`) {
-				link.setAttribute("aria-current", "location");
+		for (const section of sections) {
+			if (section === current) {
+				section.link.setAttribute("aria-current", "location");
 			} else {
-				link.removeAttribute("aria-current");
+				section.link.removeAttribute("aria-current");
 			}
 		}
 	}
 
 	function queue() {
-		if (!isQueued) {
+		if (!isQueued && contents?.checkVisibility()) {
 			isQueued = true;
 			requestAnimationFrame(update);
 		}
 	}
 
 	document.addEventListener("scroll", queue, { passive: true });
+	addEventListener("hashchange", queue);
 	addEventListener("resize", queue);
 	queue();
 }

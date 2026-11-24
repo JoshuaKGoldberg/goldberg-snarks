@@ -1,6 +1,12 @@
-import { colorEdges, spareEdges } from "~/graphs/colorEdges.ts";
+import { colorMostEdges } from "~/graphs/colorEdges.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
-import { drawEdgesByClass, getVertexRadius, locate } from "~/graphs/draw.ts";
+import { describeColoring } from "~/graphs/describeColoring.ts";
+import {
+	drawDot,
+	drawEdge,
+	getVertexRadius,
+	groupEdges,
+} from "~/graphs/draw.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import { query } from "./query.ts";
@@ -22,48 +28,38 @@ export class BlockExplorer extends HTMLElement {
 
 	#show(blocks: number) {
 		const graph = createGoldbergGraph(blocks);
-		const isSnark = blocks % 2 === 1;
-		const coloring = colorEdges(graph, isSnark ? { skipped: spareEdges } : {});
+		const coloring = colorMostEdges(graph);
 		const svg = query(this, ".picture svg", SVGSVGElement);
 		const dots = query(svg, ".dots", SVGPathElement);
 
 		svg.replaceChildren(
-			...drawEdgesByClass(graph, (index) =>
-				getColorClass(coloring?.[index]),
-			).map(([name, d]) => {
-				const path = document.createElementNS(
-					"http://www.w3.org/2000/svg",
-					"path",
-				);
+			...groupEdges(graph, (index) => getColorClass(coloring[index])).map(
+				([name, indices]) => {
+					const path = document.createElementNS(
+						"http://www.w3.org/2000/svg",
+						"path",
+					);
 
-				path.setAttribute("class", name);
-				path.setAttribute("d", d);
+					path.setAttribute("class", name);
+					path.setAttribute(
+						"d",
+						indices.map((index) => drawEdge(graph, index)).join(""),
+					);
 
-				return path;
-			}),
+					return path;
+				},
+			),
 			dots,
 		);
-
 		svg.style.setProperty(
 			"--dot",
-			`${(getVertexRadius(graph) * 2).toFixed(1)}px`,
+			`${(getVertexRadius(graph) * 2).toString()}px`,
 		);
-		dots.setAttribute(
-			"d",
-			graph.vertices
-				.map(locate)
-				.map(({ x, y }) => `M${x.toString()} ${y.toString()}h0`)
-				.join(""),
-		);
+		dots.setAttribute("d", graph.vertices.map(drawDot).join(""));
 
-		const heading = document.createElement("strong");
-		const result = document.createElement("span");
-		const total = graph.edges.length;
-
-		heading.textContent = `${blocks.toString()} blocks`;
-		result.textContent = isSnark
-			? `At most ${(total - 2).toString()} of the ${total.toString()} edges can be colored.`
-			: `All ${total.toString()} edges can be colored.`;
-		query(this, "output", HTMLElement).replaceChildren(heading, result);
+		query(this, ".count", HTMLElement).textContent =
+			`${blocks.toString()} blocks`;
+		query(this, ".result", HTMLElement).textContent =
+			describeColoring(coloring);
 	}
 }

@@ -1,12 +1,14 @@
 ---
 import type { ComponentProps } from "astro/types";
 
-import { locate } from "~/graphs/draw.ts";
+import type { MovableGraph } from "~/scripts/MovableDrawing.ts";
+
+import { groupDots, groupEdges, locate } from "~/graphs/draw.ts";
 
 import Drawing from "./Drawing.astro";
 
 type Props = ComponentProps<typeof Drawing> & {
-	/** Tells apart the buttons of drawings on the same page. */
+	/** Tells apart the controls of drawings on the same page. */
 	name: string;
 };
 
@@ -17,37 +19,21 @@ const middleDepth = 0.58;
 const deepening = 170;
 
 const { name, ...drawing } = Astro.props;
-const { edgeClass = () => "plain", graph, vertexClass } = drawing;
-
-// Grouped in the same order as they're drawn in
-const group = (names: string[]) => {
-	const groups = new Map<string, number[]>();
-
-	for (const [index, name] of names.entries()) {
-		groups.set(name, [...(groups.get(name) ?? []), index]);
-	}
-
-	return [...groups.values()];
-};
+const { edgeClass, graph, vertexClass } = drawing;
 
 const data = {
-	edges: group(graph.edges.map((_, index) => edgeClass(index))).map((indices) =>
+	dots: groupDots(graph, vertexClass).map(([, indices]) => indices),
+	edges: groupEdges(graph, edgeClass).map(([, indices]) =>
 		indices.map((index) => [graph.edges[index].from, graph.edges[index].to]),
 	),
+	names: graph.vertices.map(({ name }) => name),
 	points: graph.vertices.map((vertex) => {
 		const { x, y } = locate(vertex);
-		const z = vertex.depth
-			? Math.round((vertex.depth - middleDepth) * deepening)
-			: 0;
+		const { depth = middleDepth } = vertex;
 
-		return [x, y, z];
+		return [x, y, Math.round((depth - middleDepth) * deepening)];
 	}),
-	vertices: group(
-		graph.vertices.map((vertex, index) =>
-			vertex.role === "stub" ? "stub" : `dots ${vertexClass?.(index) ?? ""}`,
-		),
-	).filter(([index]) => graph.vertices[index].role !== "stub"),
-};
+} satisfies MovableGraph;
 
 const isDeep = data.points.some(([, , z]) => z !== 0);
 ---
@@ -56,21 +42,37 @@ const isDeep = data.points.some(([, , z]) => z !== 0);
 	data-deep={isDeep || undefined}
 	data-graph={JSON.stringify(data)}
 >
-	<Drawing {...drawing} />
-	<div class="buttons">
-		{isDeep && (
-			<button aria-label={`Turn: ${name}`} data-action="turn" type="button">
-				Turn
+	<Drawing {...drawing}>
+		<circle class="marker near" />
+		<circle class="marker selected" />
+	</Drawing>
+	<div aria-label={name} class="buttons" role="toolbar">
+		<span class="movers">
+			<button
+				aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"
+				class="lights"
+				data-action="move"
+				title="Press to select each vertex in turn, then use arrow keys to move it."
+				type="button"
+			>
+				Move
 			</button>
-		)}
-		<button
-			aria-label={`Reset: ${name}`}
-			data-action="reset"
-			disabled
-			type="button"
-		>
+			{isDeep && (
+				<button
+					aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"
+					class="lights"
+					data-action="turn"
+					title="Press to turn it, or use arrow keys."
+					type="button"
+				>
+					Turn
+				</button>
+			)}
+		</span>
+		<button class="lights" data-action="reset" disabled type="button">
 			Reset
 		</button>
+		<span class="visually-hidden" role="status"></span>
 	</div>
 </movable-drawing>
 
@@ -85,67 +87,64 @@ const isDeep = data.points.some(([, , z]) => z !== 0);
 		display: block;
 	}
 
-	/* Vertical swipes still scroll the page, except for on vertices */
+	movable-drawing :global(svg) {
+		touch-action: pan-y pinch-zoom;
+		user-select: none;
+	}
+
 	movable-drawing[data-deep] :global(svg) {
 		cursor: grab;
-		touch-action: pan-y;
-		user-select: none;
+	}
+
+	movable-drawing[data-near] :global(svg) {
+		cursor: move;
 	}
 
 	movable-drawing[data-moving] :global(svg) {
 		cursor: grabbing;
 	}
 
-	movable-drawing :global(.handle) {
-		cursor: move;
-		fill: transparent;
-	}
-
-	movable-drawing :global(.handle:hover) {
+	movable-drawing .marker {
+		fill: none;
+		opacity: 0;
+		pointer-events: none;
+		r: calc(var(--dot) / 2 + 2.5px);
 		stroke: var(--colorRed);
 		stroke-width: 1px;
+		transition: opacity var(--quickly);
 	}
 
-	movable-drawing :global(.handle[data-selected]) {
-		stroke: var(--colorRed);
+	movable-drawing .marker[data-shown] {
+		opacity: 1;
+	}
+
+	movable-drawing .selected {
 		stroke-width: 2px;
-	}
-
-	/* Names would no longer be beside what they name */
-	movable-drawing[data-moved] :global(text) {
-		opacity: 0;
 	}
 
 	.buttons {
 		display: grid;
 		gap: 0.25rem;
 		grid-template-columns: 1fr auto 1fr;
-		justify-items: center;
+		justify-items: start;
 		min-height: 1.5rem;
+		position: relative;
 	}
 
-	/* Keeps Turn centered, whether or not there's anything to reset */
-	[data-action="turn"],
-	[data-action="reset"]:first-child {
+	.movers {
+		display: flex;
+		gap: 0.25rem;
 		grid-column: 2;
 	}
 
-	[data-action="turn"] + [data-action="reset"] {
-		grid-column: 3;
-		justify-self: start;
-	}
-
-	movable-drawing:not(:defined) .buttons {
-		visibility: hidden;
-	}
-
 	button {
+		--resting: var(--colorInkMuted);
+
 		background: none;
 		border: 0;
-		color: var(--colorInkMuted);
 		cursor: pointer;
 		font: inherit;
-		font-size: 0.875rem;
+		font-size: var(--fontSizeSmall);
 		font-style: italic;
 		line-height: 1;
 		min-height: 1.5rem;
@@ -154,14 +153,15 @@ const isDeep = data.points.some(([, , z]) => z !== 0);
 		text-decoration: underline 1px;
 		text-decoration-color: var(--colorRule);
 		text-underline-offset: 0.2em;
-	}
-
-	button:hover {
-		color: var(--colorRed);
+		transition:
+			--lit var(--quickly),
+			opacity var(--quickly),
+			visibility var(--quickly);
 	}
 
 	/* Its space is kept, so that other buttons stay put */
 	button:disabled {
+		opacity: 0;
 		visibility: hidden;
 	}
 

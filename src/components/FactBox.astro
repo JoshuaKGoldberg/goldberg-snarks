@@ -7,7 +7,6 @@ import MovableDrawing from "./MovableDrawing.astro";
 interface Props {
 	blocks: number;
 
-	/** What the drawing is of, such as "Goldberg snark". */
 	kind: string;
 }
 
@@ -15,18 +14,24 @@ const { blocks, kind } = Astro.props;
 const graph = createGoldbergGraph(blocks);
 ---
 
-<div class="fact-box">
+<div class="boxed fact-box in-margin">
 	<MovableDrawing
-		name={`${kind} G${blocks.toString()}`}
 		edgeClass={(index) => getPartClass(graph, index)}
 		graph={graph}
-		label={`The ${kind} G${blocks.toString()}: ${blocks.toString()} identical blocks of vertices and edges in a ring around a central ${blocks.toString()}-sided loop.`}
+		label={`The ${kind} G${blocks.toString()}: ${blocks.toString()} identical blocks of vertices and edges in a ring around an inner ring of ${blocks.toString()} vertices.`}
+		name={`${kind} G${blocks.toString()}`}
 		padding={4}
 	/>
 	<p class="caption">
 		<slot name="caption" />
 		<br />
-		<span class="hint">Drag to turn, or drag a vertex to move it.</span>
+		<span class="hint">
+			<span class="pointer">Drag to turn it, or drag a vertex to move it.</span>
+			<span class="touch">
+				Swipe sideways to turn it. Tap a vertex, then drag it or tap a new
+				place, to move it.
+			</span>
+		</span>
 	</p>
 	<table>
 		<tbody>
@@ -37,14 +42,9 @@ const graph = createGoldbergGraph(blocks);
 
 <style>
 	.fact-box {
-		background: var(--colorPaperShaded);
-		border: 1px solid var(--colorRule);
-		border-top: 3px solid var(--colorRed);
 		display: grid;
 		gap: 0.5rem;
 		grid-template-columns: minmax(0, 1fr);
-		margin-block: 1.25rem;
-		padding: 0.9rem 1rem 0.5rem;
 	}
 
 	.fact-box > :global(movable-drawing) {
@@ -55,7 +55,7 @@ const graph = createGoldbergGraph(blocks);
 
 	.caption {
 		color: var(--colorInkMuted);
-		font-size: 0.875rem;
+		font-size: var(--fontSizeSmall);
 		font-style: italic;
 		line-height: 1.35;
 		text-align: center;
@@ -65,7 +65,7 @@ const graph = createGoldbergGraph(blocks);
 	.fact-box table {
 		border: 0;
 		border-top: 1px solid var(--colorInk);
-		font-size: 0.9375rem;
+		font-size: var(--fontSizeNote);
 	}
 
 	.fact-box :global(th) {
@@ -82,12 +82,17 @@ const graph = createGoldbergGraph(blocks);
 		padding-block: 0.22rem;
 	}
 
-	@media (min-width: 60rem) {
-		.fact-box {
-			clear: right;
-			float: right;
-			margin: 0 calc(-1 * var(--outset)) 1.75rem 0;
-			width: var(--widthMargin);
+	.touch {
+		display: none;
+	}
+
+	@media (hover: none) {
+		.pointer {
+			display: none;
+		}
+
+		.touch {
+			display: inline;
 		}
 	}
 

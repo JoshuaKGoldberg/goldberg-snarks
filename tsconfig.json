@@ -8,7 +8,7 @@
 		"paths": {
 			"~/*": ["./src/*"]
 		},
-		"target": "ES2023"
+		"target": "ES2024"
 	},
 	"exclude": ["coverage", "dist"],
 	"extends": "astro/tsconfigs/strictest"

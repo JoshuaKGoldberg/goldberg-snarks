@@ -1,5 +1,9 @@
 import type { Graph } from "./types.ts";
 
+import { getFirstBlockEdge } from "./block.ts";
+
+export type Coloring = readonly (number | undefined)[];
+
 export interface ColoringOptions {
 	/** Colors that edges must have, by index. */
 	fixed?: ReadonlyMap<number, number>;
@@ -21,7 +25,7 @@ const colors = [0, 1, 2];
 export function colorEdges(
 	{ edges, vertices }: Graph,
 	{ fixed, skipped }: ColoringOptions = {},
-) {
+): Coloring | undefined {
 	const order = [...edges.keys()].filter((index) => !skipped?.has(index));
 	const result: (number | undefined)[] = edges.map(() => undefined);
 	const remaining = vertices.map(() => 0);
@@ -49,18 +53,20 @@ export function colorEdges(
 		}
 	}
 
-	function colorFrom(position: number): boolean {
+	function describeFrontier() {
+		return [...frontier]
+			.sort((a, b) => a - b)
+			.map((vertex) => `${vertex.toString()}:${used[vertex].toString()}`)
+			.join();
+	}
+
+	/** Colors that haven't been used yet are interchangeable, so only one is tried. */
+	function colorFrom(position: number, distinct: number): boolean {
 		if (position === order.length) {
 			return true;
 		}
 
-		// Each vertex's colors are packed beside it, in an order that's always the same
-		const state = [
-			position,
-			...[...frontier]
-				.map((vertex) => vertex * 8 + used[vertex])
-				.sort((a, b) => a - b),
-		].join();
+		const state = `${position.toString()}|${describeFrontier()}`;
 
 		if (deadEnds.has(state)) {
 			return false;
@@ -69,13 +75,15 @@ export function colorEdges(
 		const index = order[position];
 		const { from, to } = edges[index];
 		const only = fixed?.get(index);
+		const candidates =
+			only === undefined ? colors.slice(0, distinct + 1) : [only];
 
-		for (const color of only === undefined ? colors : [only]) {
+		for (const color of candidates) {
 			if (!((used[from] | used[to]) & (1 << color))) {
 				result[index] = color;
 				toggle(index, color, 1);
 
-				if (colorFrom(position + 1)) {
+				if (colorFrom(position + 1, Math.max(distinct, color + 1))) {
 					return true;
 				}
 
@@ -83,32 +91,36 @@ export function colorEdges(
 			}
 		}
 
-		result[index] = undefined;
 		deadEnds.add(state);
 
 		return false;
 	}
 
-	return colorFrom(0) ? result : undefined;
+	return colorFrom(0, fixed ? colors.length : 0) ? result : undefined;
 }
 
-/** Indices of two edges, a1 to b1 and c1 to e1, that any snark's can do without. */
-export const spareEdges: ReadonlySet<number> = new Set([0, 3]);
+/** Colors as many of a Goldberg graph's edges as three colors can. */
+export function colorMostEdges(graph: Graph) {
+	return colorEdges(graph) ?? requireColoring(graph, { skipped: spareEdges });
+}
 
-/** Colors as many of a graph's edges as three colors can, leaving at most two. */
-export function colorMostEdges(graph: Graph, spares = spareEdges) {
-	const complete = colorEdges(graph);
+/** Indices of two edges, a1 to b1 and c1 to e1, that three colors can do without. */
+export const spareEdges: ReadonlySet<number> = new Set([
+	getFirstBlockEdge("a", "b"),
+	getFirstBlockEdge("c", "e"),
+]);
 
-	if (complete) {
-		return complete;
+export function countUncolored(coloring: Coloring) {
+	return coloring.filter((color) => color === undefined).length;
+}
+
+/** Colors edges of a graph that there's known to be a way to color. */
+export function requireColoring(graph: Graph, options?: ColoringOptions) {
+	const coloring = colorEdges(graph, options);
+
+	if (!coloring) {
+		throw new Error("Expected to find a coloring.");
 	}
 
-	// Never just one, as edges' colors have to balance out
-	const almost = colorEdges(graph, { skipped: spares });
-
-	if (!almost) {
-		throw new Error("Those two edges aren't enough to leave uncolored.");
-	}
-
-	return almost;
+	return coloring;
 }

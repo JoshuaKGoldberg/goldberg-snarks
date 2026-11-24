@@ -1,0 +1,19 @@
+---
+import { getStatement, type StatementId } from "~/statements.ts";
+
+interface Props {
+	id: StatementId;
+}
+
+const { id } = Astro.props;
+---
+
+<a class="ref" href={`/#${id}`}>
+	{getStatement(id).label}
+</a>
+
+<style>
+	.ref {
+		white-space: nowrap;
+	}
+</style>

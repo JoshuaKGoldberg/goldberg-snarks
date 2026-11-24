@@ -12,7 +12,7 @@ export function countCycles(graph: Graph, length: number) {
 	const visited = new Set<number>();
 	let count = 0;
 
-	// Only counts cycles from their lowest vertex, in both of their directions
+	/** Counts cycles from their lowest vertex, in both of their directions. */
 	function visit(start: number, current: number) {
 		if (visited.size === length) {
 			count += Number(neighbors[current].includes(start));
@@ -88,13 +88,9 @@ export function findShortestPath(graph: Graph, from: number, to: number) {
 	const distances = getDistances(neighbors, to);
 	const path = [from];
 
-	for (let remaining = distances[from]; remaining > 0; remaining -= 1) {
-		const current = path[path.length - 1];
-
-		path.push(
-			...neighbors[current]
-				.filter((neighbor) => distances[neighbor] === remaining - 1)
-				.slice(0, 1),
+	for (let current = from; current !== to; path.push(current)) {
+		[current] = neighbors[current].toSorted(
+			(a, b) => distances[a] - distances[b],
 		);
 	}
 

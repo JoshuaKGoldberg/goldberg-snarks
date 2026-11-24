@@ -5,20 +5,3 @@
 <div class="annotated">
 	<slot />
 </div>
-
-<style>
-	.annotated > :global(p) {
-		margin-top: 0.7rem;
-	}
-
-	@media screen and (max-width: 59.99rem) {
-		.annotated {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.annotated > :global(:first-child) {
-			order: 1;
-		}
-	}
-</style>

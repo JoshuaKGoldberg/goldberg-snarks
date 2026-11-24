@@ -1,7 +1,7 @@
 ---
+import { getSnarks } from "~/getGraphs.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import { getPartClass } from "~/graphs/edgeClasses.ts";
-import { getSnarks } from "~/getSnarks.ts";
 
 import Drawing from "./Drawing.astro";
 import Snark from "./Snark.astro";
@@ -40,12 +40,13 @@ const snarks = await getSnarks();
 		flex-wrap: wrap;
 		gap: 0.9rem var(--gap);
 		justify-content: center;
-		list-style: none;
+		list-style: "";
 		margin-block: 1rem;
 		padding: 0;
 	}
 
 	li {
+		break-inside: avoid;
 		width: calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns));
 	}
 
@@ -63,22 +64,27 @@ const snarks = await getSnarks();
 
 	.name {
 		color: var(--colorRed);
-		font-size: 1.1875rem;
+		font-size: var(--fontSizeSubheading);
 		margin-top: 0.3rem;
+		text-decoration: underline
+			color-mix(in srgb, currentcolor var(--lit), transparent);
+		text-underline-offset: 0.17em;
+		transition: --lit var(--quickly);
 	}
 
 	.teaser {
 		color: var(--colorInkMuted);
-		font-size: 0.875rem;
+		font-size: var(--fontSizeSmall);
 		text-wrap: balance;
 	}
 
-	.plate:hover .name {
-		text-decoration: underline;
-		text-underline-offset: 0.17em;
+	@media (hover: hover) {
+		.plate:hover .name {
+			--lit: 100%;
+		}
 	}
 
-	@media (min-width: 34rem) {
+	@media (width >= 34rem) {
 		.gallery {
 			--columns: 3;
 		}

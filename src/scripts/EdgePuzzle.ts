@@ -1,52 +1,75 @@
-import { edgesToNextBlock, edgesWithinBlock } from "~/graphs/block.ts";
+import type { Point } from "~/graphs/types.ts";
+
+import { edgesPerBlock } from "~/graphs/block.ts";
+import { describeProgress, findClashes } from "~/graphs/clashes.ts";
+import { type Coloring, colorMostEdges } from "~/graphs/colorEdges.ts";
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { locate } from "~/graphs/draw.ts";
 import { colorNames } from "~/graphs/edgeClasses.ts";
 
 import { query } from "./query.ts";
-
-const edgesPerBlock = edgesWithinBlock.length + edgesToNextBlock.length;
+import { type ClientPoint, toDrawing } from "./toDrawing.ts";
 
 /** How far from an edge, in pixels, a press can be and still count. */
 const reach = 22;
 
-type Color = string | undefined;
+type Color = Coloring[number];
 
 /** An attempt at coloring edges so that no two of a color meet. */
 export class EdgePuzzle extends HTMLElement {
 	readonly #board = query(this, ".board", SVGSVGElement);
-	readonly #circles = [
-		...this.querySelectorAll<SVGCircleElement>(".vertices circle"),
-	];
+	readonly #change = query(this, ".change", HTMLElement);
+	readonly #circles = this.querySelectorAll(".vertices circle");
+	readonly #graph = createGoldbergGraph(Number(this.dataset.blocks));
+	#coloring: Coloring = this.#graph.edges.map(() => undefined);
 	readonly #edges = [...this.querySelectorAll<SVGPathElement>(".edge")];
-
-	/** Every edge's color from before each change. */
-	readonly #history: Color[][] = [];
-
-	#near: SVGPathElement | undefined;
-	readonly #status = query(this, ".status", HTMLElement);
+	readonly #halo = query(this, ".halo", SVGPathElement);
+	readonly #history: Coloring[] = [];
+	#near: number | undefined;
+	readonly #progress = query(this, ".progress", HTMLElement);
 	readonly #undo = query(this, "[data-action=undo]", HTMLButtonElement);
 
 	get #selected(): Color {
 		const { value } = query(this, "input:checked", HTMLInputElement);
+		const color = colorNames.findIndex((name) => name === value);
 
-		return value === "" ? undefined : value;
+		return color === -1 ? undefined : color;
 	}
 
 	connectedCallback() {
-		// Edges are thin, so presses count for whichever of them is nearest
+		this.#board.setAttribute("role", "toolbar");
+
+		for (const [index, edge] of this.#edges.entries()) {
+			edge.setAttribute("role", "button");
+			edge.tabIndex = index ? -1 : 0;
+		}
+
+		this.#show();
+
 		this.#board.addEventListener("click", (event) => {
 			// Assistive technologies may click on edges without being anywhere near them
-			const edge =
+			const index =
 				event.detail === 0
-					? this.#edges.find((other) => other === event.target)
+					? this.#edges.findIndex((edge) => edge === event.target)
 					: this.#findNearest(event);
 
-			if (edge) {
-				this.#press(edge);
-				this.#focus(edge);
+			if (index !== undefined && index !== -1) {
+				this.#press(index);
+				this.#focus(index, event.detail === 0);
 			}
 		});
 		this.#board.addEventListener("keydown", (event) => {
 			this.#onKeyDown(event);
+		});
+		this.addEventListener("focusin", ({ target }) => {
+			const edge = this.#edges.find((other) => other === target);
+
+			if (edge?.matches(":focus-visible")) {
+				this.#halo.setAttribute("d", edge.getAttribute("d") ?? "");
+			}
+		});
+		this.addEventListener("focusout", () => {
+			this.#halo.removeAttribute("d");
 		});
 		this.#board.addEventListener("pointermove", (event) => {
 			if (event.pointerType === "mouse") {
@@ -60,64 +83,54 @@ export class EdgePuzzle extends HTMLElement {
 		query(this, "[data-action=best]", HTMLElement).addEventListener(
 			"click",
 			() => {
-				this.#change(this.#edges.map(({ dataset }) => dataset.solution));
+				this.#recolor(colorMostEdges(this.#graph));
 			},
 		);
 		query(this, "[data-action=reset]", HTMLElement).addEventListener(
 			"click",
 			() => {
-				this.#change(this.#edges.map(() => undefined));
+				this.#recolor(this.#graph.edges.map(() => undefined));
 			},
 		);
 		this.#undo.addEventListener("click", () => {
-			const previous = this.#history.pop();
-
-			if (previous) {
-				this.#show(previous);
-			}
-
-			// Disabled buttons can't be focused, so it'd be lost
-			if (this.#undo.disabled) {
-				this.#edges.find(({ tabIndex }) => tabIndex === 0)?.focus();
-			}
+			this.#onUndo();
 		});
 	}
 
-	#change(colors: Color[]) {
-		const previous = this.#edges.map(({ dataset }) => dataset.color);
-
-		if (colors.some((color, index) => color !== previous[index])) {
-			this.#history.push(previous);
-			this.#show(colors);
+	#color(index: number, color: Color) {
+		if (this.#recolor(this.#coloring.with(index, color))) {
+			this.#change.textContent = `${this.#describe(index)}. `;
 		}
 	}
 
-	#color(edge: SVGPathElement, color: Color) {
-		this.#change(
-			this.#edges.map((other) =>
-				other === edge ? color : other.dataset.color,
-			),
-		);
+	#describe(index: number) {
+		const { from, to } = this.#graph.edges[index];
+		const color = this.#coloring[index];
+
+		return [
+			"Edge",
+			this.#graph.vertices[from].name,
+			"to",
+			`${this.#graph.vertices[to].name}:`,
+			color === undefined ? "no color" : colorNames[color],
+		].join(" ");
 	}
 
-	#findNearest({ clientX, clientY }: MouseEvent) {
-		const matrix = this.#board.getScreenCTM();
+	#findNearest(press: ClientPoint) {
+		const { scale, ...point } = toDrawing(this.#board, press);
+		const { edges, vertices } = this.#graph;
+		let nearest: number | undefined;
+		let nearestDistance = reach / scale;
 
-		if (!matrix) {
-			return undefined;
-		}
-
-		const point = new DOMPoint(clientX, clientY).matrixTransform(
-			matrix.inverse(),
-		);
-		let nearest: SVGPathElement | undefined;
-		let nearestDistance = reach / matrix.a;
-
-		for (const edge of this.#edges) {
-			const distance = getDistance(point, edge);
+		for (const [index, { from, to }] of edges.entries()) {
+			const distance = getDistance(
+				point,
+				locate(vertices[from]),
+				locate(vertices[to]),
+			);
 
 			if (distance < nearestDistance) {
-				nearest = edge;
+				nearest = index;
 				nearestDistance = distance;
 			}
 		}
@@ -125,45 +138,47 @@ export class EdgePuzzle extends HTMLElement {
 		return nearest;
 	}
 
-	#focus(edge: SVGPathElement) {
-		for (const other of this.#edges) {
-			other.tabIndex = other === edge ? 0 : -1;
+	#focus(index: number, focusVisible: boolean) {
+		for (const [other, edge] of this.#edges.entries()) {
+			edge.tabIndex = other === index ? 0 : -1;
 		}
 
-		edge.focus({ preventScroll: true });
-		edge.scrollIntoView({ block: "nearest", inline: "nearest" });
+		this.#edges[index].focus({ focusVisible, preventScroll: true });
 	}
 
 	#onKeyDown(event: KeyboardEvent) {
-		const current = this.#edges.indexOf(event.target as SVGPathElement);
+		const current = this.#edges.findIndex((edge) => edge === event.target);
 
 		if (current === -1 || event.altKey || event.ctrlKey || event.metaKey) {
 			return;
 		}
 
-		const edge = this.#edges[current];
 		const move = (index: number) => {
-			this.#focus(
-				this.#edges[(index + this.#edges.length) % this.#edges.length],
-			);
+			const next = (index + this.#edges.length) % this.#edges.length;
+
+			this.#focus(next, true);
+			this.#edges[next].scrollIntoView({ block: "nearest", inline: "nearest" });
 		};
 
 		switch (event.key) {
 			case " ":
 			case "Enter":
-				this.#press(edge);
+				if (!event.repeat) {
+					this.#press(current);
+				}
+
 				break;
 
 			case "0":
 			case "Backspace":
 			case "Delete":
-				this.#color(edge, undefined);
+				this.#color(current, undefined);
 				break;
 
 			case "1":
 			case "2":
 			case "3":
-				this.#color(edge, (Number(event.key) - 1).toString());
+				this.#color(current, Number(event.key) - 1);
 				break;
 
 			case "ArrowDown":
@@ -197,112 +212,99 @@ export class EdgePuzzle extends HTMLElement {
 		event.preventDefault();
 	}
 
+	#onUndo() {
+		const previous = this.#history.pop();
+		const hadFocus = this.#undo.matches(":focus-visible");
+
+		if (previous) {
+			this.#coloring = previous;
+			this.#show();
+		}
+
+		// Disabled buttons can't be focused, so it'd be lost
+		if (hadFocus && this.#undo.disabled) {
+			this.#edges.find(({ tabIndex }) => tabIndex === 0)?.focus();
+		}
+	}
+
 	/** Colors an edge, or erases it if it's already the selected color. */
-	#press(edge: SVGPathElement) {
+	#press(index: number) {
 		const color = this.#selected;
 
-		this.#color(edge, edge.dataset.color === color ? undefined : color);
+		this.#color(index, this.#coloring[index] === color ? undefined : color);
 	}
 
-	#setNear(edge: SVGPathElement | undefined) {
-		this.#near?.removeAttribute("data-near");
-		this.#near = edge;
-		edge?.setAttribute("data-near", "");
-	}
-
-	#show(colors: Color[]) {
-		for (const [index, edge] of this.#edges.entries()) {
-			setColor(edge, colors[index]);
+	#recolor(coloring: Coloring) {
+		if (coloring.every((color, index) => color === this.#coloring[index])) {
+			return false;
 		}
 
-		const clashes = findClashes(this.#edges);
+		this.#history.push(this.#coloring);
+		this.#coloring = coloring;
+		this.#show();
 
-		for (const circle of this.#circles) {
-			circle.toggleAttribute(
-				"data-clashing",
-				clashes.has(circle.dataset.name ?? ""),
-			);
-		}
-
-		this.#undo.disabled = !this.#history.length;
-		this.#status.textContent = describe(
-			colors.filter((color) => color !== undefined).length,
-			colors.length,
-			[...clashes],
-		);
-	}
-}
-
-const formatter = new Intl.ListFormat("en");
-
-/** How many clashes are few enough to list. */
-const listedClashes = 4;
-
-function describe(colored: number, total: number, clashes: string[]) {
-	const count = `${colored.toString()} of ${total.toString()} edges colored`;
-
-	if (clashes.length > listedClashes) {
-		return `${count}. Same color twice at ${clashes.length.toString()} vertices.`;
+		return true;
 	}
 
-	if (clashes.length) {
-		return `${count}. Same color twice at ${formatter.format(clashes)}.`;
-	}
+	#setNear(index: number | undefined) {
+		if (index !== this.#near) {
+			this.#near = index;
 
-	return colored === total - 2 ? `${count}. This is the maximum.` : `${count}.`;
-}
-
-function findClashes(edges: SVGPathElement[]) {
-	const clashes = new Set<string>();
-	const seen = new Set<string>();
-
-	for (const { dataset } of edges) {
-		if (dataset.color) {
-			for (const vertex of [dataset.from ?? "", dataset.to ?? ""]) {
-				const key = `${vertex}:${dataset.color}`;
-
-				if (seen.has(key)) {
-					clashes.add(vertex);
-				}
-
-				seen.add(key);
+			for (const [other, edge] of this.#edges.entries()) {
+				edge.toggleAttribute("data-near", other === index);
 			}
 		}
 	}
 
-	return clashes;
+	#show() {
+		const clashes = findClashes(this.#graph, this.#coloring);
+
+		for (const [index, edge] of this.#edges.entries()) {
+			const color = this.#coloring[index];
+			const { from, to } = this.#graph.edges[index];
+			const clashing = [from, to]
+				.filter((vertex) => color !== undefined && clashes.has(vertex))
+				.map((vertex) => this.#graph.vertices[vertex].name);
+
+			edge.setAttribute(
+				"aria-label",
+				[
+					this.#describe(index),
+					...(clashing.length
+						? [`same color twice at ${clashing.join(" and ")}`]
+						: []),
+				].join(", "),
+			);
+
+			if (color === undefined) {
+				delete edge.dataset.color;
+			} else {
+				edge.dataset.color = colorNames[color];
+			}
+		}
+
+		for (const [index, circle] of this.#circles.entries()) {
+			circle.toggleAttribute("data-clashing", clashes.has(index));
+		}
+
+		this.#undo.disabled = !this.#history.length;
+		this.#change.textContent = "";
+		this.#progress.textContent = describeProgress(this.#graph, this.#coloring);
+	}
 }
 
-function getDistance({ x, y }: DOMPoint, edge: SVGPathElement) {
-	const [fromX, fromY, toX, toY] = (edge.getAttribute("d") ?? "")
-		.slice(1)
-		.split(/[L ]/)
-		.map(Number);
-	const deltaX = toX - fromX;
-	const deltaY = toY - fromY;
+/** Gets how far a point is from the nearest part of a line between two others. */
+function getDistance({ x, y }: Point, from: Point, to: Point) {
+	const deltaX = to.x - from.x;
+	const deltaY = to.y - from.y;
 	const along = Math.min(
 		1,
 		Math.max(
 			0,
-			((x - fromX) * deltaX + (y - fromY) * deltaY) /
+			((x - from.x) * deltaX + (y - from.y) * deltaY) /
 				(deltaX * deltaX + deltaY * deltaY),
 		),
 	);
 
-	return Math.hypot(x - fromX - along * deltaX, y - fromY - along * deltaY);
-}
-
-function setColor(edge: SVGPathElement, color: Color) {
-	const { from = "", to = "" } = edge.dataset;
-
-	if (color === undefined) {
-		delete edge.dataset.color;
-	} else {
-		edge.dataset.color = color;
-	}
-
-	edge.setAttribute(
-		"aria-label",
-		`Edge ${from} to ${to}: ${color === undefined ? "no color" : colorNames[Number(color)]}`,
-	);
+	return Math.hypot(x - from.x - along * deltaX, y - from.y - along * deltaY);
 }

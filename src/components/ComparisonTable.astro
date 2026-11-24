@@ -1,6 +1,6 @@
 ---
-import { describeSnark } from "~/graphs/describeSnark.ts";
-import { getSnarks } from "~/getSnarks.ts";
+import { getSnarks } from "~/getGraphs.ts";
+import { describeGraph } from "~/graphs/describeGraph.ts";
 
 import Snark from "./Snark.astro";
 
@@ -30,7 +30,7 @@ const snarks = await getSnarks();
 		</thead>
 		<tbody>
 			{snarks.map(({ blocks, href }) => {
-				const facts = describeSnark(blocks);
+				const facts = describeGraph(blocks);
 
 				return (
 					<tr>
@@ -45,13 +45,17 @@ const snarks = await getSnarks();
 						<td>{facts.diameter}</td>
 						<td>{facts.radius}</td>
 						<td>{facts.symmetries}</td>
-						<td>{facts.crossings ?? `${(blocks * 2).toString()}?`}</td>
+						<td>
+							{facts.crossings}
+							{!facts.isCrossingsKnown && "?"}
+						</td>
 					</tr>
 				);
 			})}
 		</tbody>
 	</table>
 </div>
+{/* eslint-enable astro/jsx-a11y/no-noninteractive-tabindex */}
 
 <style>
 	:is(td, th) {
@@ -63,6 +67,6 @@ const snarks = await getSnarks();
 	}
 
 	:is(td, th):last-child {
-		padding-right: 0;
+		padding-right: 2px;
 	}
 </style>

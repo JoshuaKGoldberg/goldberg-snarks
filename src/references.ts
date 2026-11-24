@@ -1,7 +1,8 @@
 export interface Reference {
 	authors: string;
 	details: string;
-	href: string;
+	/** Where it's available online, if it is. */
+	href?: string;
 
 	/** How it's mentioned within text. */
 	short: string;
@@ -18,6 +19,14 @@ export const references = {
 		title: "Cyclic pseudo-Loupekine snarks",
 		year: 2017,
 	},
+	blanusa1946: {
+		authors: "D. Blanuša",
+		details:
+			"Glasnik Matematičko-Fizički i Astronomski, Series II 1, 31–42 (in Croatian).",
+		short: "Blanuša 1946",
+		title: "Problem četiriju boja",
+		year: 1946,
+	},
 	brinkmann2026: {
 		authors: "G. Brinkmann and S. Van Overberghe",
 		details: "arXiv:2603.17789.",
@@ -28,7 +37,7 @@ export const references = {
 	},
 	campos2011: {
 		authors: "C. N. Campos, S. Dantas, and C. P. de Mello",
-		details: "Discrete Mathematics 311, 984–988.",
+		details: "Discrete Mathematics 311(12), 984–988.",
 		href: "https://doi.org/10.1016/j.disc.2011.02.013",
 		short: "Campos et al. 2011",
 		title: "The total-chromatic number of some families of snarks",
@@ -36,20 +45,13 @@ export const references = {
 	},
 	chen2025: {
 		authors: "G. Chen, G. Jing, and W. Zang",
-		details: "Journal of Combinatorial Optimization 50(3).",
+		details:
+			"Journal of Combinatorial Optimization 50(3), article 23. Correction in 51(1), article 1 (2026).",
 		href: "https://doi.org/10.1007/s10878-025-01348-6",
 		short: "Chen et al. 2025",
 		title:
 			"Proof of the Goldberg–Seymour conjecture on edge-colorings of multigraphs",
 		year: 2025,
-	},
-	chladny2010: {
-		authors: "M. Chladný and M. Škoviera",
-		details: "The Electronic Journal of Combinatorics 17(1).",
-		href: "https://doi.org/10.37236/304",
-		short: "Chladný & Škoviera 2010",
-		title: "Factorisation of snarks",
-		year: 2010,
 	},
 	gardner1976: {
 		authors: "M. Gardner",
@@ -62,7 +64,7 @@ export const references = {
 	},
 	ghebleh2007: {
 		authors: "M. Ghebleh",
-		details: "Discrete Mathematics 307, 3220–3225.",
+		details: "Discrete Mathematics 307(24), 3220–3225.",
 		href: "https://doi.org/10.1016/j.disc.2007.03.047",
 		short: "Ghebleh 2007",
 		title: "The circular chromatic index of Goldberg snarks",
@@ -85,6 +87,14 @@ export const references = {
 			"Infinite families of nontrivial trivalent graphs which are not Tait colorable",
 		year: 1975,
 	},
+	lukotka2024: {
+		authors: "R. Lukoťka",
+		details: "Discrete Mathematics 347(3), 113792.",
+		href: "https://doi.org/10.1016/j.disc.2023.113792",
+		short: "Lukoťka 2024",
+		title: "Circular flow number of Goldberg snarks",
+		year: 2024,
+	},
 	mohar2006: {
 		authors: "B. Mohar and A. Vodopivec",
 		details: "Combinatorics, Probability and Computing 15(6), 877–893.",
@@ -93,13 +103,27 @@ export const references = {
 		title: "On polyhedral embeddings of cubic graphs",
 		year: 2006,
 	},
+	petersen1898: {
+		authors: "J. Petersen",
+		details: "L’Intermédiaire des Mathématiciens 5, 225–227.",
+		short: "Petersen 1898",
+		title: "Sur le théorème de Tait",
+		year: 1898,
+	},
 	tait1880: {
 		authors: "P. G. Tait",
-		details: "Proceedings of the Royal Society of Edinburgh 10, 501–503.",
-		href: "https://doi.org/10.1017/S0370164600044229",
+		details: "Proceedings of the Royal Society of Edinburgh 10, 729.",
+		href: "https://doi.org/10.1017/S0370164600044643",
 		short: "Tait 1880",
-		title: "On the colouring of maps",
+		title: "Remarks on the previous communication",
 		year: 1880,
+	},
+	vizing1964: {
+		authors: "V. G. Vizing",
+		details: "Diskretnyi Analiz 3, 25–30 (in Russian).",
+		short: "Vizing 1964",
+		title: "On an estimate of the chromatic class of a p-graph",
+		year: 1964,
 	},
 	weisstein: {
 		authors: "E. W. Weisstein",

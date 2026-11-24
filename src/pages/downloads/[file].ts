@@ -1,21 +1,14 @@
 import type { APIRoute, GetStaticPaths } from "astro";
 
-import sharp from "sharp";
-
-import { getGraphs } from "~/getSnarks.ts";
+import { getGraphs } from "~/getGraphs.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import { toEdgeList, toGraph6 } from "~/graphs/serialize.ts";
 import { toSvg } from "~/graphs/toSvg.ts";
+import { toPng } from "~/toPng.ts";
 
 const formats = {
 	g6: (blocks) => `${toGraph6(createGoldbergGraph(blocks))}\n`,
-	png: async (blocks) =>
-		new Uint8Array(
-			await sharp(Buffer.from(toSvg(blocks)))
-				.flatten({ background: "white" })
-				.png({ compressionLevel: 9 })
-				.toBuffer(),
-		),
+	png: async (blocks) => toPng(toSvg(blocks)),
 	svg: toSvg,
 	txt: (blocks) => toEdgeList(createGoldbergGraph(blocks)),
 } satisfies Record<
@@ -35,9 +28,9 @@ interface Props {
 export const getStaticPaths = (async () => {
 	const graphs = await getGraphs();
 
-	return graphs.flatMap(({ blocks, href }) =>
+	return graphs.flatMap(({ blocks, slug }) =>
 		(Object.keys(formats) as Extension[]).map((extension) => ({
-			params: { file: `${href.slice(1)}.${extension}` },
+			params: { file: `${slug}.${extension}` },
 			props: { blocks, extension },
 		})),
 	);

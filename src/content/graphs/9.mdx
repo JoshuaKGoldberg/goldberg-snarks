@@ -1,6 +1,5 @@
 ---
-blocks: 9
-summary: The Goldberg snark with nine blocks, 72 vertices, and 108 edges. It is the smallest whose number of blocks is not prime.
+summary: A graph with 72 vertices and 108 edges, made of nine blocks. It is the smallest Goldberg snark whose number of blocks is not prime.
 ---
 
 import Highlight from "~/components/Highlight.astro";
@@ -8,7 +7,7 @@ import Snark from "~/components/Snark.astro";
 
 ## Covering
 
-Number the blocks of <Snark n={9} /> in order around the ring: 1, 2, 3, 1, 2, 3, 1, 2, 3.
+The blocks of <Snark n={9} /> can be numbered 1, 2, 3, 1, 2, 3, 1, 2, 3 in order around the ring.
 Merging the blocks that have the same number gives the Goldberg graph [<Snark n={3} />](/g3), which is not a snark.
 
 <Highlight
@@ -27,6 +26,7 @@ In general, <Snark n="m" /> is a covering graph of <Snark n="k" /> whenever _m_ 
 
 ## Coverings and edge colorings
 
-If a graph has a 3-edge-coloring, so does every covering graph of it: each edge is given the color of the edge that it corresponds to.
+If a graph has a <span class="nowrap">3-edge-coloring</span>, so does every covering graph of it: each edge is given the color of the edge that it corresponds to.
 The reverse is not true.
-For example, <Snark n={6} /> is a covering graph of <Snark n={3} />, and it has a 3-edge-coloring because 6 is even.
+For example, the Goldberg graph <Snark n={6} /> is a covering graph of <Snark n={3} />.
+It [has a <span class="nowrap">3-edge-coloring</span>](/#theorem) because 6 is even, but <Snark n={3} /> does not.

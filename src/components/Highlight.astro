@@ -2,8 +2,8 @@
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import { getHighlight, type HighlightKind } from "~/graphs/highlights.ts";
 
-import MovableDrawing from "./MovableDrawing.astro";
 import Figure from "./Figure.astro";
+import MovableDrawing from "./MovableDrawing.astro";
 
 interface Props {
 	blocks: number;
@@ -13,29 +13,27 @@ interface Props {
 
 const { blocks, kind, label } = Astro.props;
 
-/** What's emphasized in each kind of drawing. */
 const names: Record<HighlightKind, string> = {
-	"block-cycles": "cycles of lengths 5 and 6 in",
-	"every-fifth": "every fifth block of",
-	"every-third": "every third block of",
-	farthest: "shortest path in",
-	inner: "inner ring of",
-	longest: "longest cycle of",
-	swapped: "outer and middle rings of",
+	"block-cycles": "Cycles of lengths 5 and 6 in",
+	"every-fifth": "Every fifth block of",
+	"every-third": "Every third block of",
+	farthest: "Shortest path in",
+	inner: "Inner ring of",
+	longest: "Longest cycle of",
+	swapped: "Outer and middle rings of",
 };
 
 const graph = createGoldbergGraph(blocks);
 const { edgeClass, vertexClass } = getHighlight(graph, kind);
 ---
 
-<Figure size="medium">
+<Figure>
 	<MovableDrawing
-		name={`${names[kind]} G${blocks.toString()}`}
-		slot="drawing"
 		edgeClass={edgeClass}
 		graph={graph}
 		label={label}
-		padding={5}
+		name={`${names[kind]} G${blocks.toString()}`}
+		slot="drawing"
 		vertexClass={vertexClass}
 	/>
 	<slot />

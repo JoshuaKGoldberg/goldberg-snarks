@@ -1,6 +1,7 @@
 ---
+import { siteName } from "~/constants.ts";
+import { getSnarks } from "~/getGraphs.ts";
 import { getPath } from "~/getPath.ts";
-import { getSnarks } from "~/getSnarks.ts";
 
 import Snark from "./Snark.astro";
 import ThemeToggle from "./ThemeToggle.astro";
@@ -11,8 +12,12 @@ const snarks = await getSnarks();
 
 <header>
 	<div class="inside">
-		<a aria-current={path === "/" ? "page" : undefined} class="home" href="/">
-			Goldberg Snarks
+		<a
+			aria-current={path === "/" ? "page" : undefined}
+			class="home lights"
+			href="/"
+		>
+			{siteName}
 		</a>
 		<nav aria-label="Snarks">
 			<ul>
@@ -20,7 +25,7 @@ const snarks = await getSnarks();
 					<li>
 						<a
 							aria-current={path === href ? "page" : undefined}
-							class="snark-link"
+							class="lights snark-link"
 							href={href}
 						>
 							<Snark n={blocks} />
@@ -34,7 +39,6 @@ const snarks = await getSnarks();
 </header>
 
 <style>
-	/* A double rule, as around the title pages of old books */
 	header {
 		border-bottom: 1px solid var(--colorRule);
 		border-top: 4px solid var(--colorRed);
@@ -52,13 +56,12 @@ const snarks = await getSnarks();
 
 	.home,
 	.snark-link {
-		color: var(--colorInk);
 		line-height: 2.25rem;
 		text-decoration: none;
 	}
 
 	.home {
-		font-size: 1.1875rem;
+		font-size: var(--fontSizeSubheading);
 		font-style: italic;
 		flex: 1;
 	}
@@ -66,7 +69,7 @@ const snarks = await getSnarks();
 	ul {
 		display: flex;
 		flex-wrap: wrap;
-		list-style: none;
+		list-style: "";
 		padding: 0;
 	}
 
@@ -77,18 +80,16 @@ const snarks = await getSnarks();
 		text-align: center;
 	}
 
-	.home:hover,
-	.snark-link:hover,
-	[aria-current="page"] {
-		color: var(--colorRed);
-	}
-
 	.snark-link[aria-current="page"] {
 		border-bottom: 2px solid var(--colorRed);
 		padding-bottom: 0;
 	}
 
-	@media (max-width: 40rem) {
+	@media (width <= 40rem) {
+		.inside {
+			padding-top: 0.9rem;
+		}
+
 		nav {
 			order: 1;
 			width: 100%;

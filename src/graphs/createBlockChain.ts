@@ -1,61 +1,56 @@
-import type { Edge, Graph, Vertex } from "./types.ts";
+import type { Graph, Vertex } from "./types.ts";
 
 import {
+	createBlock,
 	edgesToNextBlock,
-	edgesWithinBlock,
 	flatPositions,
-	roles,
+	getVertexIndex,
 } from "./block.ts";
-import { getVertexIndex } from "./createGoldbergGraph.ts";
 
 /** Space from the center of each block to the center of the next. */
 const spacing = 1.6;
 
-/** Role of the stubs standing in for blocks that a chain isn't linked to. */
-export const stub = "stub";
-
 /** Creates blocks linked in a flat row, with loose links at its two ends. */
 export function createBlockChain(blocks: number): Graph {
-	const edges: Edge[] = [];
-	const vertices: Vertex[] = [];
-
-	for (let block = 0; block < blocks; block += 1) {
-		for (const role of roles) {
+	const created = Array.from({ length: blocks }, (_, block) =>
+		createBlock(block, (role) => {
 			const { x, y } = flatPositions[role];
 
-			vertices.push({ block, role, x: x + block * spacing, y });
-		}
+			return { x: x + block * spacing, y };
+		}),
+	);
+	const edges = created.flatMap((block) => block.edges);
+	const vertices = created.flatMap((block) => block.vertices);
 
-		for (const [from, to] of edgesWithinBlock) {
-			edges.push({
-				from: getVertexIndex(block, from),
-				isLink: false,
-				to: getVertexIndex(block, to),
-			});
-		}
-	}
+	const addLooseEnd = (end: Vertex) => vertices.push(end) - 1;
 
 	for (let block = -1; block < blocks; block += 1) {
-		for (const [from, to] of edgesToNextBlock) {
+		for (const { from, to, ...edge } of edgesToNextBlock) {
 			edges.push({
+				...edge,
 				from:
-					block < 0
-						? addStub(flatPositions[to].y, -spacing / 2)
+					block === -1
+						? addLooseEnd({ name: "", x: -spacing / 2, y: flatPositions[to].y })
 						: getVertexIndex(block, from),
-				isLink: true,
 				to:
-					block + 1 < blocks
-						? getVertexIndex(block + 1, to)
-						: addStub(flatPositions[from].y, (blocks - 0.5) * spacing),
+					block === blocks - 1
+						? addLooseEnd({
+								name: "",
+								x: (blocks - 0.5) * spacing,
+								y: flatPositions[from].y,
+							})
+						: getVertexIndex(block + 1, to),
 			});
 		}
 	}
 
 	return { edges, vertices };
+}
 
-	function addStub(y: number, x: number) {
-		vertices.push({ block: -1, role: stub, x, y });
-
-		return vertices.length - 1;
-	}
+/** Gets the indices of a chain's loose links: the left side's, then the right's. */
+export function getLooseLinks({ edges, vertices }: Graph) {
+	return [...edges.keys()].filter(
+		(index) =>
+			!vertices[edges[index].from].name || !vertices[edges[index].to].name,
+	);
 }

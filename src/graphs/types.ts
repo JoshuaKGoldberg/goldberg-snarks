@@ -1,15 +1,15 @@
 export interface Edge {
 	from: number;
 
-	/** Whether this is between blocks, rather than within one. */
-	isLink: boolean;
+	/** Which of a Goldberg graph's rings this is part of, if any. */
+	ring?: Ring;
 
 	to: number;
 }
 
 export interface Graph {
-	edges: Edge[];
-	vertices: Vertex[];
+	readonly edges: readonly Edge[];
+	readonly vertices: readonly Vertex[];
 }
 
 export interface Point {
@@ -17,11 +17,12 @@ export interface Point {
 	y: number;
 }
 
-export interface Vertex extends Point {
-	block: number;
+export type Ring = "inner" | "middle" | "outer";
 
+export interface Vertex extends Point {
 	/** How far it is toward the viewer, if it isn't flat with the rest. */
 	depth?: number;
 
-	role: string;
+	/** What it's called, or empty if it's only where a loose link ends. */
+	name: string;
 }

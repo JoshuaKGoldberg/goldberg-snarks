@@ -1,0 +1,42 @@
+---
+summary: A graph with 104 vertices and 156 edges, made of thirteen identical blocks. It has 52 symmetries.
+---
+
+import Highlight from "~/components/Highlight.astro";
+import Ref from "~/components/Ref.astro";
+import Snark from "~/components/Snark.astro";
+
+## Symmetries
+
+A _symmetry_, or _automorphism_, of a graph is a rearrangement of its vertices in which vertices joined by an edge remain joined by an edge.
+There are 52 symmetries of <Snark n={13} />.
+Each is a combination of:
+
+- a rotation by any number of blocks, for which there are 13 choices;
+- a reflection, or no reflection; and
+- an exchange of the outer and middle rings, or no exchange.
+
+There are 13 × 2 × 2 = 52 combinations.
+There are no others.
+Every block contains two cycles of length 5 that share a path, and no other two cycles of length 5 do (<Ref id="short-cycles" />), so a symmetry takes blocks to blocks.
+Neighboring blocks stay neighbors, so there are 2 × 13 ways for it to rearrange the blocks around the ring.
+If it leaves every block in place, it leaves every _a_ and _b_ in place, and either leaves _c_ and _d_ in place or exchanges them.
+That choice determines where the rest of the block goes, as _e_ and _h_ are linked to the next block and _f_ and _g_ to the previous one, and the links then determine every other block.
+
+The same is true of every Goldberg snark, so <Snark n="k" /> has 4*k* symmetries.
+
+## Exchanging the outer and middle rings
+
+Exchanging _c_ with _d_, _e_ with _h_, and _f_ with _g_ in every block is a symmetry, as vertices that were joined by an edge are still joined by one.
+It moves the outer ring to the middle ring and the middle ring to the outer ring, and every vertex stays in its block.
+
+<Highlight
+	blocks={13}
+	kind="swapped"
+	label="The Goldberg snark G13, with its outer ring and its middle ring emphasized in different colors."
+>
+	The outer and middle rings of <Snark n={13} />.
+</Highlight>
+
+The outer and middle rings are drawn at different distances from the center, so this symmetry is not visible in the drawing.
+The rotations are visible, but the reflections are only approximate, because the blocks are not drawn symmetrically.

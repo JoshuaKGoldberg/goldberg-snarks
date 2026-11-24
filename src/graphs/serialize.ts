@@ -1,13 +1,11 @@
 import type { Graph } from "./types.ts";
 
-import { getVertexName } from "./getVertexName.ts";
-
 /** Lists a graph's edges, one per line, as the names of their vertices. */
 export function toEdgeList({ edges, vertices }: Graph) {
 	return edges
 		.map(
 			({ from, to }) =>
-				`${getVertexName(vertices[from])} ${getVertexName(vertices[to])}\n`,
+				[vertices[from].name, vertices[to].name].join(" ") + "\n",
 		)
 		.join("");
 }

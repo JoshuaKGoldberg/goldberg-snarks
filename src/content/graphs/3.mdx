@@ -1,6 +1,5 @@
 ---
-blocks: 3
-summary: The Goldberg graph with three blocks, 24 vertices, and 36 edges. It is not a snark, because it contains a triangle.
+summary: A graph with 24 vertices and 36 edges, made of three identical blocks. It is not a snark, because it contains a triangle.
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -20,7 +19,7 @@ The [usual definition of a snark](/#snark) does not allow cycles of fewer than f
 	The triangle in <Snark n={3} />.
 </Highlight>
 
-A triangle in a cubic graph can be shrunk to a single vertex without changing whether the graph has a 3-edge-coloring.
+A triangle in a cubic graph can be shrunk to a single vertex without changing whether the graph has a <span class="nowrap">3-edge-coloring</span>.
 Some authors use a definition of a snark that allows triangles, and include <Snark n={3} /> among the Goldberg snarks <Cite id="campos2011" />.
 
 ## Relation to the Loupekine snarks
@@ -31,4 +30,5 @@ It is one of the two smallest [Loupekine snarks](/#related-graphs), another fami
 ## Distances
 
 The _diameter_ of a graph is the largest distance between two of its vertices, counted in edges.
-Every vertex of <Snark n={3} /> has a vertex at distance 4 and none farther away, so the diameter is 4.
+The _radius_ is the smallest _r_ such that some vertex is at distance at most _r_ from every other.
+From every vertex of <Snark n={3} />, the farthest vertex is at distance 4, so the diameter and the radius are both 4.

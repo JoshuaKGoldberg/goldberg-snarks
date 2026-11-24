@@ -3,15 +3,22 @@ import { Font } from "astro:assets";
 
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
+import { imageSize, siteName } from "~/constants.ts";
 import { getPath } from "~/getPath.ts";
-
+import { palette } from "~/palette.ts";
 import "~/styles/global.css";
 
 interface Props {
+	/** Whether the page has enough bold text for its font to be loaded right away. */
+	bold?: boolean;
+
 	description: string;
 
 	/** Path of the image for links to this page, and what's in it. */
 	image: { alt: string; path: string };
+
+	/** Whether this is shown in place of pages that don't exist. */
+	isMissing?: boolean;
 
 	/** What's said about the page to search engines, per schema.org. */
 	schema?: Record<string, unknown>;
@@ -19,9 +26,27 @@ interface Props {
 	title: string;
 }
 
-const { description, image, schema, title } = Astro.props;
+const { bold, description, image, isMissing, schema, title } = Astro.props;
 const imageUrl = new URL(image.path, Astro.site);
 const pageUrl = new URL(getPath(Astro.url), Astro.site);
+
+const colors = Object.entries(palette);
+const [lightPaper, darkPaper] = palette.Paper;
+
+/** Text is quicker, as partway between themes it's the same color as what's behind it. */
+const getTiming = (name: string) =>
+	name.startsWith("Paper") || name === "Rule"
+		? "350ms ease-in-out"
+		: "150ms linear 100ms";
+
+const colorStyles = [
+	...colors.map(
+		([name, [light]]) =>
+			`@property --color${name}{syntax:"<color>";inherits:true;initial-value:${light}}`,
+	),
+	`:root{${colors.map(([name, [light, dark]]) => `--color${name}:light-dark(${light},${dark})`).join(";")}}`,
+	`@media screen and (prefers-reduced-motion:no-preference){:root{transition:${colors.map(([name]) => `--color${name} ${getTiming(name)}`).join(",")}}}`,
+].join("");
 ---
 
 <!doctype html>
@@ -31,25 +56,51 @@ const pageUrl = new URL(getPath(Astro.url), Astro.site);
 		<meta content="width=device-width, initial-scale=1" name="viewport" />
 		<title>{title}</title>
 		<meta content={description} name="description" />
-		<link href={pageUrl} rel="canonical" />
+		{!isMissing && <link href={pageUrl} rel="canonical" />}
 		<link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+		<link href="/apple-touch-icon.png" rel="apple-touch-icon" />
 		<link href="/sitemap-index.xml" rel="sitemap" />
-		<meta content="#fffdf8" name="theme-color" />
+		<meta
+			content={lightPaper}
+			data-scheme="light"
+			media="(prefers-color-scheme: light)"
+			name="theme-color"
+		/>
+		<meta
+			content={darkPaper}
+			data-scheme="dark"
+			media="(prefers-color-scheme: dark)"
+			name="theme-color"
+		/>
 		<meta content={schema ? "article" : "website"} property="og:type" />
-		<meta content="Goldberg snarks" property="og:site_name" />
+		<meta content={siteName} property="og:site_name" />
 		<meta content={title} property="og:title" />
+		<meta content="en_US" property="og:locale" />
 		<meta content={description} property="og:description" />
-		<meta content={pageUrl} property="og:url" />
+		{!isMissing && <meta content={pageUrl} property="og:url" />}
 		<meta content={imageUrl} property="og:image" />
-		<meta content="1200" property="og:image:width" />
-		<meta content="630" property="og:image:height" />
+		<meta content="image/png" property="og:image:type" />
+		<meta content={imageSize.width.toString()} property="og:image:width" />
+		<meta content={imageSize.height.toString()} property="og:image:height" />
 		<meta content={image.alt} property="og:image:alt" />
 		<meta content="summary_large_image" name="twitter:card" />
+		<meta content={title} name="twitter:title" />
+		<meta content={description} name="twitter:description" />
+		<meta content={imageUrl} name="twitter:image" />
+		<meta content={image.alt} name="twitter:image:alt" />
+		{schema && (
+			<meta
+				content="https://www.joshuakgoldberg.com"
+				property="article:author"
+			/>
+		)}
+		<style is:inline set:html={colorStyles}></style>
 		<Font
 			cssVariable="--fontText"
 			preload={[
-				{ style: "normal", subset: "latin", weight: 400 },
-				{ style: "italic", subset: "latin", weight: 400 },
+				{ style: "normal", weight: 400 },
+				{ style: "italic", weight: 400 },
+				...(bold ? [{ style: "normal", weight: 700 } as const] : []),
 			]}
 		/>
 		<script is:inline>
@@ -75,6 +126,7 @@ const pageUrl = new URL(getPath(Astro.url), Astro.site);
 						url: "https://www.joshuakgoldberg.com",
 					},
 					description,
+					image: imageUrl,
 					inLanguage: "en",
 					url: pageUrl,
 					...schema,

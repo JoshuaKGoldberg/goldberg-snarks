@@ -1,35 +1,32 @@
 ---
-import type { Graph } from "~/graphs/types.ts";
+import type { ComponentProps } from "astro/types";
 
-import { colorMostEdges } from "~/graphs/colorEdges.ts";
+import { type Coloring } from "~/graphs/colorEdges.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import ColoringKey from "./ColoringKey.astro";
-import MovableDrawing from "./MovableDrawing.astro";
 import Figure from "./Figure.astro";
+import MovableDrawing from "./MovableDrawing.astro";
 
-interface Props {
-	graph: Graph;
-	inMargin?: boolean;
-	label: string;
-	name: string;
-	size?: "large" | "medium" | "small";
+type Props = ComponentProps<typeof Figure> &
+	Pick<
+		ComponentProps<typeof MovableDrawing>,
+		"cropped" | "graph" | "label" | "name"
+	> & {
+		coloring: Coloring;
+	};
 
-	/** Indices of two edges to leave uncolored if needed, other than the usual. */
-	spares?: Set<number>;
-}
-
-const { graph, inMargin, label, name, size, spares } = Astro.props;
-const coloring = colorMostEdges(graph, spares);
+const { coloring, cropped, graph, label, name, ...figure } = Astro.props;
 ---
 
-<Figure inMargin={inMargin} size={size}>
+<Figure {...figure}>
 	<MovableDrawing
-		slot="drawing"
+		cropped={cropped}
 		edgeClass={(index) => getColorClass(coloring[index])}
 		graph={graph}
 		label={label}
 		name={name}
+		slot="drawing"
 	/>
 	<ColoringKey slot="key" spare={coloring.includes(undefined)} />
 	<slot />

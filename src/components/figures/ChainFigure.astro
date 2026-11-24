@@ -1,33 +1,39 @@
 ---
-import { colorEdges } from "~/graphs/colorEdges.ts";
-import { createBlockChain } from "~/graphs/createBlockChain.ts";
-import { getColorClass } from "~/graphs/edgeClasses.ts";
+import { requireColoring, spareEdges } from "~/graphs/colorEdges.ts";
+import { createBlockChain, getLooseLinks } from "~/graphs/createBlockChain.ts";
 
-import ColoringKey from "../ColoringKey.astro";
-import MovableDrawing from "../MovableDrawing.astro";
-import Figure from "../Figure.astro";
+import ColoredFigure from "../ColoredFigure.astro";
 
-const graph = createBlockChain(2);
-const links = [...graph.edges.keys()].filter(
-	(index) => graph.edges[index].isLink,
-);
+interface Props {
+	blocks: number;
+	id?: string;
+	label: string;
 
-// Loose links are the same on both sides, so that the blocks could be repeated
-const sides = [...links.slice(0, 3), ...links.slice(-3)];
-const coloring = colorEdges(graph, {
-	fixed: new Map(sides.map((link, i) => [link, i % 3 ? 0 : 1])),
+	/** Colors of the inner, outer, and middle links, which are the same on both sides. */
+	links: readonly number[];
+	name: string;
+
+	/** Whether to leave two edges of the first block uncolored. */
+	spares?: boolean;
+}
+
+const { blocks, id, label, links, name, spares } = Astro.props;
+const graph = createBlockChain(blocks);
+const coloring = requireColoring(graph, {
+	fixed: new Map(
+		getLooseLinks(graph).map((link, i) => [link, links[i % links.length]]),
+	),
+	...(spares && { skipped: spareEdges }),
 });
 ---
 
-<Figure id="chain">
-	<MovableDrawing
-		name="two linked blocks"
-		slot="drawing"
-		cropped
-		edgeClass={(index) => getColorClass(coloring?.[index])}
-		graph={graph}
-		label="Two blocks in a row, colored. On the left, the outer and middle links are both green. Between the blocks, they’re two different colors. On the right, they’re both green again."
-	/>
-	<ColoringKey slot="key" />
+<ColoredFigure
+	coloring={coloring}
+	cropped
+	graph={graph}
+	id={id}
+	label={label}
+	name={name}
+>
 	<slot />
-</Figure>
+</ColoredFigure>

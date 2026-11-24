@@ -1,0 +1,268 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import { render } from "astro:content";
+
+import Article from "~/components/Article.astro";
+import Code from "~/components/Code.astro";
+import ColoredFigure from "~/components/ColoredFigure.astro";
+import EdgePuzzle from "~/components/EdgePuzzle.astro";
+import Fact from "~/components/Fact.astro";
+import FactBox from "~/components/FactBox.astro";
+import Heading from "~/components/Heading.astro";
+import LinkedHeading from "~/components/LinkedHeading.astro";
+import Ref from "~/components/Ref.astro";
+import Snark from "~/components/Snark.astro";
+import Term from "~/components/Term.astro";
+import Background, { getHeadings } from "~/content/background.mdx";
+import { getGraphs } from "~/getGraphs.ts";
+import { colorMostEdges } from "~/graphs/colorEdges.ts";
+import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { describeGraph } from "~/graphs/describeGraph.ts";
+import { toGraph6 } from "~/graphs/serialize.ts";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+export const getStaticPaths = (async () => {
+	const graphs = await getGraphs();
+	const snarks = graphs.filter(({ isSnark }) => isSnark);
+
+	return graphs.map((graph) => {
+		const index = snarks.indexOf(graph);
+
+		return {
+			params: { graph: graph.slug },
+			props: {
+				graph,
+				next: index === -1 ? undefined : snarks.at(index + 1),
+				previous: index > 0 ? snarks[index - 1] : undefined,
+			},
+		};
+	});
+}) satisfies GetStaticPaths;
+
+const { next, previous } = Astro.props;
+const { blocks, entry, href, isSnark, name, slug, summary } = Astro.props.graph;
+const { Content, headings } = await render(entry);
+const facts = describeGraph(blocks);
+const graph = createGoldbergGraph(blocks);
+const coloring = colorMostEdges(graph);
+const uncolored = graph.edges
+	.filter((_, index) => coloring[index] === undefined)
+	.map(
+		({ from, to }) =>
+			`from ${graph.vertices[from].name} to ${graph.vertices[to].name}`,
+	);
+const formatter = new Intl.ListFormat("en");
+const title = isSnark ? "Goldberg snark" : "Goldberg graph";
+
+const after = [
+	{ depth: 2, slug: "coloring", text: "Edge coloring" },
+	{ depth: 2, slug: "downloads", text: "Downloads" },
+];
+
+const downloads = [
+	["svg", "Drawing (SVG)"],
+	["png", "Drawing (PNG)"],
+	["txt", "Edge list (text)"],
+	["g6", "Graph (graph6)"],
+];
+---
+
+<BaseLayout
+	description={summary.replace(/^A graph/, `The ${title} ${name} is a graph`)}
+	image={{
+		alt: `${title} ${name}, with ${facts.vertices.toString()} vertices and ${facts.edges.toString()} edges, beside a drawing of its ${blocks.toString()} blocks in a ring.`,
+		path: `/images${href}.png`,
+	}}
+	schema={{
+		"@type": "Article",
+		about: { "@type": "Thing", name: `${title} ${name}` },
+		headline: `${title} ${name}`,
+	}}
+	title={`${title} ${name}: a graph whose edges need four colors`}
+>
+	<Article headings={[...getHeadings(), ...headings, ...after]}>
+		<Heading slot="heading" summary={summary}>
+			{`${title} `}
+			<Snark n={blocks} />
+		</Heading>
+		<div class="annotated">
+			<FactBox blocks={blocks} kind={title}>
+				<Fragment slot="caption">
+					{`The ${title} `}
+					<Snark n={blocks} />
+				</Fragment>
+				<Fact label="Blocks">{blocks}</Fact>
+				<Fact label="Vertices">{facts.vertices}</Fact>
+				<Fact label="Edges">{facts.edges}</Fact>
+				<Fact about="#coloring" label="Chromatic index">
+					{facts.chromaticIndex}
+				</Fact>
+				<Fact about="#coloring" label="Resistance">
+					{facts.resistance}
+				</Fact>
+				<Fact about="/#properties" label="Girth">
+					{facts.girth}
+				</Fact>
+				<Fact about="/#hamiltonian-cycles" label="Circumference">
+					{facts.circumference}
+				</Fact>
+				<Fact
+					about={isSnark ? "/#short-cycles" : undefined}
+					label="Cycles of length 5"
+				>
+					{facts.pentagons}
+				</Fact>
+				<Fact about="/#properties" label="Diameter">
+					{facts.diameter}
+				</Fact>
+				<Fact about="/#properties" label="Radius">
+					{facts.radius}
+				</Fact>
+				<Fact about="/#properties" label="Symmetries">
+					{facts.symmetries}
+				</Fact>
+				<Fact about="/#properties" label="Crossing number">
+					{facts.crossings}
+					{!facts.isCrossingsKnown && " (conjectured)"}
+				</Fact>
+				<Fact about="/#hamiltonian-cycles" label="Hamiltonian">
+					No
+				</Fact>
+				<Fact about="/#properties" label="Planar">
+					No
+				</Fact>
+			</FactBox>
+			<Background components={{ h2: LinkedHeading }} isSnark={isSnark} />
+		</div>
+
+		<Content components={{ h2: LinkedHeading }} />
+
+		<LinkedHeading id="coloring">Edge coloring</LinkedHeading>
+		<ColoredFigure
+			coloring={coloring}
+			graph={graph}
+			inMargin
+			label={`${name} with all but two of its ${facts.edges.toString()} edges colored. The uncolored edges are ${formatter.format(uncolored)}.`}
+			name={`Colored ${name}`}
+			size="small"
+		>
+			<Snark n={blocks} /> with all but <Term is="spare">two edges</Term>{" "}
+			colored.
+		</ColoredFigure>
+		<p>
+			In any <span class="nowrap">3-edge-coloring</span>, the outer and middle
+			links have the same color on one side of each block and different colors
+			on the other side (
+			<Ref id="matching" />
+			). Around the ring, places between blocks where those colors are the same
+			would therefore alternate with places where they differ. This is
+			impossible in <Snark n={blocks} />, because the number of places between
+			blocks, {blocks}, is odd.
+		</p>
+		<p>
+			When three colors are used,{" "}
+			<a href="/#uncolored-edges">at least two edges must be left uncolored</a>{" "}
+			in any cubic graph that has no <span class="nowrap">3-edge-coloring</span>
+			. The figure shows <Snark n={blocks} /> with two edges uncolored, so the
+			most that can be colored is {facts.edges - facts.resistance} of{" "}
+			{facts.edges}.
+		</p>
+		<p>
+			By <a href="/#edge-colorings-with-three-colors">Vizing’s theorem</a>, no
+			cubic graph needs more than four colors, so four are enough. The smallest
+			number of colors in an edge coloring of a graph is its{" "}
+			<em>chromatic index</em>, which is {facts.chromaticIndex} for{" "}
+			<Snark n={blocks} />. The smallest number of edges that must be left
+			uncolored with three colors is its <em>resistance</em>, which is{" "}
+			{facts.resistance}.
+		</p>
+		<EdgePuzzle blocks={blocks} />
+
+		<LinkedHeading id="downloads">Downloads</LinkedHeading>
+		<ul class="downloads">
+			{downloads.map(([extension, label]) => (
+				<li>
+					<a
+						data-astro-prefetch="false"
+						download
+						href={`/downloads/${slug}.${extension}`}
+					>
+						{label}
+					</a>
+				</li>
+			))}
+		</ul>
+		<details>
+			<summary>The graph in graph6, a compact text format</summary>
+			<Code breaks code={toGraph6(graph)} />
+		</details>
+
+		{(previous ?? next) && (
+			<nav aria-label="Other Goldberg snarks" class="siblings">
+				{previous && (
+					<a class="sibling" href={previous.href} rel="prev">
+						<span class="direction">Previous</span>
+						<Snark n={previous.blocks} />
+					</a>
+				)}
+				{next && (
+					<a class="sibling next" href={next.href} rel="next">
+						<span class="direction">Next</span>
+						<Snark n={next.blocks} />
+					</a>
+				)}
+			</nav>
+		)}
+	</Article>
+</BaseLayout>
+
+<style>
+	.downloads {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem 1.75rem;
+		list-style: "";
+		margin-bottom: 0.75rem;
+		padding: 0;
+	}
+
+	.siblings {
+		border-top: 1px solid var(--colorRule);
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		justify-content: space-between;
+		margin-top: 2.5rem;
+		padding-top: 0.75rem;
+	}
+
+	.sibling {
+		line-height: 1.4;
+		text-decoration: none;
+	}
+
+	@media (hover: hover) {
+		.sibling:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.next {
+		margin-left: auto;
+		text-align: right;
+	}
+
+	.direction {
+		color: var(--colorInkMuted);
+		display: block;
+		font-size: var(--fontSizeSmall);
+		font-style: italic;
+	}
+
+	@media print {
+		.siblings {
+			display: none;
+		}
+	}
+</style>

@@ -4,23 +4,42 @@ import { defineConfig, fontProviders } from "astro/config";
 
 import { site } from "./src/constants.ts";
 
+const fontFiles = "@fontsource/libertinus-serif/files/libertinus-serif";
+
 // https://astro.build/config
 export default defineConfig({
 	build: { format: "file", inlineStylesheets: "always" },
-
 	fonts: [
 		{
 			cssVariable: "--fontText",
+			display: "optional",
 			fallbacks: ["serif"],
 			name: "Libertinus Serif",
-			provider: fontProviders.google(),
-			styles: ["normal", "italic"],
-			subsets: ["latin"],
-			weights: [400, 700],
+			optimizedFallbacks: false,
+			options: {
+				variants: [
+					{
+						src: [`${fontFiles}-latin-400-normal.woff2`],
+						style: "normal",
+						weight: 400,
+					},
+					{
+						src: [`${fontFiles}-latin-400-italic.woff2`],
+						style: "italic",
+						weight: 400,
+					},
+					{
+						src: [`${fontFiles}-latin-700-normal.woff2`],
+						style: "normal",
+						weight: 700,
+					},
+				],
+			},
+			provider: fontProviders.local(),
 		},
 	],
 	integrations: [mdx(), sitemap()],
-	prefetch: true,
+	prefetch: { prefetchAll: true },
 	site,
 	trailingSlash: "never",
 });

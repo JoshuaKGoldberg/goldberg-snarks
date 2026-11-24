@@ -1,6 +1,5 @@
 ---
-blocks: 11
-summary: The Goldberg snark with eleven blocks, 88 vertices, and 132 edges. Its diameter is also 11.
+summary: A graph with 88 vertices and 132 edges, made of eleven identical blocks. The largest distance between two vertices is also eleven.
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -9,7 +8,7 @@ import Snark from "~/components/Snark.astro";
 
 ## Diameter
 
-The _distance_ between two vertices is the number of edges in a shortest path between them, and the _diameter_ of a graph is its largest distance.
+The _distance_ between two vertices is the number of edges in a shortest path between them, and the _diameter_ of a graph is the largest distance between two of its vertices.
 The diameter of <Snark n={11} /> is 11.
 No other Goldberg snark has a diameter equal to its number of blocks.
 
@@ -25,13 +24,12 @@ A shortest path between vertices in distant blocks follows the outer ring, the m
 The outer and middle rings take about two edges per block.
 The inner ring takes one edge per block, but a path may need up to three edges to reach it and three to leave it.
 
-In <Snark n={5} />, <Snark n={7} />, and <Snark n={9} />, the vertices that are farthest apart are joined by a path along the outer or middle ring, and the diameter is one more than the number of blocks: 6, 8, and 10.
+In <Snark n={5} />, <Snark n={7} />, and <Snark n={9} />, the vertices that are farthest apart are joined by a shortest path along the outer or middle ring, and the diameter is one more than the number of blocks: 6, 8, and 10.
 In <Snark n={11} />, no two blocks are more than five apart, so a path along the inner ring has at most 3 + 5 + 3 = 11 edges.
-For larger Goldberg snarks, every two additional blocks add one to the diameter.
+The same argument gives at most (_k_ + 11)/2 for larger Goldberg snarks, and their diameters have been computed to be exactly that up to <span class="nowrap">_k_ = 25</span>.
 The diameters of <Snark n={13} /> and <Snark n={15} /> are 12 and 13.
 
 ## Crossing number
 
 The _crossing number_ of a graph is the smallest number of edge crossings in any drawing of it.
-The crossing number of <Snark n={11} /> is 22 <Cite id="weisstein" />.
-The graph <Snark n={11} /> is the largest Goldberg snark whose crossing number is known.
+The crossing number of <Snark n={11} /> is 22, and no larger Goldberg snark has a known crossing number <Cite id="weisstein" />.

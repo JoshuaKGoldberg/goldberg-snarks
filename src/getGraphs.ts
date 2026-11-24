@@ -5,18 +5,28 @@ const fewestBlocks = 5;
 
 /** Gets the Goldberg graphs that have pages, from fewest blocks to most. */
 export async function getGraphs() {
-	const entries = await getCollection("snarks");
+	const entries = await getCollection("graphs");
 
 	return entries
 		.map((entry) => {
-			const { blocks } = entry.data;
+			const blocks = Number(entry.id);
+
+			if (blocks % 2 !== 1) {
+				throw new Error(
+					`Pages are for odd numbers of blocks, rather than ${entry.id}.`,
+				);
+			}
+
+			const slug = `g${entry.id}`;
 
 			return {
-				...entry.data,
+				blocks,
 				entry,
-				href: `/g${blocks.toString()}`,
+				href: `/${slug}`,
 				isSnark: blocks >= fewestBlocks,
-				name: `G${blocks.toString()}`,
+				name: `G${entry.id}`,
+				slug,
+				summary: entry.data.summary,
 			};
 		})
 		.sort((a, b) => a.blocks - b.blocks);

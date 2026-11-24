@@ -1,24 +1,27 @@
 ---
-import { createPetersenAroundBlock } from "~/graphs/createPetersenAroundBlock.ts";
+import {
+	createPetersenAroundBlock,
+	isCut,
+} from "~/graphs/createPetersenAroundBlock.ts";
 
-import MovableDrawing from "../MovableDrawing.astro";
 import Figure from "../Figure.astro";
+import MovableDrawing from "../MovableDrawing.astro";
 import { nameFlatVertices } from "./names.ts";
 
 const graph = createPetersenAroundBlock();
 ---
 
-<Figure inMargin id="cut">
+<Figure id="cut" inMargin>
 	<MovableDrawing
-		name="block within the Petersen graph"
-		slot="drawing"
 		cropped
-		edgeClass={(index) => (graph.edges[index].isLink ? "cut" : "plain")}
+		edgeClass={(index) => (isCut(graph, index) ? "cut" : "spoke")}
 		graph={graph}
-		label="The Petersen graph, drawn as a block’s vertices b through h, with three more vertices: u, which joins e, h, and v; v, which joins b, u, and w; and w, which joins f, g, and v."
+		label="The Petersen graph, drawn as a block’s vertices b through h, with three more vertices: u, joined to e, h, and v; v, joined to b, u, and w; and w, joined to f, g, and v."
+		name="Block within the Petersen graph"
 		names={nameFlatVertices(graph)}
 		nameSize={11}
 		padding={17}
+		slot="drawing"
 	/>
 	<slot />
 </Figure>

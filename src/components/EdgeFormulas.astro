@@ -1,9 +1,10 @@
 ---
+import type { Role } from "~/graphs/block.ts";
+
 import Vertex from "./Vertex.astro";
 
 interface Props {
-	/** Pairs of vertices' letters. */
-	edges: readonly (readonly [string, string])[];
+	edges: readonly { from: Role; to: Role }[];
 
 	/** Which block each second vertex is in. */
 	to: string;
@@ -13,11 +14,10 @@ const { edges, to } = Astro.props;
 ---
 
 <span class="formulas">
-	{edges.map(([first, second], i) => (
-		<span class="edge">
-			<Vertex i="i" role={first} />
-			<Vertex i={to} role={second} />
-			{i < edges.length - 1 && ", "}
+	{edges.map((edge) => (
+		<span>
+			<Vertex i="i" role={edge.from} />
+			<Vertex i={to} role={edge.to} />,
 		</span>
 	))}
 </span>

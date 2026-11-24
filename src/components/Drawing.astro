@@ -1,12 +1,14 @@
 ---
 import type { Graph } from "~/graphs/types.ts";
 
-import { stub } from "~/graphs/createBlockChain.ts";
 import {
-	drawEdgesByClass,
+	drawDot,
+	drawEdge,
 	getCroppedViewBox,
 	getRingViewBox,
 	getVertexRadius,
+	groupDots,
+	groupEdges,
 	locate,
 } from "~/graphs/draw.ts";
 
@@ -15,12 +17,12 @@ interface Props {
 	cropped?: boolean;
 
 	/** Classes for each edge, by index. */
-	edgeClass?: (index: number) => string;
+	edgeClass: (index: number) => string;
 
 	graph: Graph;
 
 	/** What the drawing shows, or nothing if what's beside it already says. */
-	label?: string | undefined;
+	label?: string;
 
 	/** Names of vertices to show by index, and where to from each, in units. */
 	names?: (
@@ -33,12 +35,12 @@ interface Props {
 	padding?: number;
 
 	/** Classes for each vertex, by index. */
-	vertexClass?: ((index: number) => string | undefined) | undefined;
+	vertexClass?: (index: number) => string | undefined;
 }
 
 const {
 	cropped,
-	edgeClass = () => "plain",
+	edgeClass,
 	graph,
 	label,
 	names,
@@ -46,18 +48,6 @@ const {
 	padding = 5,
 	vertexClass,
 } = Astro.props;
-
-const dots = new Map<string, string>();
-
-// Dots are zero-length lines with round ends, which makes for much less markup
-for (const [index, vertex] of graph.vertices.entries()) {
-	if (vertex.role !== stub) {
-		const { x, y } = locate(vertex);
-		const name = vertexClass?.(index) ?? "";
-
-		dots.set(name, `${dots.get(name) ?? ""}M${x.toString()} ${y.toString()}h0`);
-	}
-}
 
 const texts = names
 	? graph.vertices.flatMap((vertex, index) => {
@@ -67,6 +57,7 @@ const texts = names
 			return name
 				? [
 						{
+							index,
 							letter: name[0].slice(0, 1),
 							number: name[0].slice(1),
 							x: x + name[1],
@@ -92,18 +83,25 @@ const dotSize = (getVertexRadius(graph) * 2).toFixed(1);
 	}
 	{...accessibility}
 >
-	{drawEdgesByClass(graph, edgeClass).map(([name, path]) => (
-		<path class={name} d={path} />
+	{groupEdges(graph, edgeClass).map(([name, indices]) => (
+		<path
+			class={name}
+			d={indices.map((index) => drawEdge(graph, index)).join("")}
+		/>
 	))}
-	{[...dots].map(([name, path]) => (
-		<path class:list={["dots", name]} d={path} />
+	{groupDots(graph, vertexClass).map(([name, indices]) => (
+		<path
+			class:list={["dots", name]}
+			d={indices.map((index) => drawDot(graph.vertices[index])).join("")}
+		/>
 	))}
-	{texts.map(({ letter, number, x, y }) => (
-		<text x={x.toFixed(1)} y={y.toFixed(1)}>
+	{texts.map(({ index, letter, number, x, y }) => (
+		<text data-vertex={index} x={x.toFixed(1)} y={y.toFixed(1)}>
 			{letter}
 			{number && <tspan dy="0.2em">{number}</tspan>}
 		</text>
 	))}
+	<slot />
 </svg>
 
 <style>

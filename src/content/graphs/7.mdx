@@ -1,9 +1,9 @@
 ---
-blocks: 7
-summary: The Goldberg snark with seven blocks, 56 vertices, and 84 edges. It is the only one that has a cycle of length 7.
+summary: A graph with 56 vertices and 84 edges, made of seven identical blocks. It is the only Goldberg snark with a cycle of length 7.
 ---
 
 import Highlight from "~/components/Highlight.astro";
+import Ref from "~/components/Ref.astro";
 import Snark from "~/components/Snark.astro";
 
 ## Cycle of length 7
@@ -22,6 +22,7 @@ It is the only such cycle in <Snark n={7} />, and no other Goldberg snark has on
 In every Goldberg snark, cycles that do not go around the ring of blocks have length 5, 6, or at least 8.
 Of the cycles that do, the inner ring has length _k_, and all others have length at least 10.
 A Goldberg snark therefore has a cycle of length 7 only if _k_ is 7.
+This is shown in the proof of <Ref id="short-cycles" />.
 
 ## Other short cycles
 
@@ -37,5 +38,5 @@ There are no other cycles within a block.
 	A cycle of length 5, at the top, and a cycle of length 6, at the right.
 </Highlight>
 
-A cycle that uses edges of two blocks has length at least 8.
+A cycle that visits two or more blocks, other than the inner ring, has length at least 8.
 In total, <Snark n={7} /> has 14 cycles of length 5, seven of length 6, one of length 7, and 42 of length 8.

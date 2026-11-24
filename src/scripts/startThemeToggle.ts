@@ -1,13 +1,12 @@
 import { query } from "./query.ts";
 
-type Theme = "dark" | "light";
+const themes = ["dark", "light"] as const;
+
+type Theme = (typeof themes)[number];
 
 const key = "theme";
 
-/**
- * Toggles between themes, starting from the system's preference.
- * Once one's been chosen, it can be cleared to go back to the system's.
- */
+/** Toggles between themes, starting from the system's preference until one's chosen. */
 export function startThemeToggle(host: HTMLElement) {
 	const clear = query(host, "[data-clear]", HTMLElement);
 	const preference = matchMedia("(prefers-color-scheme: dark)");
@@ -15,18 +14,8 @@ export function startThemeToggle(host: HTMLElement) {
 	const toggle = query(host, "[data-toggle]", HTMLElement);
 
 	function choose(theme: Theme | undefined) {
-		// Storage throws when the browser is set to block site data
-		try {
-			if (theme) {
-				localStorage.setItem(key, theme);
-			} else {
-				localStorage.removeItem(key);
-			}
-		} catch {
-			// The choice still applies until the next page
-		}
-
 		update(theme);
+		store(theme);
 	}
 
 	function isDark() {
@@ -36,13 +25,7 @@ export function startThemeToggle(host: HTMLElement) {
 	}
 
 	function restore() {
-		try {
-			const theme = localStorage.getItem(key);
-
-			update(theme === "dark" || theme === "light" ? theme : undefined);
-		} catch {
-			update(undefined);
-		}
+		update(getStored());
 	}
 
 	function update(theme: Theme | undefined) {
@@ -52,11 +35,21 @@ export function startThemeToggle(host: HTMLElement) {
 			delete root.dataset.theme;
 		}
 
-		clear.toggleAttribute("data-active", !!theme);
 		toggle.setAttribute("aria-pressed", isDark().toString());
-		document
-			.querySelector("meta[name=theme-color]")
-			?.setAttribute("content", getComputedStyle(root).backgroundColor);
+
+		for (const name of themes) {
+			const meta = query(
+				document,
+				`meta[name=theme-color][data-scheme=${name}]`,
+				HTMLMetaElement,
+			);
+
+			meta.media = theme
+				? theme === name
+					? "all"
+					: "not all"
+				: `(prefers-color-scheme: ${name})`;
+		}
 	}
 
 	toggle.addEventListener("click", () => {
@@ -74,4 +67,27 @@ export function startThemeToggle(host: HTMLElement) {
 	addEventListener("storage", restore);
 	preference.addEventListener("change", restore);
 	restore();
+}
+
+function getStored() {
+	// Storage throws when the browser is set to block site data
+	try {
+		const stored = localStorage.getItem(key);
+
+		return themes.find((theme) => theme === stored);
+	} catch {
+		return undefined;
+	}
+}
+
+function store(theme: Theme | undefined) {
+	try {
+		if (theme) {
+			localStorage.setItem(key, theme);
+		} else {
+			localStorage.removeItem(key);
+		}
+	} catch {
+		return;
+	}
 }

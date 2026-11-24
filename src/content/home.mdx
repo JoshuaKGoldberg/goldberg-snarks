@@ -14,6 +14,7 @@ import ReattachedFigure from "~/components/figures/ReattachedFigure.astro";
 import RingFigure from "~/components/figures/RingFigure.astro";
 import Note from "~/components/Note.astro";
 import Proof from "~/components/Proof.astro";
+import Ref from "~/components/Ref.astro";
 import Snark from "~/components/Snark.astro";
 import Statement from "~/components/Statement.astro";
 import Term from "~/components/Term.astro";
@@ -23,7 +24,7 @@ import { edgesToNextBlock, edgesWithinBlock, roles } from "~/graphs/block.ts";
 
 ## Edge colorings with three colors
 
-Two vertices of a graph are joined by at most one edge.
+In the graphs on this site, two vertices are joined by at most one edge, and no edge joins a vertex to itself.
 Only the connections matter; the same graph can be drawn in many ways.
 A graph is _connected_ if there is a path of edges between any two of its vertices.
 A _cycle_ is a closed loop of edges that does not visit any vertex twice, and its _length_ is its number of edges.
@@ -31,12 +32,12 @@ A _cycle_ is a closed loop of edges that does not visit any vertex twice, and it
 <Annotated>
 
 <Note>
-	Vizing's theorem covers all graphs in which two vertices are joined by at most one edge. If the largest number of edges at any vertex is Δ, the edges need either Δ or Δ + 1 colors. Graphs that need Δ are called _class 1_, and graphs that need Δ + 1 are called _class 2_.
+	Vizing's theorem covers all graphs of this kind, not only cubic ones. If the largest number of edges at any vertex is Δ, the edges need either Δ or Δ + 1 colors. Graphs that need Δ are called _class 1_, and graphs that need Δ + 1 are called _class 2_.
 </Note>
 
-An edge coloring with three colors is a _3-edge-coloring_.
+An edge coloring with three colors is a _<span class="nowrap">3-edge-coloring</span>_.
 A cubic graph needs at least three colors, because three edges meet at each vertex.
-By a theorem that Vadim Vizing proved in 1964, it never needs more than four.
+By a theorem that Vadim Vizing proved in 1964, it never needs more than four <Cite id="vizing1964" />.
 
 </Annotated>
 
@@ -65,24 +66,25 @@ Among cubic graphs with 28 vertices and no triangle, fewer than one in a thousan
 	No other value of _n_ below 40 has any.
 </Note>
 
-Some cubic graphs without a 3-edge-coloring are small modifications of others.
-For example, replacing a vertex of a snark with a triangle makes a larger cubic graph that also has no 3-edge-coloring.
+Some cubic graphs without a <span class="nowrap">3-edge-coloring</span> are small modifications of others.
+For example, replacing a vertex of a snark with a triangle makes a larger cubic graph that also has no <span class="nowrap">3-edge-coloring</span>.
 The usual definition of a snark excludes such graphs.
 
 </Annotated>
 
-<Statement id="snark" kind="Definition" name="snark" number={1}>
+<Statement id="snark" name="snark">
 
 A _snark_ is a connected cubic graph with these properties:
 
-- It has no 3-edge-coloring.
+- It has no <span class="nowrap">3-edge-coloring</span>.
 - Its cycles all have length at least 5.
 - Removing three or fewer edges never separates it into two parts that each contain a cycle.
 
 </Statement>
 
 Definitions vary.
-Martin Gardner, who introduced the name, required only that removing one edge never disconnects the graph <Cite id="brinkmann2026" />.
+Martin Gardner, who introduced the name, excluded graphs that can be disconnected by removing one edge, and graphs with cycles of length 3 or 4 <Cite id="gardner1976" />.
+Some later authors exclude only the former <Cite id="campos2011" />.
 
 The smallest snark is the Petersen graph, which has 10 vertices and 15 edges.
 It can be drawn as a pentagon, a five-pointed star inside it, and five edges joining the two.
@@ -94,13 +96,13 @@ It can be drawn as a pentagon, a five-pointed star inside it, and five edges joi
 </PetersenFigure>
 
 <PetersenProofFigure>
-	The proof of Lemma 2, with green, blue, and gold for colors 1, 2, and 3. Every edge of the star meets a <Term is="gold">gold</Term> edge.
+	The proof of <Ref id="petersen" />, with green, blue, and gold for colors 1, 2, and 3. Every edge of the star meets a <Term is="gold">gold</Term> edge.
 </PetersenProofFigure>
 
 </div>
 
-<Statement id="petersen" kind="Lemma" name="Petersen, 1898" number={2}>
-	The Petersen graph has no 3-edge-coloring.
+<Statement id="petersen" name="Petersen, 1898">
+	The Petersen graph has no <span class="nowrap">3-edge-coloring</span>.
 </Statement>
 
 <Proof>
@@ -119,16 +121,15 @@ This is a contradiction.
 
 </Proof>
 
-Several open problems in graph theory, including the [cycle double cover conjecture](https://en.wikipedia.org/wiki/Cycle_double_cover) and the [5-flow conjecture](https://en.wikipedia.org/wiki/Nowhere-zero_flow), would be proved for all graphs if they were proved for snarks <Cite id="chladny2010" />.
+Several conjectures in graph theory, including the [cycle double cover conjecture](https://en.wikipedia.org/wiki/Cycle_double_cover) and the [5-flow conjecture](https://en.wikipedia.org/wiki/Nowhere-zero_flow), would be proved in general if they were proved for snarks <Cite id="lukotka2024" />.
 
 ## Coloring a Goldberg snark
 
-The diagram shows <Snark n={5} />, which has 60 edges.
-Vertices where two edges of the same color meet are marked in <Term is="spare">red</Term>.
+Below is <Snark n={5} />, which has 60 edges.
 
 <EdgePuzzle blocks={5} />
 
-At most 58 of the 60 edges can be colored; see [Uncolored edges](#uncolored-edges).
+At most 58 of the 60 edges can be colored without edges of the same color meeting; see [Uncolored edges](#uncolored-edges).
 
 ## Construction
 
@@ -152,7 +153,7 @@ Three further edges, called _links_, join each block to the next.
 
 The block comes from the Petersen graph.
 Removing a path of three vertices, such as _u_, _v_, _w_, leaves seven vertices, which are _b_ through _h_.
-It makes no difference which path is chosen, because a symmetry of the Petersen graph takes any path of three vertices to any other.
+It makes no difference which path is chosen, because a [symmetry](/g13#symmetries) of the Petersen graph takes any path of three vertices to any other.
 Five edges led from the remaining vertices to _u_, _v_, and _w_.
 The one from _b_ now leads to a new vertex, _a_.
 The ones from _e_, _f_, _g_, and _h_ become links to the neighboring blocks.
@@ -166,9 +167,9 @@ The links form part of three rings: the <Term is="outer">outer ring</Term>, whic
 	The Goldberg snark <Snark n={5} />, with the vertices of one block labeled.
 </RingFigure>
 
-<Statement id="goldberg-snark" kind="Definition" name="Goldberg snark" number={3}>
+<Statement id="goldberg-snark" name="Goldberg snark">
 
-For _k_ ≥ 3, the _Goldberg graph_ <Snark n="k" /> has 8*k* vertices {roles.map((role, i) => [i ? ", " : "", <Vertex i="i" role={role} />])} and 12*k* edges:
+For _k_ ≥ 3, the _Goldberg graph_ <Snark n="k" /> has 8*k* vertices {roles.map((role, i) => [i ? ", " : "", <Vertex i="i" role={role} />])} and 12*k* edges, each written here as the two vertices that it joins:
 
 <EdgeFormulas edges={edgesWithinBlock} to="i" />
 <EdgeFormulas edges={edgesToNextBlock} to="i+1" />
@@ -183,13 +184,13 @@ If _k_ is odd and at least 5, <Snark n="k" /> is a _Goldberg snark_ <Cite id="mo
 <Annotated>
 
 <Note>
-	The counting argument in the first paragraph of this proof is called the _parity lemma_.
+	The first paragraph of the proof of <Ref id="matching" /> shows a case of the _parity lemma_.
 </Note>
 
 The proof compares the colors of the <Term is="outer">outer</Term> and <Term is="middle">middle</Term> links between neighboring blocks.
 
-<Statement id="matching" kind="Lemma" number={4}>
-	In any 3-edge-coloring of a block and its links, the outer and middle links have the same color on exactly one of the block's two sides.
+<Statement id="matching">
+	In any <span class="nowrap">3-edge-coloring</span> of a block and its links, the outer and middle links have the same color on exactly one of the block's two sides.
 </Statement>
 
 </Annotated>
@@ -197,7 +198,7 @@ The proof compares the colors of the <Term is="outer">outer</Term> and <Term is=
 <Annotated>
 
 <ReattachedFigure>
-	The last case of the proof of Lemma 4, with the dashed edges of Figure 4 restored and colored. Green, blue, and gold stand for colors 1, 2, and 3.
+	The last case of the proof of <Ref id="matching" />, with the [dashed edges](#cut) restored and colored. Green, blue, and gold stand for colors 1, 2, and 3.
 </ReattachedFigure>
 
 <Proof>
@@ -221,54 +222,126 @@ Since 2 appears only once, the other color on the right is 3.
 Restore the vertices _u_, _v_, and _w_ [that were removed](#cut) from the Petersen graph.
 Attach the links on the right to _u_, the links on the left to _w_, and the edge from _b_ to _v_.
 Color the edge _uv_ with 2 and the edge _vw_ with 3.
-All three colors now meet at each of _u_, _v_, and _w_, so this is a 3-edge-coloring of the Petersen graph.
-By [Lemma 2](#petersen), there is none.
+All three colors now meet at each of _u_, _v_, and _w_, so this is a <span class="nowrap">3-edge-coloring</span> of the Petersen graph.
+By <Ref id="petersen" />, there is none.
 
 </Proof>
 
 </Annotated>
 
-<ChainFigure>
-	A 3-edge-coloring of two linked blocks. The outer and middle links have the same color on the left, different colors in the middle, and the same color on the right.
+<ChainFigure blocks={2} id="chain" label="Two blocks in a row, colored. On the left, the outer and middle links are both green. Between the blocks, they are two different colors. On the right, they are both green again." links={[1, 0, 0]} name="Two linked blocks">
+	A <span class="nowrap">3-edge-coloring</span> of two linked blocks. The outer and middle links have the same color on the left, different colors in the middle, and the same color on the right.
 </ChainFigure>
 
-<Statement id="theorem" kind="Theorem" number={5}>
-	For <i>k</i> ≥ 3, the Goldberg graph <Snark n="k" /> has a 3-edge-coloring if and only if <i>k</i> is even.
+<Statement id="theorem">
+	For <i>k</i> ≥ 3, the Goldberg graph <Snark n="k" /> has a <span class="nowrap">3-edge-coloring</span> if and only if <i>k</i> is even.
 </Statement>
 
 <Proof>
 
-Suppose that <Snark n="k" /> has a 3-edge-coloring.
+Suppose that <Snark n="k" /> has a <span class="nowrap">3-edge-coloring</span>.
 There are _k_ places around the ring where one block is linked to the next.
-By Lemma 4, the places where the outer and middle links have the same color alternate with the places where they have different colors.
+By <Ref id="matching" />, the places where the outer and middle links have the same color alternate with the places where they have different colors.
 This is only possible if _k_ is even.
 
-If _k_ is even, take _k_/2 copies of [the two blocks in Figure 7](#chain) and join them in a ring.
-The links have the same colors on the left as on the right, so the result is a 3-edge-coloring.
+If _k_ is even, _k_/2 copies of [the two blocks drawn above](#chain) can be joined in a ring, as the links have the same colors on the left as on the right.
+The result is a <span class="nowrap">3-edge-coloring</span> of <Snark n="k" />.
 
 </Proof>
 
-The diagram below shows Goldberg graphs with 4 to 15 blocks, with as many edges colored as possible.
+The drawing below shows Goldberg graphs with different numbers of blocks, with as many edges colored with three colors as possible.
 
-<BlockExplorer />
+<BlockExplorer blocks={6} max={15} min={4} />
+
+## Short cycles and connectivity
+
+<Ref id="theorem" /> shows that Goldberg snarks have the first property in <Ref id="snark" />.
+The next two propositions show that they have the other two.
+
+<Statement id="short-cycles">
+	For odd <i>k</i> ≥ 5, the only cycles of <Snark n="k" /> with length less than 8 are two of length 5 and one of length 6 in each block, and the inner ring if <i>k</i> is 5 or 7.
+</Statement>
+
+<Proof>
+
+A cycle within one block cannot use _ab_, as there is no other way back to _a_.
+The other eight edges form three paths from _c_ to _d_, of lengths 2, 3, and 3, so they contain two cycles of length 5 and one of length 6.
+
+Consider a cycle that visits two blocks or more, and suppose that there are two neighboring blocks with none of the cycle's edges between them.
+It then has a first block and a last block, and it enters and leaves each of them by two different links on the same side.
+Those links end at two of _a_, _e_, and _h_, or at two of _a_, _f_, and _g_.
+Within a block, any two of the former are at distance 3, and so are any two of the latter.
+The cycle has at least three edges in each of the two blocks, and at least two links, so its length is at least 8.
+
+Otherwise, the cycle uses a link between every two neighboring blocks, so it has at least _k_ links.
+If they are all inner links, it is the inner ring.
+If none are, then no two of its links meet, so there is another edge between each link and the next, and its length is at least <span class="nowrap">2*k* ≥ 10</span>.
+If some are, then it goes at least twice between _a_ and one of _e_, _f_, _g_, and _h_ within a block, which takes three edges each time, and its length is at least <span class="nowrap">_k_ + 6 ≥ 11</span>.
+
+</Proof>
+
+<Statement id="connectivity">
+	For odd <i>k</i> ≥ 5, removing three or fewer edges from <Snark n="k" /> never separates it into two parts that each contain a cycle.
+</Statement>
+
+<Proof>
+
+Suppose that it does.
+Color the vertices of one part black and those of the other part white, so that at most three edges have ends of both colors.
+Call these edges _mixed_.
+
+In each block, consider the _core_: the vertices _b_ through _h_ and the eight edges that join them.
+Every edge of a core is in a cycle of the core, so a core that has vertices of both colors has at least two mixed edges.
+At most one core therefore does.
+The cores of neighboring blocks are joined by two links, the outer and the middle.
+If one core is all black and a neighboring core is all white, both links between them are mixed.
+
+If no core has both colors, then every core is the same color: otherwise the color would change at least twice around the ring, with two mixed edges each time.
+Say that they are white.
+Only vertices labeled _a_ can be black, so the black cycle is the inner ring.
+Then all _k_ edges _ab_ are mixed, and _k_ is more than three.
+
+If one core has both colors, then the other _k_ − 1 cores are all the same color, as there is at most one other mixed edge.
+Say that they are white.
+The black cycle is not the inner ring, as then the edge _ab_ would be mixed in the other _k_ − 1 ≥ 4 blocks.
+It is therefore within the one core, as _b_ is white in every other block.
+If it has length 6, it contains _e_, _f_, _g_, and _h_, whose four links to white cores are mixed.
+If it has length 5, the links from two of those vertices are mixed, as are at least two edges of the core.
+There are at least four mixed edges either way.
+
+</Proof>
+
+Goldberg snarks are cubic and connected, since each vertex has three edges in <Ref id="goldberg-snark" /> and each block is connected and is linked to the next.
+They therefore meet <Ref id="snark" />.
 
 ## Uncolored edges
 
-If a cubic graph has no 3-edge-coloring, at least two of its edges must be left uncolored when three colors are used.
+If a cubic graph has no <span class="nowrap">3-edge-coloring</span>, at least two of its edges must be left uncolored when three colors are used.
 To see this, suppose that only one edge, _uv_, is uncolored.
 Every vertex other than _u_ and _v_ has an edge of each color, and _u_ and _v_ are each missing one color.
-The edges of one color cover two vertices each, and the number of vertices is even, so the number of vertices missing that color is also even.
+The number of vertices is even, because three times as many is twice the number of edges.
+Each edge of one color covers two vertices, so the number of vertices missing that color is also even.
 The color missing at _u_ is therefore the color missing at _v_.
-Giving that color to _uv_ produces a 3-edge-coloring, which is a contradiction.
+Giving that color to _uv_ produces a <span class="nowrap">3-edge-coloring</span>, which is a contradiction.
 
 The smallest number of edges that must be left uncolored is called the _resistance_ of the graph.
 The resistance of every Goldberg snark is 2: the edges _ab_ and _ce_ of one block can be left uncolored, and the rest can be colored.
+The drawings below show three blocks colored in this way, and two blocks with every edge colored.
+The links have the same colors at both ends of both drawings, so the three blocks can be joined in a ring with any number of copies of the two.
+
+<ChainFigure blocks={3} label="Three blocks in a row. Every edge is colored except for two in the first block: from a to b, and from c to e. The links on the left have the same colors as those on the right." links={[0, 0, 1]} name="Three blocks with two edges uncolored" spares>
+	Three blocks, with two edges of the first uncolored.
+</ChainFigure>
+
+<ChainFigure blocks={2} label="Two blocks in a row, with every edge colored. The links on each side have the same colors as those at the sides of the three blocks." links={[0, 0, 1]} name="Two blocks to go with the three">
+	Two blocks, with the same colors at both ends as the three.
+</ChainFigure>
 
 ## Hamiltonian cycles
 
-A _Hamiltonian cycle_ is a cycle that visits every vertex exactly once.
+A _Hamiltonian cycle_ is a cycle that visits every vertex exactly once, and a graph that has one is called _Hamiltonian_.
 
-<Statement id="hamiltonian" kind="Corollary" number={6}>
+<Statement id="hamiltonian">
 	Goldberg snarks have no Hamiltonian cycle.
 </Statement>
 
@@ -278,43 +351,56 @@ Suppose that there is a Hamiltonian cycle.
 It has 8*k* edges, which is an even number, so two colors can alternate around it.
 The cycle uses two of the three edges at each vertex.
 The unused edges do not meet each other, so they can all be given the third color.
-This is a 3-edge-coloring, which contradicts Theorem 5.
+This is a <span class="nowrap">3-edge-coloring</span>, which contradicts <Ref id="theorem" />.
 
 </Proof>
 
-The same proof applies to every cubic graph that has no 3-edge-coloring, and so to every snark.
-For odd _k_ from 5 to 15, <Snark n="k" /> has a cycle that visits all but one of its vertices.
+The same proof applies to every cubic graph that has no <span class="nowrap">3-edge-coloring</span>, and so to every snark, as every cubic graph has an even number of vertices.
+
+Every Goldberg snark has a cycle that visits all but one of its vertices, so its _circumference_, the length of its longest cycle, is 8*k* − 1.
+[The cycle drawn for <Snark n={5} />](/g5#longest-cycle) passes between its second and third blocks, counting clockwise from the top, only once, along their inner link.
+Two more blocks can be inserted there.
+The cycle visits the first in the order _a_, _b_, _d_, _f_, _e_, _c_, _g_, _h_, and the second in the order _g_, _h_, _d_, _f_, _e_, _c_, _b_, _a_.
+Repeating this gives a cycle for every odd _k_ ≥ 5.
 
 ## Properties
 
 These are properties of <Snark n="k" /> for odd _k_ ≥ 5.
+The _distance_ between two vertices is the number of edges in a shortest path between them.
 Values marked as computed were checked by computer for the Goldberg snarks with that many blocks or fewer.
 
 <div class="table">
 
 | Property | Value | Source |
 | :--- | :--- | :--- |
-| Vertices | 8*k* | Definition 3 |
-| Edges | 12*k* | Definition 3 |
-| Chromatic index (fewest colors in an edge coloring) | 4 | [Theorem 5](#theorem) and Vizing's theorem |
-| Total chromatic number (fewest colors for the vertices and edges together, with different colors for neighboring vertices, for edges that meet, and for each edge and its ends) | 4 | <Cite id="campos2011" /> |
+| Vertices | 8*k* | <Ref id="goldberg-snark" /> |
+| Edges | 12*k* | <Ref id="goldberg-snark" /> |
+| Chromatic index (fewest colors in an edge coloring) | 4 | <Ref id="theorem" /> and Vizing's theorem |
+| Total chromatic number (fewest colors for the vertices and edges together, with different colors for neighboring vertices, for edges that meet, and for an edge and its ends) | 4 | <Cite id="campos2011" /> |
 | Resistance (fewest edges left uncolored by three colors) | 2 | [Uncolored edges](#uncolored-edges) |
-| Girth (length of the shortest cycle) | 5 | [Short cycles](/g7#other-short-cycles) |
-| Circumference (length of the longest cycle) | 8*k* − 1 | Computed for <span class="nowrap">_k_ ≤ 15</span> |
-| Cycles of length 5 | 2*k* <span class="nowrap">(11 if _k_ = 5)</span> | [Short cycles](/g7#other-short-cycles) |
+| Girth (length of the shortest cycle) | 5 | <Ref id="short-cycles" /> |
+| Circumference (length of the longest cycle) | 8*k* − 1 | [Hamiltonian cycles](#hamiltonian-cycles) |
+| Cycles of length 5 | 2*k* <span class="nowrap">(11 if _k_ = 5)</span> | <Ref id="short-cycles" /> |
 | Diameter (largest distance between two vertices) | <span class="nowrap">_k_ + 1 if _k_ ≤ 9,</span> <span class="nowrap">else (_k_ + 11)/2</span> | Computed for <span class="nowrap">_k_ ≤ 25</span> |
-| Radius (smallest distance within which some vertex reaches all others) | <span class="nowrap">(_k_ + 5)/2</span> | Computed for <span class="nowrap">_k_ ≤ 25</span> |
-| Cyclic edge-connectivity (fewest edges whose removal leaves two parts that each contain a cycle) | 5 | Computed for <span class="nowrap">_k_ ≤ 9</span> |
-| Symmetries (the order of the automorphism group) | 4*k* | [Symmetries](/g13#symmetries) |
+| Radius (smallest _r_ such that some vertex is at distance at most _r_ from every other) | <span class="nowrap">(_k_ + 5)/2</span> | Computed for <span class="nowrap">_k_ ≤ 25</span> |
+| Cyclic edge-connectivity (fewest edges whose removal leaves two parts that each contain a cycle) | 5 | Computed for <span class="nowrap">_k_ ≤ 15</span> |
+| Circular flow number (defined below) | <span class="nowrap">4 + 2/(_k_ + 1)</span> | <Cite id="lukotka2024" /> |
+| Symmetries (rearrangements of the vertices that keep joined vertices joined) | 4*k* | [Symmetries](/g13#symmetries) |
 | Crossing number (fewest crossings of edges in any drawing) | 2*k* | Known for <span class="nowrap">_k_ ≤ 12</span>, conjectured for larger _k_ <Cite id="weisstein" /> |
 
 </div>
 
+A _circular nowhere-zero r-flow_ gives each edge a direction and a number from 1 to _r_ − 1, which need not be whole.
+At each vertex, the numbers on the edges leading in have the same sum as the numbers on the edges leading out.
+The smallest _r_ for which a graph has one is its _circular flow number_.
+The 5-flow conjecture says that it is at most 5 for every connected graph that cannot be disconnected by removing one edge.
+It is less than 5 for every Goldberg snark, so the conjecture holds for them.
+
 Goldberg snarks are not planar: every drawing of one has edges that cross.
-This follows from the four color theorem, which says that the regions of any map can be colored with four colors so that regions sharing a border have different colors.
-Peter Tait showed in 1880 that it is equivalent to the statement that every planar cubic graph has a 3-edge-coloring, provided that removing one edge never disconnects the graph <Cite id="tait1880" />.
-Snarks satisfy that condition but have no 3-edge-coloring.
-The four color theorem was proved in 1976.
+This follows from the four color theorem, proved in 1976, which says that the regions of any map can be colored with four colors so that regions sharing a border have different colors.
+Peter Tait showed in 1880 that the theorem is equivalent to the statement that every planar cubic graph has a <span class="nowrap">3-edge-coloring</span>, provided that removing one edge never disconnects the graph <Cite id="tait1880" />.
+If removing one edge disconnected a cubic graph, both parts would contain a cycle.
+By the third property in <Ref id="snark" />, snarks therefore satisfy that condition, but they have no <span class="nowrap">3-edge-coloring</span>.
 
 <ComparisonTable />
 
@@ -326,7 +412,7 @@ A question mark indicates a conjectured crossing number.
 	<dt>Twisted Goldberg snarks</dt>
 	<dd>
 		A twisted Goldberg snark is made by exchanging the ends of two links between one pair of blocks, so that _e_ is linked to _g_ and _h_ is linked to _f_ <Cite id="ghebleh2007" />.
-		The proof of Theorem 5 applies unchanged.
+		The blocks are the same, so <Ref id="matching" /> still applies, and the proof that four colors are needed is unchanged.
 	</dd>
 	<dt>Loupekine snarks</dt>
 	<dd>
@@ -340,30 +426,31 @@ A question mark indicates a conjectured crossing number.
 	</dd>
 	<dt>Goldberg graphs that are not snarks</dt>
 	<dd>
-		If _k_ is even, <Snark n="k" /> has a 3-edge-coloring.
-		[The graph <Snark n={3} />](/g3) has no 3-edge-coloring, but it contains a triangle.
+		If _k_ is even, <Snark n="k" /> has a <span class="nowrap">3-edge-coloring</span>.
+		[The graph <Snark n={3} />](/g3) has no <span class="nowrap">3-edge-coloring</span>, but it contains a triangle.
 	</dd>
 </dl>
 
 ## History
 
-Peter Tait related the four color problem to edge colorings of cubic graphs in 1880 <Cite id="tait1880" />.
-Julius Petersen showed in 1898 that the Petersen graph has no 3-edge-coloring.
-It was the only known snark until 1946, when Danilo Blanuša found another.
+Peter Tait showed in 1880 that the four color problem is equivalent to one about [edge colorings of planar cubic graphs](#properties) <Cite id="tait1880" />.
+Julius Petersen showed in 1898 that the Petersen graph has no <span class="nowrap">3-edge-coloring</span> <Cite id="petersen1898" />.
+It was the only known snark until 1946, when Danilo Blanuša found another <Cite id="blanusa1946" />.
 In 1975, Rufus Isaacs described the first infinite families of snarks, including the flower snarks <Cite id="isaacs1975" />.
 Martin Gardner gave snarks their name in 1976, after Lewis Carroll's poem _The Hunting of the Snark_ <Cite id="gardner1976" />.
+In the same year, Isaacs described a construction by F. Loupekine that also [joins blocks in a ring](#related-graphs) <Cite id="berman2017" />.
 
 Mark K. Goldberg published the Goldberg snarks in 1981 <Cite id="goldberg1981" />.
 Later papers studied their embeddings in surfaces <Cite id="mohar2006" />, their circular chromatic index <Cite id="ghebleh2007" />, and their total chromatic number <Cite id="campos2011" />.
-[Goldberg](https://www.cs.rpi.edu/~goldberg) received a doctorate from the Institute of Mathematics in Novosibirsk, and was later a professor of computer science at Rensselaer Polytechnic Institute.
+[Goldberg](https://www.cs.rpi.edu/~goldberg/) received a doctorate from the Institute of Mathematics in Novosibirsk, and was later a professor of computer science at Rensselaer Polytechnic Institute.
 The Goldberg–Seymour conjecture, on edge colorings of graphs in which two vertices may be joined by more than one edge, is named after Goldberg and Paul Seymour.
 A proof was published in 2025 <Cite id="chen2025" />.
-
 
 ## Code
 
 The following Python function constructs <Snark n="k" /> with [NetworkX](https://networkx.org).
+Its blocks are numbered from 0.
 
 <Code code={python} lang="python" />
 
-The page for each graph has its edge list, as plain text and in the graph6 format, and drawings of it.
+Drawings of each graph, its edge list, and its graph6 encoding can be downloaded from its page.

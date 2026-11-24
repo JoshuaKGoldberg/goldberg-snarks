@@ -1,44 +1,46 @@
-import type { Graph } from "./types.ts";
+import type { Graph, Point } from "./types.ts";
 
-import { createBlockChain, stub } from "./createBlockChain.ts";
+import { edgesWithinBlock, flatPositions, roles } from "./block.ts";
 
 /** Vertices that are cut from the Petersen graph to make a block. */
-const cut = {
-	u: { joins: ["e", "h"], x: 1.3, y: -0.13 },
-	v: { joins: ["b"], x: 0, y: 1.3 },
-	w: { joins: ["f", "g"], x: -1.3, y: -0.13 },
+const cutPositions: Readonly<Record<string, Point>> = {
+	u: { x: 1.3, y: -0.13 },
+	v: { x: 0, y: 1.3 },
+	w: { x: -1.3, y: -0.13 },
 };
+
+const cutEdges = [
+	{ from: "u", to: "e" },
+	{ from: "u", to: "h" },
+	{ from: "u", to: "v" },
+	{ from: "v", to: "b" },
+	{ from: "v", to: "w" },
+	{ from: "w", to: "f" },
+	{ from: "w", to: "g" },
+];
 
 /** Creates the Petersen graph, laid out around the part of it that's in blocks. */
 export function createPetersenAroundBlock(): Graph {
-	const block = createBlockChain(1);
-	const kept = block.vertices.filter(
-		({ role }) => role !== "a" && role !== stub,
-	);
 	const vertices = [
-		...kept,
-		...Object.entries(cut).map(([role, { x, y }]) => ({
-			block: -1,
-			role,
-			x,
-			y,
+		...roles
+			.filter((role) => role !== "a")
+			.map((name) => ({ name, ...flatPositions[name] })),
+		...Object.entries(cutPositions).map(([name, position]) => ({
+			name,
+			...position,
 		})),
 	];
-	const find = (role: string) =>
-		vertices.findIndex((vertex) => vertex.role === role);
-	const edges = block.edges
-		.map(({ from, isLink, to }) => ({
-			from: kept.indexOf(block.vertices[from]),
-			isLink,
-			to: kept.indexOf(block.vertices[to]),
-		}))
-		.filter(({ from, to }) => from !== -1 && to !== -1);
-
-	for (const [role, { joins }] of Object.entries(cut)) {
-		for (const other of role === "v" ? [...joins, "u", "w"] : joins) {
-			edges.push({ from: find(role), isLink: true, to: find(other) });
-		}
-	}
+	const find = (name: string) =>
+		vertices.findIndex((vertex) => vertex.name === name);
+	const edges = [
+		...edgesWithinBlock.filter(({ from }) => from !== "a"),
+		...cutEdges,
+	].map(({ from, to }) => ({ from: find(from), to: find(to) }));
 
 	return { edges, vertices };
+}
+
+/** Gets whether an edge was cut from the Petersen graph to make a block. */
+export function isCut({ edges, vertices }: Graph, index: number) {
+	return vertices[edges[index].from].name in cutPositions;
 }

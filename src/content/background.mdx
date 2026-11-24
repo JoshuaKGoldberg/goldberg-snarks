@@ -1,33 +1,23 @@
 import Cite from "~/components/Cite.astro";
-import BlockFigure from "~/components/figures/BlockFigure.astro";
 import Snark from "~/components/Snark.astro";
 import Term from "~/components/Term.astro";
-import Vertex from "~/components/Vertex.astro";
 
 ## Background
 
 A _graph_ is a set of points, called vertices, joined by lines, called edges.
-In a _cubic_ graph, three edges meet at every vertex.
-A _cycle_ is a closed loop of edges that does not visit any vertex twice, and its _length_ is its number of edges.
+A graph is _cubic_ if three edges meet at every vertex.
+A _cycle_ is a closed loop of edges that does not visit any vertex twice.
 
-An _edge coloring_ gives each edge of a graph a color, with different colors for edges that meet.
-Most cubic graphs have an edge coloring with three colors, called a _3-edge-coloring_.
-A _snark_ is a cubic graph that has no 3-edge-coloring and that meets [some other conditions](/#snark), such as having no triangle.
+An _edge coloring_ gives each edge a color, with different colors for edges that meet.
+Most cubic graphs have one with three colors, called a <span class="nowrap">_3-edge-coloring_</span>.
+A _snark_ is a cubic graph that needs four colors, with some exceptions.
 
-The [Goldberg snarks](/) are a family of snarks that Mark K. Goldberg published in 1981 <Cite id="goldberg1981" />.
-The Goldberg snark <Snark n="k" /> is a ring of _k_ copies of a block, where _k_ is odd and at least 5.
-
-<BlockFigure>
-	A block and its links.
-</BlockFigure>
-
-A block (Figure 1) has eight vertices, labeled _a_ to _h_.
-Those in block _i_ are labeled <Vertex i="i" role="a" /> to <Vertex i="i" role="h" />.
-Three edges, called links, join each block to the next.
-The links form part of three rings: the <Term is="outer">outer ring</Term>, the <Term is="middle">middle ring</Term>, and the <Term is="inner">inner ring</Term>.
+The _Goldberg snark_ <Snark n="k" /> is made of _k_ copies of a block of eight vertices, where _k_ is odd and at least 5 <Cite id="goldberg1981" />.
+Links join each block to the next, in an <Term is="outer">outer ring</Term>, a <Term is="middle">middle ring</Term>, and an <Term is="inner">inner ring</Term>.
+[The construction](/#construction) names the vertices of each block _a_ through _h_.
 
 {!props.isSnark && (
 	<p>
-		The graph <Snark n={props.blocks} /> is built in the same way from three blocks.
+		The <em>Goldberg graph</em> <Snark n={3} /> is made of three blocks.
 	</p>
 )}

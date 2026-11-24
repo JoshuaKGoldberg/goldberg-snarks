@@ -1,4 +1,6 @@
 ---
+import SelfLink from "./SelfLink.astro";
+
 interface Props {
 	id: string;
 	level?: "h2" | "h3";
@@ -8,30 +10,7 @@ const { id, level: Level = "h2" } = Astro.props;
 ---
 
 <Level id={id}>
-	<a class="anchor" href={`#${id}`}>
+	<SelfLink id={id}>
 		<slot />
-	</a>
+	</SelfLink>
 </Level>
-
-<style>
-	.anchor {
-		color: inherit;
-		text-decoration: none;
-	}
-
-	.anchor::after {
-		color: var(--colorRed);
-		content: "\00a0#" / "";
-		opacity: 0;
-	}
-
-	.anchor:is(:hover, :focus-visible)::after,
-	:target > .anchor::after {
-		opacity: 1;
-	}
-
-	.anchor:hover,
-	:target > .anchor {
-		color: var(--colorRed);
-	}
-</style>

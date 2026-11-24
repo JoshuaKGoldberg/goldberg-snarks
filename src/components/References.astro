@@ -1,19 +1,20 @@
 ---
 import { type Reference, references } from "~/references.ts";
 
-const entries: [string, Reference][] = Object.entries(references);
-const sorted = entries.sort(([, a], [, b]) =>
-	a.authors
-		.replace(/^(?:[A-Z]\. ?)+/, "")
-		.localeCompare(b.authors.replace(/^(?:[A-Z]\. ?)+/, "")),
+const sorted = Object.entries<Reference>(references).sort(([, a], [, b]) =>
+	getLastName(a).localeCompare(getLastName(b)),
 );
+
+function getLastName({ authors }: Reference) {
+	return authors.replace(/^(?:[A-Z]\. ?)+/, "");
+}
 ---
 
 <ol>
 	{sorted.map(([id, { authors, details, href, title, year }]) => (
 		<li id={id}>
 			{year ? `${authors} (${year.toString()}). ` : `${authors}. `}
-			<a href={href}>{title}</a>
+			{href ? <a href={href}>{title}</a> : <i>{title}</i>}
 			{`. ${details}`}
 		</li>
 	))}
@@ -21,9 +22,9 @@ const sorted = entries.sort(([, a], [, b]) =>
 
 <style>
 	ol {
-		font-size: 0.9375rem;
+		font-size: var(--fontSizeNote);
 		line-height: 1.4;
-		list-style: none;
+		list-style: "";
 		padding: 0;
 	}
 

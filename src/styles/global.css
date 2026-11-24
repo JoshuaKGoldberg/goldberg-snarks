@@ -1,5 +1,11 @@
 @layer reset, base, graphs;
 
+@property --lit {
+	inherits: false;
+	initial-value: 0%;
+	syntax: "<percentage>";
+}
+
 @layer reset {
 	*,
 	::before,
@@ -21,27 +27,14 @@
 	:root {
 		color-scheme: light dark;
 
-		--colorPaper: light-dark(#fffdf8, #191613);
-		--colorPaperShaded: light-dark(#f8f3e8, #221e19);
-		--colorInk: light-dark(#1d1a16, #eae3d5);
-		--colorInkMuted: light-dark(#5c554a, #b3a996);
-		--colorInkFaint: light-dark(#8d8576, #7f7666);
-		--colorRule: light-dark(#d8cfbd, #453d33);
-		--colorRed: light-dark(#9c1c2b, #f0838a);
-
-		/* With red, the inks that old books were printed in */
-		--colorBlue: light-dark(#1c4f91, #86b4ee);
-		--colorGreen: light-dark(#2c6b45, #85c596);
-		--colorGold: light-dark(#a8720a, #dcab4c);
-
-		/* As text needs more contrast than lines do */
-		--colorGoldText: light-dark(#80560a, #dcab4c);
-
 		--fontSizeSmall: 0.875rem;
+		--fontSizeNote: 0.9375rem;
 		--fontSizeBody: 1.0625rem;
 		--fontSizeSubheading: 1.1875rem;
 		--fontSizeHeading: 1.4375rem;
 		--fontSizeTitle: clamp(2rem, 1.6rem + 2vw, 2.75rem);
+
+		--quickly: 117ms;
 
 		--gap: 2.75rem;
 		--space: clamp(1rem, 4vw, 2rem);
@@ -49,7 +42,6 @@
 		--widthMargin: 17.5rem;
 		--widthText: 37rem;
 
-		/* As many of the contents, text, and margin columns as there's room for */
 		--widthPage: var(--widthText);
 	}
 
@@ -61,13 +53,19 @@
 		color-scheme: light;
 	}
 
-	@media (min-width: 60rem) {
+	@media (prefers-reduced-motion: reduce) {
+		:root {
+			--quickly: 0s;
+		}
+	}
+
+	@media (width >= 60rem) {
 		:root {
 			--widthPage: calc(var(--widthText) + var(--gap) + var(--widthMargin));
 		}
 	}
 
-	@media (min-width: 75rem) {
+	@media (width >= 75rem) {
 		:root {
 			--widthPage: calc(
 				var(--widthContents) + var(--widthText) + var(--widthMargin) + 2 *
@@ -120,13 +118,35 @@
 	a {
 		color: var(--colorRed);
 		text-decoration: underline 1px;
-		text-decoration-color: color-mix(in srgb, currentcolor 45%, transparent);
+		text-decoration-color: color-mix(
+			in srgb,
+			currentcolor calc(60% + 0.4 * var(--lit)),
+			transparent
+		);
 		text-underline-offset: 0.17em;
 	}
 
-	a:hover {
-		text-decoration-color: currentcolor;
-		text-decoration-thickness: 2px;
+	/* Transitioning colors themselves would fight with how themes fade */
+	.lights {
+		color: color-mix(
+			in srgb,
+			var(--colorRed) var(--lit),
+			var(--resting, var(--colorInk))
+		);
+	}
+
+	:is(a, .lights) {
+		transition: --lit var(--quickly);
+	}
+
+	.lights:is(:focus-visible, [aria-current]) {
+		--lit: 100%;
+	}
+
+	@media (hover: hover) {
+		:is(a, .lights):hover:not(:disabled) {
+			--lit: 100%;
+		}
 	}
 
 	:focus-visible {
@@ -144,15 +164,39 @@
 		cursor: pointer;
 	}
 
-	/* Leaves space above whatever's linked to */
-	:target,
-	:is(h2, h3, figure, li, div)[id] {
+	[id] {
 		scroll-margin-top: 2.5rem;
 	}
 
+	.visually-hidden {
+		clip-path: inset(50%);
+		height: 1px;
+		overflow: hidden;
+		position: absolute;
+		width: 1px;
+	}
+
+	.boxed {
+		background: var(--colorPaperShaded);
+		border: 1px solid var(--colorRule);
+		border-top: 3px solid var(--colorRed);
+		margin-block: 1.25rem;
+		padding: 1rem;
+	}
+
+	/* Goes beside the text when there's room for it to */
+	@media (width >= 60rem) {
+		.in-margin {
+			clear: right;
+			float: right;
+			margin: 0.25rem calc(-1 * var(--outset)) 1.75rem 0;
+			width: var(--widthMargin);
+		}
+	}
+
 	@media (prefers-reduced-motion: no-preference) {
-		html {
-			scroll-behavior: smooth;
+		@view-transition {
+			navigation: auto;
 		}
 	}
 }
@@ -176,7 +220,6 @@
 		fill: currentcolor;
 	}
 
-	/* Places in a graph's structure */
 	.graph .inner {
 		color: var(--colorRed);
 		stroke-width: 2px;
@@ -192,7 +235,6 @@
 		stroke-width: 2px;
 	}
 
-	/* Edge colors, which dashes also tell apart */
 	.graph .green {
 		color: var(--colorGreen);
 		stroke-width: 2px;
@@ -220,7 +262,6 @@
 		stroke-dasharray: 3 4;
 	}
 
-	/* Emphasis, and its lack */
 	.graph .faint {
 		color: var(--colorInkFaint);
 		stroke-width: 1px;
@@ -236,7 +277,6 @@
 	}
 }
 
-/* Beats every other style for graphs, as each of them only matters for its colors */
 @media (forced-colors: active) {
 	:root[data-theme],
 	:root {
@@ -247,11 +287,15 @@
 		color: CanvasText !important;
 	}
 
-	.graph path {
+	.graph .marker {
+		stroke: Highlight !important;
+	}
+
+	.graph path:not(.halo) {
 		stroke: CanvasText !important;
 	}
 
-	.graph :is(text, circle:not(.handle)) {
+	.graph :is(text, circle:not(.marker)) {
 		fill: CanvasText !important;
 	}
 }

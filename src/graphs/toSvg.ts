@@ -1,24 +1,33 @@
+import { palette } from "../palette.ts";
 import { createGoldbergGraph } from "./createGoldbergGraph.ts";
-import { drawEdgesByClass, getVertexRadius, locate } from "./draw.ts";
+import { drawEdge, getVertexRadius, groupEdges, locate } from "./draw.ts";
 import { getPartClass } from "./edgeClasses.ts";
 
-const colors: Record<string, string> = {
-	inner: "#9c1c2b",
-	middle: "#a8720a",
-	outer: "#1c4f91",
-	spoke: "#1d1a16",
+const colors: Record<ReturnType<typeof getPartClass>, string> = {
+	inner: palette.Red[0],
+	middle: palette.Gold[0],
+	outer: palette.Blue[0],
+	spoke: palette.Ink[0],
 };
 
-/** Draws a Goldberg graph as an SVG that stands alone. */
-export function toSvg(blocks: number) {
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-110 -110 220 220" width="1100" height="1100"><title>Goldberg graph G${blocks.toString()}</title>${toSvgContents(blocks)}</svg>\n`;
+/** Draws a Goldberg graph as an SVG that stands alone, over a background if there is one. */
+export function toSvg(blocks: number, background?: string) {
+	const backdrop = background
+		? `<rect x="-110" y="-110" width="220" height="220" fill="${background}"/>`
+		: "";
+
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-110 -110 220 220" width="1100" height="1100"><title>Goldberg graph G${blocks.toString()}</title>${backdrop}${toSvgContents(blocks)}</svg>\n`;
 }
 
+/** Draws a Goldberg graph as what would be within an SVG. */
 export function toSvgContents(blocks: number) {
 	const graph = createGoldbergGraph(blocks);
 	const radius = getVertexRadius(graph).toFixed(2);
-	const edges = drawEdgesByClass(graph, (index) => getPartClass(graph, index))
-		.map(([name, d]) => `<path d="${d}" stroke="${colors[name]}"/>`)
+	const edges = groupEdges(graph, (index) => getPartClass(graph, index))
+		.map(
+			([part, indices]) =>
+				`<path d="${indices.map((index) => drawEdge(graph, index)).join("")}" stroke="${colors[part]}"/>`,
+		)
 		.join("");
 	const vertices = graph.vertices
 		.map(locate)
@@ -28,5 +37,5 @@ export function toSvgContents(blocks: number) {
 		)
 		.join("");
 
-	return `<g fill="none" stroke-linecap="round" stroke-width="0.9">${edges}</g><g fill="#1d1a16">${vertices}</g>`;
+	return `<g fill="none" stroke-linecap="round" stroke-width="0.9">${edges}</g><g fill="${palette.Ink[0]}">${vertices}</g>`;
 }

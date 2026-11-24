@@ -3,29 +3,18 @@ import type { Graph, Vertex } from "./types.ts";
 /** Units that a graph's radius of 1 is drawn at. */
 const unit = 100;
 
-const round = (value: number) => Math.round(value * unit * 10) / 10;
+/** Gets the path of a dot: a line of no length, which only has round ends. */
+export function drawDot(vertex: Vertex) {
+	const { x, y } = locate(vertex);
+
+	return `M${x.toString()} ${y.toString()}h0`;
+}
 
 export function drawEdge({ edges, vertices }: Graph, index: number) {
 	const from = locate(vertices[edges[index].from]);
 	const to = locate(vertices[edges[index].to]);
 
 	return `M${from.x.toString()} ${from.y.toString()}L${to.x.toString()} ${to.y.toString()}`;
-}
-
-/** Groups edges by the names of their classes, each as an SVG path. */
-export function drawEdgesByClass(
-	graph: Graph,
-	getClass: (index: number) => string,
-) {
-	const paths = new Map<string, string>();
-
-	for (const index of graph.edges.keys()) {
-		const name = getClass(index);
-
-		paths.set(name, (paths.get(name) ?? "") + drawEdge(graph, index));
-	}
-
-	return [...paths];
 }
 
 /** Gets a view box that's cropped to what's in a graph. */
@@ -53,6 +42,31 @@ export function getVertexRadius({ vertices }: Graph) {
 	return Math.max(1, Math.min(2.6, 14 / Math.sqrt(vertices.length)));
 }
 
+/** Groups the indices of vertices to draw dots for, by their classes. */
+export function groupDots(
+	{ vertices }: Graph,
+	getClass: (index: number) => string | undefined = () => undefined,
+) {
+	return [
+		...Map.groupBy(
+			[...vertices.keys()].filter((index) => vertices[index].name),
+			getClass,
+		),
+	];
+}
+
+/** Groups the indices of edges by their classes. */
+export function groupEdges<Class extends string>(
+	{ edges }: Graph,
+	getClass: (index: number) => Class,
+) {
+	return [...Map.groupBy(edges.keys(), getClass)];
+}
+
 export function locate({ x, y }: Vertex) {
 	return { x: round(x), y: round(y) };
+}
+
+function round(value: number) {
+	return Math.round(value * unit * 10) / 10;
 }

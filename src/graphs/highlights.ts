@@ -1,9 +1,8 @@
 import type { Graph } from "./types.ts";
 
-import { roles } from "./block.ts";
-import { findEdgesAlong, getPartClass } from "./edgeClasses.ts";
-import { getVertexName } from "./getVertexName.ts";
-import { longestCycles } from "./longestCycles.ts";
+import { getVertexIndex, getVerticesIn, roles } from "./block.ts";
+import { createLongestCycle } from "./createLongestCycle.ts";
+import { getPartClass } from "./edgeClasses.ts";
 import { findShortestPath, getDistances, getNeighbors } from "./measure.ts";
 
 export interface Highlight {
@@ -22,18 +21,18 @@ export type HighlightKind =
 
 /** Gets how to draw a Goldberg graph such that something about it stands out. */
 export function getHighlight(graph: Graph, kind: HighlightKind): Highlight {
-	const { vertices } = graph;
+	const blocks = graph.vertices.length / roles.length;
 
 	switch (kind) {
 		case "block-cycles": {
-			const getIndices = (names: string) =>
-				names
-					.split(" ")
-					.map((name) =>
-						vertices.findIndex((vertex) => getVertexName(vertex) === name),
-					);
-			const pentagon = findEdgesAlong(graph, getIndices("b1 c1 e1 f1 d1 b1"));
-			const hexagon = findEdgesAlong(graph, getIndices("c3 e3 f3 d3 h3 g3 c3"));
+			const pentagon = findEdgesAlong(
+				graph,
+				close(getVerticesIn(0, "b", "c", "e", "f", "d")),
+			);
+			const hexagon = findEdgesAlong(
+				graph,
+				close(getVerticesIn(2, "c", "e", "f", "d", "h", "g")),
+			);
 
 			return {
 				edgeClass: (index) =>
@@ -53,23 +52,23 @@ export function getHighlight(graph: Graph, kind: HighlightKind): Highlight {
 			return highlightBlocks(graph, 3);
 
 		case "farthest":
-			return highlightPath(graph, findFarthest(graph));
+			return highlightPath(
+				graph,
+				findPathToFarthest(graph, getVertexIndex(0, "e")),
+			);
 
 		case "inner":
-			return highlightPath(graph, [
-				...[...vertices.keys()].filter((index) => vertices[index].role === "a"),
-				0,
-			]);
+			return highlightPath(
+				graph,
+				close(
+					Array.from({ length: blocks }, (_, block) =>
+						getVertexIndex(block, "a"),
+					),
+				),
+			);
 
-		case "longest": {
-			const path = longestCycles[vertices.length / roles.length]
-				.split(" ")
-				.map((name) =>
-					vertices.findIndex((vertex) => getVertexName(vertex) === name),
-				);
-
-			return highlightPath(graph, [...path, path[0]]);
-		}
+		case "longest":
+			return highlightPath(graph, close(createLongestCycle(blocks)));
 
 		case "swapped":
 			return {
@@ -85,18 +84,36 @@ export function getHighlight(graph: Graph, kind: HighlightKind): Highlight {
 	}
 }
 
-function findFarthest(graph: Graph) {
-	const neighbors = getNeighbors(graph);
-	const distances = getDistances(neighbors, 4);
-
-	return findShortestPath(graph, 4, distances.indexOf(Math.max(...distances)));
+function close(path: number[]) {
+	return [...path, path[0]];
 }
 
-function highlightBlocks(
-	{ edges, vertices }: Graph,
-	spacing: number,
-): Highlight {
-	const isInStep = (vertex: number) => vertices[vertex].block % spacing === 0;
+/** Finds the indices of edges between consecutive vertices of a path. */
+function findEdgesAlong({ edges }: Graph, path: number[]) {
+	const steps = new Set(
+		path.slice(1).map((vertex, i) => [path[i], vertex].sort().join()),
+	);
+
+	return new Set(
+		[...edges.keys()].filter((index) =>
+			steps.has([edges[index].from, edges[index].to].sort().join()),
+		),
+	);
+}
+
+function findPathToFarthest(graph: Graph, from: number) {
+	const distances = getDistances(getNeighbors(graph), from);
+
+	return findShortestPath(
+		graph,
+		from,
+		distances.indexOf(Math.max(...distances)),
+	);
+}
+
+function highlightBlocks({ edges }: Graph, spacing: number): Highlight {
+	const isInStep = (vertex: number) =>
+		Math.floor(vertex / roles.length) % spacing === 0;
 
 	return {
 		edgeClass: (index) =>

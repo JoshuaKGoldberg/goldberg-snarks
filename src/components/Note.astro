@@ -1,4 +1,4 @@
-<div class="note" role="note">
+<div class="in-margin note" role="note">
 	<slot />
 </div>
 
@@ -6,22 +6,18 @@
 	.note {
 		border-left: 2px solid var(--colorRed);
 		color: var(--colorInkMuted);
-		font-size: 0.9375rem;
+		font-size: var(--fontSizeNote);
 		line-height: 1.4;
-		margin-block: 0.75rem;
 		padding-left: 0.8rem;
+	}
+
+	@media (width < 60rem) {
+		.note {
+			margin-block: 0.75rem;
+		}
 	}
 
 	.note > :global(* + *) {
 		margin-top: 0.5rem;
-	}
-
-	@media (min-width: 60rem) {
-		.note {
-			clear: right;
-			float: right;
-			margin: 0.2rem calc(-1 * var(--outset)) 1.25rem 0;
-			width: var(--widthMargin);
-		}
 	}
 </style>

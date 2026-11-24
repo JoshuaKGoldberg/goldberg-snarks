@@ -1,6 +1,5 @@
 ---
-blocks: 15
-summary: The Goldberg snark with fifteen blocks, 120 vertices, and 180 edges. Merging the blocks that are five apart gives G5.
+summary: A graph with 120 vertices and 180 edges, made of fifteen identical blocks. Merging the blocks that are five apart gives G5.
 ---
 
 import Highlight from "~/components/Highlight.astro";
@@ -8,7 +7,7 @@ import Snark from "~/components/Snark.astro";
 
 ## Coverings
 
-Number the blocks of <Snark n={15} /> in order around the ring: 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5.
+The blocks of <Snark n={15} /> can be numbered from 1 to 5 three times, in order around the ring.
 Merging the blocks that have the same number gives [<Snark n={5} />](/g5), so three blocks of <Snark n={15} /> correspond to each block of <Snark n={5} />.
 Every edge of <Snark n={15} /> corresponds to an edge of <Snark n={5} />, and the three edges at a vertex correspond to the three edges at its counterpart.
 A graph that corresponds to another in this way is called a [_covering graph_](/g9#covering) of it.
@@ -27,6 +26,5 @@ Each block of <Snark n={3} /> corresponds to five blocks of <Snark n={15} />.
 
 ## Chinese remainder theorem
 
-Instead, number the blocks of <Snark n={15} /> from 0 to 14, those of <Snark n={3} /> from 0 to 2, and those of <Snark n={5} /> from 0 to 4.
-Block _i_ corresponds to the block of <Snark n={3} /> whose number is the remainder of _i_ divided by 3, and to the block of <Snark n={5} /> whose number is the remainder of _i_ divided by 5.
+If the blocks of <Snark n={15} /> are numbered from 0 to 14, those of <Snark n={3} /> from 0 to 2, and those of <Snark n={5} /> from 0 to 4, then block _i_ corresponds to the block of <Snark n={3} /> whose number is the remainder of _i_ divided by 3, and to the block of <Snark n={5} /> whose number is the remainder of _i_ divided by 5.
 By the Chinese remainder theorem, no two of the numbers from 0 to 14 have the same pair of remainders, so a block of <Snark n={15} /> is determined by the two blocks that it corresponds to.

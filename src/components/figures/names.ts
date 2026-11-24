@@ -1,5 +1,7 @@
 import type { Graph } from "~/graphs/types.ts";
 
+import { type Role, roles } from "~/graphs/block.ts";
+
 type Offsets = Record<string, readonly [x: number, y: number]>;
 
 /** Where names are drawn from vertices that are laid out flat, so as to not cover any edges. */
@@ -18,7 +20,7 @@ const flatOffsets: Offsets = {
 };
 
 /** Where names are drawn from vertices at the top of a ring. */
-const ringOffsets: Offsets = {
+const ringOffsets: Record<Role, readonly [x: number, y: number]> = {
 	a: [0, 10],
 	b: [8, 2],
 	c: [-1, -4],
@@ -32,21 +34,17 @@ const ringOffsets: Offsets = {
 /** Gets names of a flat graph's vertices, and where to draw them. */
 export function nameFlatVertices({ vertices }: Graph) {
 	return (index: number) => {
-		const { role } = vertices[index];
+		const letter = vertices[index].name.charAt(0);
 
-		return role in flatOffsets
-			? ([role, ...flatOffsets[role]] as const)
+		return letter in flatOffsets
+			? ([letter, ...flatOffsets[letter]] as const)
 			: undefined;
 	};
 }
 
 /** Gets names of the vertices of a ring's first block, and where to draw them. */
-export function nameRingVertices({ vertices }: Graph) {
-	return (index: number) => {
-		const { block, role } = vertices[index];
+export function nameRingVertices(index: number) {
+	const role = roles.at(index);
 
-		return block === 0
-			? ([`${role}1`, ...ringOffsets[role]] as const)
-			: undefined;
-	};
+	return role && ([`${role}1`, ...ringOffsets[role]] as const);
 }

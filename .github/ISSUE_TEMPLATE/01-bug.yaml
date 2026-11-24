@@ -7,6 +7,12 @@ body:
           required: true
     type: checkboxes
   - attributes:
+      description: Which page it's on, and which browser and device you used.
+      label: Page and Browser
+    type: textarea
+    validations:
+      required: true
+  - attributes:
       description: What did you expect to happen?
       label: Expected
     type: textarea
@@ -23,7 +29,7 @@ body:
       label: Additional Info
     type: textarea
 
-description: Report a bug trying to run the code
+description: Report a mistake on the site, or a problem using it
 
 labels:
   - "type: bug"

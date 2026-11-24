@@ -2,8 +2,8 @@
 import { createBlockChain } from "~/graphs/createBlockChain.ts";
 import { getPartClass } from "~/graphs/edgeClasses.ts";
 
-import MovableDrawing from "../MovableDrawing.astro";
 import Figure from "../Figure.astro";
+import MovableDrawing from "../MovableDrawing.astro";
 import { nameFlatVertices } from "./names.ts";
 
 const graph = createBlockChain(1);
@@ -11,15 +11,15 @@ const graph = createBlockChain(1);
 
 <Figure inMargin size="small">
 	<MovableDrawing
-		name="block"
-		slot="drawing"
 		cropped
 		edgeClass={(index) => getPartClass(graph, index)}
 		graph={graph}
-		label="A block: eight vertices named a through h. Links cross it at three heights: through f and e at the top, g and h lower down, and a at the bottom. Between them, c joins b, e, and g; d joins b, f, and h; and b joins a."
+		label="A block: eight vertices, a through h. Edges join a to b; b to c and d; c to e and g; d to f and h; e to f; and g to h. Links lead left from f, g, and a, and right from e, h, and a."
+		name="Block"
 		names={nameFlatVertices(graph)}
 		nameSize={10}
-		padding={12}
+		padding={17}
+		slot="drawing"
 	/>
 	<slot />
 </Figure>

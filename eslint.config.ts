@@ -34,18 +34,10 @@ export default defineConfig(
 			jsdoc.configs["flat/contents-typescript-error"],
 			jsdoc.configs["flat/logical-typescript-error"],
 			jsdoc.configs["flat/stylistic-typescript-error"],
-			n.configs["flat/recommended"],
 			perfectionist.configs["recommended-natural"],
 			regexp.configs["flat/recommended"],
-			tseslint.configs.strictTypeChecked,
-			tseslint.configs.stylisticTypeChecked,
 		],
-		files: ["**/*.{js,ts}"],
-		languageOptions: {
-			parserOptions: {
-				projectService: true,
-			},
-		},
+		files: ["**/*.{astro,js,ts}"],
 		rules: {
 			// Stylistic concerns that don't interfere with Prettier
 			"logical-assignment-operators": [
@@ -56,12 +48,30 @@ export default defineConfig(
 			"no-useless-rename": "error",
 			"object-shorthand": "error",
 			"operator-assignment": "error",
-
+		},
+		settings: { perfectionist: { partitionByComment: true, type: "natural" } },
+	},
+	{
+		extends: [
+			n.configs["flat/recommended"],
+			tseslint.configs.strictTypeChecked,
+			tseslint.configs.stylisticTypeChecked,
+		],
+		files: ["**/*.{js,ts}"],
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+			},
+		},
+		rules: {
 			// TypeScript already checks imports, including Astro's virtual modules
 			"n/no-missing-import": "off",
 			"n/no-unpublished-import": "off",
 		},
-		settings: { perfectionist: { partitionByComment: true, type: "natural" } },
+	},
+	{
+		extends: [tseslint.configs.strict, tseslint.configs.stylistic],
+		files: ["**/*.astro"],
 	},
 	astro.configs.recommended,
 	astro.configs["jsx-a11y-recommended"],

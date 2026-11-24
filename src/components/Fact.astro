@@ -1,0 +1,16 @@
+---
+interface Props {
+	/** Where the fact's label is explained. */
+	about?: string | undefined;
+	label: string;
+}
+
+const { about, label } = Astro.props;
+---
+
+<tr>
+	<th scope="row">{about ? <a href={about}>{label}</a> : label}</th>
+	<td>
+		<slot />
+	</td>
+</tr>

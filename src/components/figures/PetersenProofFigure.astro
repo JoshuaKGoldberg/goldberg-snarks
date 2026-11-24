@@ -3,34 +3,40 @@ import { createPetersenGraph } from "~/graphs/createPetersenGraph.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import ColoringKey from "../ColoringKey.astro";
-import MovableDrawing from "../MovableDrawing.astro";
 import Figure from "../Figure.astro";
+import MovableDrawing from "../MovableDrawing.astro";
 
 const graph = createPetersenGraph();
 
 /** Colors of the pentagon's edges, clockwise, and of those inward from where each starts. */
-const pentagon = [0, 1, 0, 1, 2];
-const inward = [1, 2, 2, 2, 0];
+const corners = [
+	{ inward: 1, outer: 0 },
+	{ inward: 2, outer: 1 },
+	{ inward: 2, outer: 0 },
+	{ inward: 2, outer: 1 },
+	{ inward: 0, outer: 2 },
+];
 ---
 
 <Figure size="small">
 	<MovableDrawing
-		name="proof of Lemma 2"
-		slot="drawing"
+		cropped
 		edgeClass={(index) => {
-			const corner = Math.floor(index / 3);
+			const corner = corners[Math.floor(index / 3)];
 
 			switch (index % 3) {
 				case 0:
-					return getColorClass(pentagon[corner]);
+					return getColorClass(corner.outer);
 				case 1:
-					return getColorClass(inward[corner]);
+					return getColorClass(corner.inward);
 				default:
 					return "faint";
 			}
 		}}
 		graph={graph}
-		label="The Petersen graph. Its pentagon's edges are green, blue, green, blue, and gold. Three neighboring edges leading inward are gold, one is blue, and one is green. The star has no colors."
+		label="The Petersen graph. Its pentagon’s edges are green, blue, green, blue, and gold. Three neighboring edges leading inward are gold, one is blue, and one is green. The star has no colors."
+		name="Proof about the Petersen graph"
+		slot="drawing"
 	/>
 	<ColoringKey slot="key" />
 	<slot />

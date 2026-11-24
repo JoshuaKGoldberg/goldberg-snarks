@@ -1,6 +1,7 @@
 ---
 import Article from "~/components/Article.astro";
 import Code from "~/components/Code.astro";
+import Fact from "~/components/Fact.astro";
 import FactBox from "~/components/FactBox.astro";
 import Gallery from "~/components/Gallery.astro";
 import Heading from "~/components/Heading.astro";
@@ -8,30 +9,29 @@ import LinkedHeading from "~/components/LinkedHeading.astro";
 import LinkedSubheading from "~/components/LinkedSubheading.astro";
 import References from "~/components/References.astro";
 import Snark from "~/components/Snark.astro";
-import { site } from "~/constants.ts";
+import { homeImage, site, siteName } from "~/constants.ts";
 import { Content, getHeadings } from "~/content/home.mdx";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 
 const citation = `@misc{goldbergsnarks,
   author = {Goldberg, Josh},
-  title  = {Goldberg Snarks},
+  title  = {${siteName}},
   year   = {2026},
   url    = {${site}}
 }`;
 ---
 
 <BaseLayout
-	description="The Goldberg snarks are an infinite family of cubic graphs that have no 3-edge-coloring. Their construction, proofs, properties, and history, with diagrams."
-	image={{
-		alt: "Goldberg snarks, beside a drawing of the Goldberg snark G5.",
-		path: "/images/home.png",
-	}}
+	bold
+	description="The Goldberg snarks are an infinite family of cubic graphs that have no 3-edge-coloring. Their construction, properties, and history, with proofs and drawings."
+	image={homeImage}
 	schema={{
-		"@type": "Article",
+		"@type": ["Article", "WebSite"],
 		about: { "@type": "Thing", name: "Goldberg snark" },
 		headline: "Goldberg snarks",
+		name: siteName,
 	}}
-	title="Goldberg snarks"
+	title="Goldberg snarks: graphs whose edges need four colors"
 >
 	<Article
 		headings={[
@@ -39,103 +39,69 @@ const citation = `@misc{goldbergsnarks,
 			{ depth: 2, slug: "references", text: "References" },
 		]}
 	>
-		<Fragment slot="top">
-			<Heading summary="A family of graphs whose edges cannot be colored with three colors">
-				Goldberg snarks
-			</Heading>
-			<div class="lead">
-				<FactBox blocks={5} kind="Goldberg snark">
-					<Fragment slot="caption">
-						The Goldberg snark <Snark n={5} />
-					</Fragment>
-					<tr>
-						<th scope="row">Named for</th>
-						<td>Mark K. Goldberg</td>
-					</tr>
-					<tr>
-						<th scope="row">Published</th>
-						<td>1981</td>
-					</tr>
-					<tr>
-						<th scope="row">Blocks</th>
-						<td>
-							<i>k</i> (odd, at least 5)
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">Vertices</th>
-						<td>
-							8<i>k</i>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">Edges</th>
-						<td>
-							12<i>k</i>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<a href="#properties">Chromatic index</a>
-						</th>
-						<td>4</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<a href="#uncolored-edges">Resistance</a>
-						</th>
-						<td>2</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<a href="#properties">Girth</a>
-						</th>
-						<td>5</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<a href="#properties">Symmetries</a>
-						</th>
-						<td>
-							4<i>k</i>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<a href="#hamiltonian">Hamiltonian</a>
-						</th>
-						<td>No</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<a href="#properties">Planar</a>
-						</th>
-						<td>No</td>
-					</tr>
-				</FactBox>
-				<p>
-					In graph theory, a <em>graph</em> is a set of points joined by lines.
-					The points are called vertices, and the lines are called edges. A
-					graph is <em>cubic</em> if three edges meet at every vertex.
-				</p>
-				<p>
-					An <em>edge coloring</em> gives each edge of a graph a color, with
-					different colors for edges that meet. Most cubic graphs have an edge
-					coloring with three colors. A <strong>snark</strong> is a cubic graph
-					that needs four, with some exceptions. Snarks are named after the
-					elusive creature in Lewis Carroll’s poem{" "}
-					<cite>The Hunting of the Snark</cite>.
-				</p>
-				<p>
-					The <strong>Goldberg snarks</strong> are an infinite family of snarks
-					that Mark K. Goldberg published in 1981. Each is made of an odd number
-					of copies of a block of eight vertices, joined in a ring. The Goldberg
-					snark with <i>k</i> blocks is written <Snark n="k" />, and there is
-					one for each odd <i>k</i> ≥ 5. The first six are:
-				</p>
-				<Gallery />
-			</div>
-		</Fragment>
+		<Heading
+			slot="heading"
+			summary="A family of graphs whose edges cannot be colored with three colors"
+		>
+			Goldberg snarks
+		</Heading>
+		<div class="annotated">
+			<FactBox blocks={5} kind="Goldberg snark">
+				<Fragment slot="caption">
+					The Goldberg snark <Snark n={5} />
+				</Fragment>
+				<Fact label="Named for">Mark K. Goldberg</Fact>
+				<Fact label="Published">1981</Fact>
+				<Fact label="Blocks">
+					<i>k</i> (odd, at least 5)
+				</Fact>
+				<Fact label="Vertices">
+					8<i>k</i>
+				</Fact>
+				<Fact label="Edges">
+					12<i>k</i>
+				</Fact>
+				<Fact about="#properties" label="Chromatic index">
+					4
+				</Fact>
+				<Fact about="#uncolored-edges" label="Resistance">
+					2
+				</Fact>
+				<Fact about="#properties" label="Girth">
+					5
+				</Fact>
+				<Fact about="#properties" label="Symmetries">
+					4<i>k</i>
+				</Fact>
+				<Fact about="#hamiltonian-cycles" label="Hamiltonian">
+					No
+				</Fact>
+				<Fact about="#properties" label="Planar">
+					No
+				</Fact>
+			</FactBox>
+			<p>
+				In graph theory, a <em>graph</em> is a set of points joined by lines.
+				The points are called vertices, and the lines are called edges. A graph
+				is <em>cubic</em> if three edges meet at every vertex.
+			</p>
+			<p>
+				An <em>edge coloring</em> gives each edge of a graph a color, with
+				different colors for edges that meet. Most cubic graphs have an edge
+				coloring with three colors. A <strong>snark</strong> is a cubic graph
+				that needs four, with some exceptions. Snarks are named after the
+				elusive creature in Lewis Carroll’s poem{" "}
+				<cite>The Hunting of the Snark</cite>.
+			</p>
+			<p>
+				The <strong>Goldberg snarks</strong> are an infinite family of snarks
+				that Mark K. Goldberg published in 1981. Each is made of an odd number
+				of copies of a block of eight vertices, joined in a ring. The Goldberg
+				snark with <i>k</i> blocks is written <Snark n="k" />, and there is one
+				for each odd <i>k</i> that is at least 5. The smallest are:
+			</p>
+			<Gallery />
+		</div>
 
 		<Content components={{ h2: LinkedHeading, h3: LinkedSubheading }} />
 
@@ -148,20 +114,3 @@ const citation = `@misc{goldbergsnarks,
 		<Code code={citation} lang="bibtex" />
 	</Article>
 </BaseLayout>
-
-<style>
-	.lead > :global(p + p) {
-		margin-top: 0.7rem;
-	}
-
-	@media screen and (max-width: 59.99rem) {
-		.lead {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.lead > :global(.fact-box) {
-			order: 1;
-		}
-	}
-</style>

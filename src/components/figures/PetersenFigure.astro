@@ -1,17 +1,20 @@
 ---
+import { requireColoring } from "~/graphs/colorEdges.ts";
 import { createPetersenGraph } from "~/graphs/createPetersenGraph.ts";
 
 import ColoredFigure from "../ColoredFigure.astro";
 
 const graph = createPetersenGraph();
+const coloring = requireColoring(graph, { skipped: new Set([0, 2]) });
 ---
 
 <ColoredFigure
-	name="colored Petersen graph"
+	coloring={coloring}
+	cropped
 	graph={graph}
-	label="The Petersen graph, a pentagon joined to a five-pointed star inside of it, with thirteen of its fifteen edges colored."
+	label="The Petersen graph, a pentagon joined to a five-pointed star inside it, with thirteen of its fifteen edges colored."
+	name="Colored Petersen graph"
 	size="small"
-	spares={new Set([0, 2])}
 >
 	<slot />
 </ColoredFigure>

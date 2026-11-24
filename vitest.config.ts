@@ -4,13 +4,10 @@ export default defineConfig({
 	test: {
 		clearMocks: true,
 		coverage: {
-			include: ["src"],
+			include: ["src/**/*.ts"],
 			reporter: ["html", "lcov"],
 		},
 		exclude: ["dist", "node_modules"],
 		setupFiles: ["console-fail-test/setup"],
-
-		// Ruling out every coloring of the larger snarks takes a while
-		testTimeout: 30_000,
 	},
 });

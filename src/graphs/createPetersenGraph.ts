@@ -7,7 +7,7 @@ export function createPetersenGraph(): Graph {
 	const edges: Edge[] = [];
 	const vertices: Vertex[] = [];
 
-	for (const [role, radius] of [
+	for (const [part, radius] of [
 		["outer", 1],
 		["inner", 0.5],
 	] as const) {
@@ -15,8 +15,7 @@ export function createPetersenGraph(): Graph {
 			const angle = (i / points) * Math.PI * 2;
 
 			vertices.push({
-				block: i,
-				role,
+				name: `${part} ${(i + 1).toString()}`,
 				x: Math.sin(angle) * radius,
 				y: -Math.cos(angle) * radius,
 			});
@@ -25,9 +24,9 @@ export function createPetersenGraph(): Graph {
 
 	for (let i = 0; i < points; i += 1) {
 		edges.push(
-			{ from: i, isLink: false, to: (i + 1) % points },
-			{ from: i, isLink: false, to: i + points },
-			{ from: i + points, isLink: false, to: ((i + 2) % points) + points },
+			{ from: i, to: (i + 1) % points },
+			{ from: i, to: i + points },
+			{ from: i + points, to: ((i + 2) % points) + points },
 		);
 	}
 

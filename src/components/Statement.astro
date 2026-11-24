@@ -1,24 +1,28 @@
 ---
+import { getStatement, type StatementId } from "~/statements.ts";
+
+import SelfLink from "./SelfLink.astro";
+
 interface Props {
-	id?: string;
-	kind: "Corollary" | "Definition" | "Lemma" | "Theorem";
+	id: StatementId;
 	name?: string;
-	number: number;
 }
 
-const { id, kind, name, number } = Astro.props;
+const { id, name } = Astro.props;
+const { kind, label } = getStatement(id);
 ---
 
-<div class:list={["statement", kind.toLowerCase()]} id={id}>
+<div
+	aria-labelledby={`${id}-label`}
+	class:list={["statement", kind.toLowerCase()]}
+	id={id}
+	role="group"
+>
 	<p class="head">
-		{id ? (
-			<a class="anchor" href={`#${id}`}>
-				<strong>{`${kind} ${number.toString()}`}</strong>
-			</a>
-		) : (
-			<strong>{`${kind} ${number.toString()}`}</strong>
-		)}
-		{name && ` (${name})`}.
+		<SelfLink id={id}>
+			<strong id={`${id}-label`}>{label}</strong>
+			{name && ` (${name})`}.
+		</SelfLink>
 	</p>
 	<slot />
 </div>
@@ -35,7 +39,6 @@ const { id, kind, name, number } = Astro.props;
 		font-style: italic;
 	}
 
-	/* Emphasis within what's already italic */
 	.statement:not(.definition) > :global(:not(.head)) :global(em) {
 		font-style: normal;
 	}
@@ -44,26 +47,8 @@ const { id, kind, name, number } = Astro.props;
 		padding-left: 1.2rem;
 	}
 
-	.anchor {
-		text-decoration: none;
-	}
-
-	.anchor:hover {
-		text-decoration: underline;
-	}
-
-	.anchor::after {
-		content: "\00a0#" / "";
-		display: none;
-	}
-
-	.anchor:is(:hover, :focus-visible)::after,
-	.statement:target .anchor::after {
-		display: inline;
-	}
-
 	.statement:target {
-		box-shadow: 0 0 0 1px var(--colorRed);
+		outline: 1px solid var(--colorRed);
 	}
 
 	strong {
@@ -71,7 +56,17 @@ const { id, kind, name, number } = Astro.props;
 		font-weight: 700;
 	}
 
-	.statement > :global(* + :not(.formulas + .formulas, .head + p)) {
+	.statement > :global(* + *) {
 		margin-top: 0.4rem;
+	}
+
+	.statement > :global(.head + p) {
+		margin-top: 0;
+	}
+
+	@media print {
+		.statement {
+			break-inside: avoid;
+		}
 	}
 </style>

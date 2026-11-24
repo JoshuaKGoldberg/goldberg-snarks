@@ -1,10 +1,13 @@
 ---
-import { createPetersenAroundBlock } from "~/graphs/createPetersenAroundBlock.ts";
+import {
+	createPetersenAroundBlock,
+	isCut,
+} from "~/graphs/createPetersenAroundBlock.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import ColoringKey from "../ColoringKey.astro";
-import MovableDrawing from "../MovableDrawing.astro";
 import Figure from "../Figure.astro";
+import MovableDrawing from "../MovableDrawing.astro";
 import { nameFlatVertices } from "./names.ts";
 
 const graph = createPetersenAroundBlock();
@@ -23,25 +26,23 @@ const colors: Record<string, number> = {
 const getName = (index: number) => {
 	const { from, to } = graph.edges[index];
 
-	return [graph.vertices[from].role, graph.vertices[to].role].sort().join("");
+	return [graph.vertices[from].name, graph.vertices[to].name].sort().join("");
 };
 ---
 
 <Figure inMargin>
 	<MovableDrawing
-		name="proof of Lemma 4"
-		slot="drawing"
 		cropped
 		edgeClass={(index) =>
-			graph.edges[index].isLink
-				? getColorClass(colors[getName(index)])
-				: "faint"
+			isCut(graph, index) ? getColorClass(colors[getName(index)]) : "faint"
 		}
 		graph={graph}
-		label="The same drawing of the Petersen graph, with its seven cut edges colored. At u, v, and w, all three colors meet."
+		label="The Petersen graph, drawn as before. The edges from b to v, e to u, and f to w are green; those from g to w and u to v are blue; and those from h to u and v to w are gold."
+		name="Reattached block"
 		names={nameFlatVertices(graph)}
 		nameSize={11}
 		padding={17}
+		slot="drawing"
 	/>
 	<ColoringKey slot="key" />
 	<slot />

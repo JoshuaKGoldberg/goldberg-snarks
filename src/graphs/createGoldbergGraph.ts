@@ -1,12 +1,14 @@
 import type { Edge, Graph, Vertex } from "./types.ts";
 
 import {
+	createBlock,
 	edgesToNextBlock,
-	edgesWithinBlock,
+	getVertexIndex,
 	polarPositions,
-	type Role,
-	roles,
 } from "./block.ts";
+
+/** Number of blocks that positions are for, which others are scaled from. */
+const positionedBlocks = 5;
 
 /** Creates the Goldberg graph with some number of blocks, at least three. */
 export function createGoldbergGraph(blocks: number): Graph {
@@ -20,40 +22,28 @@ export function createGoldbergGraph(blocks: number): Graph {
 	const vertices: Vertex[] = [];
 
 	for (let block = 0; block < blocks; block += 1) {
-		for (const role of roles) {
+		const created = createBlock(block, (role) => {
 			const { angle, depth, radius } = polarPositions[role];
-			// Blocks are narrower the more of them there are to fit
-			const turned = (angle * 5) / blocks + (block / blocks) * Math.PI * 2;
+			const turned =
+				(angle * positionedBlocks) / blocks + (block / blocks) * Math.PI * 2;
 
-			vertices.push({
-				block,
+			return {
 				depth,
-				role,
 				x: Math.sin(turned) * radius,
 				y: -Math.cos(turned) * radius,
-			});
-		}
+			};
+		});
 
-		for (const [from, to] of edgesWithinBlock) {
-			edges.push({
+		vertices.push(...created.vertices);
+		edges.push(
+			...created.edges,
+			...edgesToNextBlock.map(({ from, to, ...edge }) => ({
+				...edge,
 				from: getVertexIndex(block, from),
-				isLink: false,
-				to: getVertexIndex(block, to),
-			});
-		}
-
-		for (const [from, to] of edgesToNextBlock) {
-			edges.push({
-				from: getVertexIndex(block, from),
-				isLink: true,
 				to: getVertexIndex((block + 1) % blocks, to),
-			});
-		}
+			})),
+		);
 	}
 
 	return { edges, vertices };
-}
-
-export function getVertexIndex(block: number, role: Role) {
-	return block * roles.length + roles.indexOf(role);
 }

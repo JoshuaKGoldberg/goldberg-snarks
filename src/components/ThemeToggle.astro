@@ -1,5 +1,10 @@
 <div class="theme">
-	<button aria-label="Dark theme" class="toggle" data-toggle type="button">
+	<button
+		aria-label="Dark theme"
+		class="lights toggle"
+		data-toggle
+		type="button"
+	>
 		<svg aria-hidden="true" height="18" viewBox="2.5 2.5 19 19" width="18">
 			<circle cx="12" cy="12" r="8.5"></circle>
 			<path d="M12 3.5a8.5 8.5 0 0 1 0 17z"></path>
@@ -7,7 +12,7 @@
 	</button>
 	<button
 		aria-label="Clear theme preference"
-		class="clear"
+		class="clear lights"
 		data-clear
 		type="button"
 	>
@@ -32,20 +37,10 @@
 	button {
 		background: none;
 		border: 0;
-		color: inherit;
 		cursor: pointer;
-		min-height: 1.75rem;
+		min-height: 1.5rem;
 		min-width: 1.5rem;
 		padding: 0;
-	}
-
-	/* Needs JavaScript to do anything, which is also what sets its state */
-	.theme:has(.toggle:not([aria-pressed])) {
-		visibility: hidden;
-	}
-
-	button:hover {
-		color: var(--colorRed);
 	}
 
 	.toggle {
@@ -53,7 +48,6 @@
 		display: flex;
 	}
 
-	/* Lines up with the right of the page */
 	.toggle svg {
 		margin-left: auto;
 	}
@@ -68,30 +62,32 @@
 		fill: currentcolor;
 	}
 
-	/* Like a superscript, outside of the page if there's room to be */
 	.clear {
-		bottom: 0;
-		left: 100%;
-		position: absolute;
 		align-items: flex-start;
+		bottom: 0.3rem;
 		display: flex;
-		padding: 0.35rem 0 0 0.1rem;
+		left: 100%;
+		padding: 0.15rem 0 0 0.1rem;
+		position: absolute;
 		transition:
-			117ms opacity,
-			117ms translate,
-			117ms visibility;
+			--lit var(--quickly),
+			opacity var(--quickly),
+			translate var(--quickly),
+			visibility var(--quickly);
 	}
 
-	@media (max-width: 40rem) {
+	@media (width <= 40rem) {
 		.clear {
-			justify-content: flex-end;
+			align-items: flex-end;
+			bottom: 100%;
+			justify-content: center;
 			left: auto;
-			padding-right: 0.2rem;
-			right: 100%;
+			padding: 0 0 0.1rem;
+			right: -0.4rem;
 		}
 	}
 
-	.clear:not([data-active]) {
+	:global(:root:not([data-theme])) .clear {
 		opacity: 0;
 		translate: 0 0.5rem;
 		visibility: hidden;
@@ -103,7 +99,7 @@
 		stroke-width: 1.4;
 	}
 
-	@media print {
+	@media print, (scripting: none) {
 		.theme {
 			display: none;
 		}

@@ -1,35 +1,44 @@
 ---
-import { colorEdges } from "~/graphs/colorEdges.ts";
+import { colorMostEdges } from "~/graphs/colorEdges.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
+import { describeColoring } from "~/graphs/describeColoring.ts";
 import { getColorClass } from "~/graphs/edgeClasses.ts";
 
+import ColoringKey from "./ColoringKey.astro";
 import Drawing from "./Drawing.astro";
 
-const blocks = 6;
+interface Props {
+	blocks: number;
+	max: number;
+	min: number;
+}
+
+const { blocks, max, min } = Astro.props;
 const graph = createGoldbergGraph(blocks);
-const coloring = colorEdges(graph);
+const coloring = colorMostEdges(graph);
 ---
 
-<block-explorer class="wide">
+<block-explorer class="boxed wide">
 	<div class="picture">
 		<Drawing
-			edgeClass={(index) => getColorClass(coloring?.[index])}
+			edgeClass={(index) => getColorClass(coloring[index])}
 			graph={graph}
 		/>
+		<ColoringKey spare />
 	</div>
 	<div class="slider">
 		<label for="explorer-blocks">Number of blocks</label>
 		<input
 			id="explorer-blocks"
-			max="15"
-			min="4"
+			max={max}
+			min={min}
 			step="1"
 			type="range"
 			value={blocks}
 		/>
 		<output for="explorer-blocks">
-			<strong>{blocks} blocks</strong>
-			<span>All {graph.edges.length} edges can be colored.</span>
+			<span class="count">{blocks} blocks</span>
+			<span class="result">{describeColoring(coloring)}</span>
 		</output>
 	</div>
 </block-explorer>
@@ -43,23 +52,16 @@ const coloring = colorEdges(graph);
 <style>
 	block-explorer {
 		align-items: center;
-		background: var(--colorPaperShaded);
-		border: 1px solid var(--colorRule);
-		border-top: 3px solid var(--colorRed);
 		display: grid;
 		gap: 1rem 2rem;
-		margin-block: 1.25rem;
-		padding: 1rem;
 	}
 
 	.picture {
+		display: grid;
+		gap: 0.6rem;
 		margin-inline: auto;
 		max-width: 27rem;
 		width: 100%;
-	}
-
-	block-explorer:not(:defined) .slider {
-		visibility: hidden;
 	}
 
 	.slider {
@@ -80,19 +82,18 @@ const coloring = colorEdges(graph);
 
 	output {
 		display: grid;
+		align-content: start;
 		line-height: 1.4;
-		min-height: 4.2em;
+		min-height: 5em;
 	}
 
-	output :global(strong) {
+	.count {
 		font-size: var(--fontSizeHeading);
-		font-weight: 400;
 	}
 
-	@media (min-width: 60rem) {
+	@media (width >= 60rem) {
 		block-explorer {
 			grid-template-columns: minmax(0, 1fr) 16rem;
-			padding: 1.25rem;
 		}
 	}
 

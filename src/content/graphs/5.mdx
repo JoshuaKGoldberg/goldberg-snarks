@@ -1,6 +1,5 @@
 ---
-blocks: 5
-summary: The smallest Goldberg snark, with five blocks, 40 vertices, and 60 edges.
+summary: A graph with 40 vertices and 60 edges, made of five identical blocks. It is the smallest Goldberg snark.
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -24,7 +23,8 @@ No other Goldberg snark has an inner ring of length 5.
 
 ## Longest cycle
 
-Like every snark, <Snark n={5} /> has no [Hamiltonian cycle](/#hamiltonian), which is a cycle that visits every vertex.
+A [_Hamiltonian cycle_](/#hamiltonian-cycles) is a cycle that visits every vertex.
+Like every snark, <Snark n={5} /> has none.
 Its longest cycles visit 39 of its 40 vertices.
 
 <Highlight

@@ -26,7 +26,16 @@ const { id, inMargin, size = "medium" } = Astro.props;
 		display: grid;
 		gap: 0.6rem;
 		grid-template-columns: minmax(0, 1fr);
+	}
+
+	figure:not(.in-margin) {
 		margin-block: 1.25rem;
+	}
+
+	@media (width < 60rem) {
+		figure.in-margin {
+			margin-block: 1.25rem;
+		}
 	}
 
 	.drawing {
@@ -48,7 +57,7 @@ const { id, inMargin, size = "medium" } = Astro.props;
 
 	figcaption {
 		color: var(--colorInkMuted);
-		font-size: 0.9375rem;
+		font-size: var(--fontSizeNote);
 		line-height: 1.4;
 		margin-inline: auto;
 		max-width: 30rem;
@@ -70,15 +79,6 @@ const { id, inMargin, size = "medium" } = Astro.props;
 	figure:target {
 		box-shadow: 0 0 0 0.5rem var(--colorPaperShaded);
 		background: var(--colorPaperShaded);
-	}
-
-	@media (min-width: 60rem) {
-		.in-margin {
-			clear: right;
-			float: right;
-			margin: 0.25rem calc(-1 * var(--outset)) 1.75rem 0;
-			width: var(--widthMargin);
-		}
 	}
 
 	@media print {

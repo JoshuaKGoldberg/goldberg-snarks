@@ -2,19 +2,20 @@
 import Article from "~/components/Article.astro";
 import Gallery from "~/components/Gallery.astro";
 import Heading from "~/components/Heading.astro";
+import { homeImage } from "~/constants.ts";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
-	description="There’s no page at this address."
-	image={{
-		alt: "Goldberg snarks, beside a drawing of the Goldberg snark G5.",
-		path: "/images/home.png",
-	}}
+	description="There is no page at this address."
+	image={homeImage}
+	isMissing
 	title="Page not found: Goldberg snarks"
 >
 	<Article headings={[]}>
-		<Heading summary="There’s no page at this address.">Page not found</Heading>
+		<Heading slot="heading" summary="There is no page at this address.">
+			Page not found
+		</Heading>
 		<p>
 			<a href="/">Return to the main page</a>, or see the page for a particular
 			snark:
