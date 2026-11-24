@@ -1,6 +1,5 @@
 ---
 import { describeProgress } from "~/graphs/clashes.ts";
-import { colorMostEdges, countUncolored } from "~/graphs/colorEdges.ts";
 import { createGoldbergGraph } from "~/graphs/createGoldbergGraph.ts";
 import {
 	drawEdge,
@@ -16,8 +15,6 @@ interface Props {
 
 const { blocks } = Astro.props;
 const graph = createGoldbergGraph(blocks);
-const total = graph.edges.length;
-const most = total - countUncolored(colorMostEdges(graph));
 const id = `puzzle-${blocks.toString()}`;
 ---
 
@@ -28,7 +25,6 @@ const id = `puzzle-${blocks.toString()}`;
 			{[...colorNames, "erase"].map((name, i) => (
 				<label>
 					<input
-						autocomplete="off"
 						checked={i === 0}
 						name={`${id}-color`}
 						type="radio"
@@ -60,7 +56,6 @@ const id = `puzzle-${blocks.toString()}`;
 	</div>
 	<div class="scroller">
 		<svg
-			aria-describedby={`${id}-instructions`}
 			aria-label={`Edges of G${blocks.toString()}`}
 			class="graph board"
 			role="img"
@@ -89,7 +84,7 @@ const id = `puzzle-${blocks.toString()}`;
 				Start over
 			</button>
 			<button class="lights" data-action="best" type="button">
-				{`Color ${most.toString()} edges`}
+				Show a solution
 			</button>
 		</div>
 		<p aria-live="polite" class="status">
@@ -239,8 +234,9 @@ const id = `puzzle-${blocks.toString()}`;
 		cursor: crosshair;
 		margin: auto;
 		max-width: 33rem;
-		min-width: min(var(--boardWidth), 36rem);
+		min-width: min(var(--boardWidth), 33rem);
 		touch-action: manipulation;
+		-webkit-user-select: none;
 		user-select: none;
 	}
 
@@ -350,6 +346,7 @@ const id = `puzzle-${blocks.toString()}`;
 		line-height: 1.2;
 		min-height: 2rem;
 		padding: 0 0.7rem;
+		touch-action: manipulation;
 		transition:
 			--lit var(--quickly),
 			opacity var(--quickly);
@@ -382,6 +379,11 @@ const id = `puzzle-${blocks.toString()}`;
 	@media print {
 		edge-puzzle {
 			break-inside: avoid;
+		}
+
+		.board {
+			max-width: 20rem;
+			min-width: 0;
 		}
 	}
 </style>

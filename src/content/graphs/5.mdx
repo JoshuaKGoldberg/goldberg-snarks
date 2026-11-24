@@ -1,5 +1,5 @@
 ---
-summary: A graph with 40 vertices and 60 edges, made of five identical blocks. It is the smallest Goldberg snark.
+fact: It is the smallest Goldberg snark.
 ---
 
 import Cite from "~/components/Cite.astro";
@@ -32,13 +32,13 @@ Its longest cycles visit 39 of its 40 vertices.
 	kind="longest"
 	label="A cycle in the Goldberg snark G5 that visits every vertex but one, c1, near the top."
 >
-	A cycle that visits every vertex except <Vertex i="1" role="c" />.
+	A cycle that visits every vertex except <Vertex block="1" role="c" />.
 </Highlight>
 
 ## Connectivity
 
 The _cyclic edge-connectivity_ of a graph is the smallest number of edges whose removal leaves two parts that each contain a cycle.
-It is at least 4 for every snark, and 5 for <Snark n={5} />.
+It is at least 4 for every snark, and [5 for <Snark n={5} />](/#properties).
 
 ## Number of snarks of this size
 

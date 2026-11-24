@@ -49,17 +49,15 @@ const isDeep = data.points.some(([, , z]) => z !== 0);
 	<div aria-label={name} class="buttons" role="toolbar">
 		<span class="movers">
 			<button
-				aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"
 				class="lights"
-				data-action="move"
+				data-action="next"
 				title="Press to select each vertex in turn, then use arrow keys to move it."
 				type="button"
 			>
-				Move
+				Select
 			</button>
 			{isDeep && (
 				<button
-					aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"
 					class="lights"
 					data-action="turn"
 					title="Press to turn it, or use arrow keys."
@@ -89,6 +87,7 @@ const isDeep = data.points.some(([, , z]) => z !== 0);
 
 	movable-drawing :global(svg) {
 		touch-action: pan-y pinch-zoom;
+		-webkit-user-select: none;
 		user-select: none;
 	}
 
@@ -151,8 +150,8 @@ const isDeep = data.points.some(([, , z]) => z !== 0);
 		min-width: 2.5rem;
 		padding: 0 0.4rem;
 		text-decoration: underline 1px;
-		text-decoration-color: var(--colorRule);
 		text-underline-offset: 0.2em;
+		touch-action: manipulation;
 		transition:
 			--lit var(--quickly),
 			opacity var(--quickly),

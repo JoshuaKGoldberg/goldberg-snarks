@@ -7,8 +7,12 @@
 		"replacements:all"
 	],
 	"labels": ["dependencies"],
-	"minimumReleaseAge": "7 days",
 	"packageRules": [
+		{
+			"description": "A top-level age would be overridden by the one in config:best-practices.",
+			"matchPackageNames": ["*"],
+			"minimumReleaseAge": "7 days"
+		},
 		{
 			"description": "The Engines Check job's Node.js version is the minimum from engines.node.",
 			"enabled": false,

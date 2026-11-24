@@ -25,7 +25,7 @@ export function startThemeToggle(host: HTMLElement) {
 	}
 
 	function restore() {
-		update(getStored());
+		update(getStored(root.dataset.theme));
 	}
 
 	function update(theme: Theme | undefined) {
@@ -63,20 +63,29 @@ export function startThemeToggle(host: HTMLElement) {
 	});
 
 	// It may have been changed on another page, in another tab, or by the system
-	addEventListener("pageshow", restore);
+	addEventListener("pageshow", () => {
+		restore();
+
+		// Pages that are gone back to should already look right, rather than fade
+		for (const animation of root.getAnimations()) {
+			animation.finish();
+		}
+	});
 	addEventListener("storage", restore);
 	preference.addEventListener("change", restore);
 	restore();
 }
 
-function getStored() {
+function findTheme(name: null | string | undefined) {
+	return themes.find((theme) => theme === name);
+}
+
+function getStored(current: string | undefined) {
 	// Storage throws when the browser is set to block site data
 	try {
-		const stored = localStorage.getItem(key);
-
-		return themes.find((theme) => theme === stored);
+		return findTheme(localStorage.getItem(key));
 	} catch {
-		return undefined;
+		return findTheme(current);
 	}
 }
 

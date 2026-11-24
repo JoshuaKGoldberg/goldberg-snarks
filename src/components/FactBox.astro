@@ -18,7 +18,7 @@ const graph = createGoldbergGraph(blocks);
 	<MovableDrawing
 		edgeClass={(index) => getPartClass(graph, index)}
 		graph={graph}
-		label={`The ${kind} G${blocks.toString()}: ${blocks.toString()} identical blocks of vertices and edges in a ring around an inner ring of ${blocks.toString()} vertices.`}
+		label={`The ${kind} G${blocks.toString()}: ${blocks.toString()} identical blocks in a ring, with an inner ring through one vertex of each.`}
 		name={`${kind} G${blocks.toString()}`}
 		padding={4}
 	/>

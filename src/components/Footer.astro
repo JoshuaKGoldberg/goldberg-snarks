@@ -1,12 +1,11 @@
 ---
-import { source } from "~/constants.ts";
+import { author, source } from "~/constants.ts";
 ---
 
 <footer>
 	<p>
-		Compiled by <a href="https://www.joshuakgoldberg.com">Josh Goldberg</a>. Its
-		drawings, and most of its numbers, are computed by{" "}
-		<a href={source}>its source</a>.
+		Compiled by <a href={author}>Josh Goldberg</a>. Its drawings, and most of
+		its numbers, are computed by <a href={source}>its source</a>.
 	</p>
 </footer>
 
@@ -20,5 +19,12 @@ import { source } from "~/constants.ts";
 		padding: 1.25rem var(--space) 2.5rem;
 		text-align: center;
 		text-wrap: balance;
+	}
+
+	@media print {
+		footer {
+			margin-top: 1rem;
+			padding-bottom: 0;
+		}
 	}
 </style>

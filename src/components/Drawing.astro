@@ -16,7 +16,6 @@ interface Props {
 	/** Whether the graph is of a shape other than a ring around its center. */
 	cropped?: boolean;
 
-	/** Classes for each edge, by index. */
 	edgeClass: (index: number) => string;
 
 	graph: Graph;
@@ -29,12 +28,8 @@ interface Props {
 		index: number,
 	) => readonly [name: string, x: number, y: number] | undefined;
 
-	/** How big names are, in units. */
 	nameSize?: number;
-
 	padding?: number;
-
-	/** Classes for each vertex, by index. */
 	vertexClass?: (index: number) => string | undefined;
 }
 

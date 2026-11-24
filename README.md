@@ -21,8 +21,8 @@
 This is the source of [goldbergsnarks.com](https://goldbergsnarks.com).
 
 A _graph_ is a set of points joined by lines.
-In most graphs where three lines meet at every point, the lines can be given three colors so that lines that meet have different colors.
-A _snark_ is one that needs four, with some exceptions.
+Most graphs in which three lines meet at every point can have their lines given three colors, so that lines that meet have different colors.
+A _snark_ is a graph like that whose lines need four colors, with some exceptions.
 The _Goldberg snarks_ are a family of snarks that Mark Goldberg published in 1981.
 The six smallest are:
 

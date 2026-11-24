@@ -11,7 +11,6 @@ import { getColorClass } from "~/graphs/edgeClasses.ts";
 
 import { query } from "./query.ts";
 
-/** Shows the Goldberg graph of however many blocks, as colored as it can be. */
 export class BlockExplorer extends HTMLElement {
 	connectedCallback() {
 		const input = query(this, "input", HTMLInputElement);
@@ -53,7 +52,7 @@ export class BlockExplorer extends HTMLElement {
 		);
 		svg.style.setProperty(
 			"--dot",
-			`${(getVertexRadius(graph) * 2).toString()}px`,
+			`${(getVertexRadius(graph) * 2).toFixed(1)}px`,
 		);
 		dots.setAttribute("d", graph.vertices.map(drawDot).join(""));
 

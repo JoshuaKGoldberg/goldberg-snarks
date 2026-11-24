@@ -1,18 +1,15 @@
 ---
 interface Props {
-	/** Which block it's in, such as "i". */
-	i: string;
-
-	/** Its letter within the block. */
+	block: string;
 	role: string;
 }
 
-const { i, role } = Astro.props;
+const { block, role } = Astro.props;
 ---
 
 <span class="vertex">
 	<i>{role}</i>
-	<sub>{i}</sub>
+	<sub>{block}</sub>
 </span>
 
 <style>

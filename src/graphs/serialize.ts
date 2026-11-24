@@ -1,6 +1,5 @@
 import type { Graph } from "./types.ts";
 
-/** Lists a graph's edges, one per line, as the names of their vertices. */
 export function toEdgeList({ edges, vertices }: Graph) {
 	return edges
 		.map(
@@ -11,7 +10,7 @@ export function toEdgeList({ edges, vertices }: Graph) {
 }
 
 /**
- * Encodes a graph of up to 258,047 vertices in graph6 format.
+ * Encodes a graph in graph6 format.
  * @see https://users.cecs.anu.edu.au/~bdm/data/formats.txt
  */
 export function toGraph6({ edges, vertices }: Graph) {

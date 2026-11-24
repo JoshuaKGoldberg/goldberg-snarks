@@ -2,7 +2,7 @@ jobs:
   anti-slop:
     permissions:
       contents: read
-      issues: write
+      issues: read
       pull-requests: write
     runs-on: ubuntu-latest
     steps:

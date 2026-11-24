@@ -6,8 +6,8 @@ export const collections = {
 	graphs: defineCollection({
 		loader: glob({ base: "./src/content/graphs", pattern: "*.mdx" }),
 		schema: z.object({
-			/** One or two sentences, for its page's lead and metadata. */
-			summary: z.string(),
+			/** What sets it apart, as a sentence for its page's lead and metadata. */
+			fact: z.string(),
 		}),
 	}),
 };

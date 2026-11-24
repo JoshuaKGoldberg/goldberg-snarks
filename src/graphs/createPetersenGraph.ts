@@ -2,7 +2,6 @@ import type { Edge, Graph, Vertex } from "./types.ts";
 
 const points = 5;
 
-/** Creates the Petersen graph: a pentagon joined to a pentagram. */
 export function createPetersenGraph(): Graph {
 	const edges: Edge[] = [];
 	const vertices: Vertex[] = [];

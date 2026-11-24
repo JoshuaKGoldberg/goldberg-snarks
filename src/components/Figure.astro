@@ -22,10 +22,19 @@ const { id, inMargin, size = "medium" } = Astro.props;
 
 <style>
 	figure {
+		--shade: color-mix(
+			in srgb,
+			var(--colorPaperShaded) var(--lit),
+			transparent
+		);
+
+		background: var(--shade);
+		box-shadow: 0 0 0 0.5rem var(--shade);
 		counter-increment: figure;
 		display: grid;
 		gap: 0.6rem;
 		grid-template-columns: minmax(0, 1fr);
+		transition: --lit var(--quickly);
 	}
 
 	figure:not(.in-margin) {
@@ -77,8 +86,7 @@ const { id, inMargin, size = "medium" } = Astro.props;
 	}
 
 	figure:target {
-		box-shadow: 0 0 0 0.5rem var(--colorPaperShaded);
-		background: var(--colorPaperShaded);
+		--lit: 100%;
 	}
 
 	@media print {

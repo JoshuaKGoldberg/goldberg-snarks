@@ -11,10 +11,10 @@ function getLastName({ authors }: Reference) {
 ---
 
 <ol>
-	{sorted.map(([id, { authors, details, href, title, year }]) => (
+	{sorted.map(([id, { authors, details, href, lang, title, year }]) => (
 		<li id={id}>
 			{year ? `${authors} (${year.toString()}). ` : `${authors}. `}
-			{href ? <a href={href}>{title}</a> : <i>{title}</i>}
+			{href ? <a href={href}>{title}</a> : <i lang={lang}>{title}</i>}
 			{`. ${details}`}
 		</li>
 	))}
@@ -34,8 +34,17 @@ function getLastName({ authors }: Reference) {
 		text-indent: -1.5rem;
 	}
 
+	li {
+		background: color-mix(
+			in srgb,
+			var(--colorPaperShaded) var(--lit),
+			transparent
+		);
+		transition: --lit var(--quickly);
+	}
+
 	li:target {
-		background: var(--colorPaperShaded);
+		--lit: 100%;
 	}
 
 	a {

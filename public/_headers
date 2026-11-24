@@ -1,3 +1,9 @@
+/*
+  X-Content-Type-Options: nosniff
+
+https://:version.:subdomain.workers.dev/*
+  X-Robots-Tag: noindex
+
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 

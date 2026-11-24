@@ -6,11 +6,12 @@
 	},
 	"compatibility_date": "2026-11-18",
 	"name": "goldberg-snarks",
+	"preview_urls": true,
 	"routes": [
 		{
 			"custom_domain": true,
 			"pattern": "goldbergsnarks.com",
 		},
 	],
-	"workers_dev": true,
+	"workers_dev": false,
 }

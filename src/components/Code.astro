@@ -2,16 +2,14 @@
 import { Code as HighlightedCode } from "astro:components";
 
 interface Props {
-	/** Whether lines may be broken anywhere. */
-	breaks?: boolean;
 	code: string;
-	lang?: "bibtex" | "plaintext" | "python";
+	lang: "bibtex" | "python";
 }
 
-const { breaks, code, lang = "plaintext" } = Astro.props;
+const { code, lang } = Astro.props;
 ---
 
-<div class:list={["code", breaks && "breaks"]}>
+<div class="code">
 	<HighlightedCode code={code.trimEnd()} lang={lang} theme="css-variables" />
 </div>
 
@@ -40,10 +38,5 @@ const { breaks, code, lang = "plaintext" } = Astro.props;
 		overflow: auto;
 		padding: 0.7rem 1rem;
 		tab-size: 4;
-	}
-
-	.breaks :global(pre) {
-		overflow-wrap: anywhere;
-		white-space: pre-wrap;
 	}
 </style>

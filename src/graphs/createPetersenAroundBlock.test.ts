@@ -7,6 +7,18 @@ import {
 import { countSymmetries, getGirth, getNeighbors } from "./measure.ts";
 
 describe(createPetersenAroundBlock, () => {
+	it("has u on the right, v at the bottom, and w on the left", () => {
+		const { vertices } = createPetersenAroundBlock();
+		const by = (key: "x" | "y") =>
+			vertices.toSorted((a, b) => a[key] - b[key]).map(({ name }) => name);
+
+		expect([by("x").at(-1), by("y").at(-1), by("x")[0]]).toEqual([
+			"u",
+			"v",
+			"w",
+		]);
+	});
+
 	it("has the Petersen graph's degrees, girth, and symmetries", () => {
 		const graph = createPetersenAroundBlock();
 
